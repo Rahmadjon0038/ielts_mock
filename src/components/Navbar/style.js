@@ -7,7 +7,7 @@ export const NavbarConatiner = styled.div`
     justify-content: space-between;
     padding: 10px 40px;
 
-` 
+`
 export const Logo = styled.div`
     color: #B61304;
     text-align: center;
@@ -49,4 +49,17 @@ export const Buttons = styled.div`
         }
     }
 
+`
+export const Profile = styled.div`
+    padding-inline-start: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 18px;
+    cursor: pointer;
+        color: #A60A06;
+    .icon{
+        font-size: 36px;
+        color: #A60A06;
+    }
 `

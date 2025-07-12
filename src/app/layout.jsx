@@ -2,7 +2,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ClientProviders from "./Providers";
 import { Toaster } from "react-hot-toast";
-import NavbarVisibilityWrapper from "@/components/NavbarVisibilityWrapper";
 import Navbar from "@/components/Navbar/Navbar";
 import { AuthProvider } from "@/context/userData";
 const geistSans = Geist({
@@ -26,7 +25,7 @@ export default function RootLayout({ children }) {
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ClientProviders>
           <AuthProvider>
-            <NavbarVisibilityWrapper />
+            <Navbar/>
             <Toaster
               position="top-center"
               reverseOrder={false}

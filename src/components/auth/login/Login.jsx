@@ -6,6 +6,7 @@ import { CustomModal } from '../style';
 import { uselogin } from '@/hooks/auth';
 import { useAuth } from '@/context/userData';
 import { useRouter } from 'next/navigation';
+import { usegetUser } from '@/hooks/user';
 
 const style = {
     position: 'absolute',
@@ -20,7 +21,9 @@ const style = {
 };
 
 export default function Login({ children }) {
+
     const { user, setUser } = useAuth();
+    const { refetch } = usegetUser();
     const loginMuation = uselogin();
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -38,14 +41,7 @@ export default function Login({ children }) {
         e.preventDefault();
         loginMuation.mutate(logindata, {
             onSuccess: (data) => {
-                console.log(data, 'salomat')
-                setUser(data)
-                if (data.user.role == 'admin') {
-                    router.push('/admin')
-                }
-                else {
-                    router.push('/user')
-                }
+                refetch()
             }
         })
     }

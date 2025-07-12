@@ -40,11 +40,10 @@ export const uselogin = () => {
             }
             notify('ok', data.msg)
             Cookies.set('token', data.token)
-            Cookies.set('role', data.user.role)
         },
         onError: (error) => {
             console.log(error)
-            notify('ok', error.response.data.msg)
+            notify('err', error.response.data.msg)
 
         }
     })

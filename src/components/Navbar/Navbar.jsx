@@ -1,15 +1,23 @@
 'use client'
 import React from 'react'
-import { Buttons, Logo, NavbarConatiner } from './style'
+import { Buttons, Logo, NavbarConatiner, Profile } from './style'
 import logo from '../../assets/logo.png'
 import Image from 'next/image'
 import Link from 'next/link'
 import Login from '../auth/login/Login'
 import Register from '../auth/register/Register'
 import { useAuth } from '@/context/userData'
-function Navbar({ role }) {
-    const { user, setUser } = useAuth();
-    console.log(role)
+import Loader from '../loader/Loader'
+import { useRouter } from 'next/navigation'
+import { FaRegUserCircle } from "react-icons/fa";
+import { MdKeyboardArrowDown } from "react-icons/md";
+function Navbar() {
+    const { user, setUser, isLoading } = useAuth();
+    const role = user?.user?.role
+    const router = useRouter();
+    if (isLoading) {
+        return <Loader />
+    }
     return (
         <NavbarConatiner>
             <Link href={'/'}>
@@ -21,7 +29,7 @@ function Navbar({ role }) {
                     </div>
                 </Logo>
             </Link>
-            {role == 'user' ? < button > user Proflie</button> : role == 'admin' ? <button>admin profile</button> :
+            {role == 'user' ? < Profile onClick={() => router.push('/user')}><FaRegUserCircle className='icon' /> {user?.user?.username}<MdKeyboardArrowDown /></Profile> : role == 'admin' ? < Profile onClick={() => router.push('/admin')}><FaRegUserCircle className='icon' /> {user?.user?.username}<MdKeyboardArrowDown /></Profile> :
                 <Buttons>
                     <Login>
                         Log in

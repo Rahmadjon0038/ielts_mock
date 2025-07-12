@@ -2,10 +2,6 @@
 import React from 'react'
 import { Conatiner, TitleInfo, Title, Cards, Card, CardInfo } from './style'
 import Link from 'next/link'
-import { useGetHome } from '@/hooks/reading'
-import { getNotify } from '@/hooks/notify'
-import toast from 'react-hot-toast'
-import { useAuth } from '@/context/userData'
 
 function Home() {
     return (
