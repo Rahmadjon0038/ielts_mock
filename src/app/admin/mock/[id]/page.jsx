@@ -5,6 +5,8 @@ import { GlobalContainer } from '@/globalStyle'
 import { useParams, useRouter } from 'next/navigation'
 import { SectionCard, SectionList } from '../../style'
 import { UserCard, UserList } from '@/components/Navbar/style'
+import { usegetMontId } from '@/hooks/mockMonth'
+import Loader from '@/components/loader/Loader'
 
 const sections = [
   { id: 'listening', title: 'Listening' },
@@ -28,6 +30,8 @@ const userResults = [
 
 function AdminResult() {
   const { id } = useParams()
+  const { data, isLoading, error, refetch } = usegetMontId(id);
+  console.log(id)
   const router = useRouter()
 
   const handleGo = (sectionId) => {
@@ -38,10 +42,13 @@ function AdminResult() {
     router.push(`/admin/mock/${id}/user/${userId}`)
 
   }
+  if (isLoading) {
+    return <Loader />
+  }
 
   return (
     <GlobalContainer>
-      <h2 style={{ marginBottom: '2rem' }}>Mock: {id} uchun bo‘limlar</h2>
+      <h2 style={{ marginBottom: '2rem' }}>Mock: {data?.month} uchun bo‘limlar</h2>
 
       <SectionList>
         {sections.map((item) => (

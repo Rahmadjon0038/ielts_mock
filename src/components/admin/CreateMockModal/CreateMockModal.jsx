@@ -20,6 +20,7 @@ function CreateMockModal({ addMock }) {
     const handleClose = () => setOpen(false);
 
     const [date, setDate] = useState();
+    
     const handleSumbit = (e) => {
         e.preventDefault();
         addMock(date)
