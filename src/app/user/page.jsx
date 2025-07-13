@@ -1,10 +1,10 @@
 'use client'
 import React from 'react'
-import Header from '@/components/users/Header'
 import MonthCard from '@/components/users/mookcard/MonthCard'
 import { GlobalContainer } from '@/globalStyle'
 import styled from 'styled-components'
 import Link from 'next/link'
+import BannerComponent from '@/components/banner/Banner'
 
 // Oylik mock testlar — backenddan keladi (hozircha local array)
 const months = [
@@ -23,7 +23,7 @@ const Grid = styled.div`
 function UserProfile() {
   return (
     <GlobalContainer>
-      <Header />
+      <BannerComponent info={' Bu bo‘limda siz ILST Mook testidagi natijalaringizni kuzatishingiz mumkin.'}/>
       <Grid>
         {months.map((month, index) => (
           <Link key={month.id} href={`/user/results/${month.id}`}>

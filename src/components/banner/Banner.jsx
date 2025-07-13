@@ -1,19 +1,17 @@
 'use client'
 import React from 'react'
-import { Banner, Container, Title, Subtitle } from './style'
+import { Banner, Container, Title, Subtitle, LogOut } from './style'
 import { useAuth } from '@/context/userData'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
-import { usegetUser } from '@/hooks/user'
 
-function UserHeader() {
-  const { user } = useAuth()
-  const { refetch } = usegetUser();
+function BannerComponent({info}='sa') {
+  const { user, setUser } = useAuth()
   const router = useRouter();
   const data = user?.user
   const logOut = () => {
     Cookies.remove('token');
-    refetch();
+    setUser(null)
     router.push('/');
   }
   return (
@@ -21,14 +19,13 @@ function UserHeader() {
       <Banner>
         <Title>Salom, {data?.username}!</Title>
         <Subtitle>
-          Bu bo‘limda siz ILST Mook testidagi natijalaringizni kuzatishingiz mumkin.
+         {info}
         </Subtitle>
         <p>Email: {data?.email}</p>
-
-        <button onClick={logOut}>Logout</button>
+        <LogOut onClick={logOut}>Logout</LogOut>
       </Banner>
     </Container>
   )
 }
 
-export default UserHeader
+export default BannerComponent

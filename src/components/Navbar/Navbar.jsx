@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { Buttons, Logo, NavbarConatiner, Profile } from './style'
+import { Buttons, Logocont, NavbarConatiner, Profile } from './style'
 import logo from '../../assets/logo.png'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -21,13 +21,13 @@ function Navbar() {
     return (
         <NavbarConatiner>
             <Link href={'/'}>
-                <Logo>
+                <Logocont>
                     <Image width={100} className='logoimg' src={logo} alt='img' />
                     <div>
                         <h3>Taraqqiyot</h3>
                         <p>Teaching center</p>
                     </div>
-                </Logo>
+                </Logocont>
             </Link>
             {role == 'user' ? < Profile onClick={() => router.push('/user')}><FaRegUserCircle className='icon' /> {user?.user?.username}<MdKeyboardArrowDown /></Profile> : role == 'admin' ? < Profile onClick={() => router.push('/admin')}><FaRegUserCircle className='icon' /> {user?.user?.username}<MdKeyboardArrowDown /></Profile> :
                 <Buttons>
