@@ -15,7 +15,7 @@ export const CardList = styled.div`
   gap: 1.5rem;
   margin-top: 1rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+  grid-template-columns: repeat(auto-fit,minmax(350px,1fr));
 
  
 `
@@ -48,7 +48,7 @@ export const CardTitle = styled.h3`
 `
 
 export const ViewButton = styled.button`
-  background-color:green;
+  background-color:orange;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -61,11 +61,36 @@ export const ViewButton = styled.button`
   gap: 10px;
 
   &:hover {
-    background-color:rgb(153, 6, 4);
+    background-color:orange;
   }
 `
+export const ActiveButton = styled.button`
+  background-color:${({ activemontCookies }) => activemontCookies ? 'rgb(10, 247, 77)' : "gray"};
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 
-
+  &:hover {
+    background-color:rgb(10, 247, 77);
+  }
+`
+// export const EmtyMock = styled.div`
+//   border: 2px dashed rgb(167, 156, 156);
+//   border-radius: 10px;
+//   padding: 10px;
+//   background-image: url('https://img.freepik.com/premium-vector/modern-design-concept-result-found_637684-434.jpg?semt=ais_hybrid&w=740');
+//   height: 300px;
+//   background-repeat: no-repeat;
+//   background-position: top center;
+//   background-size: contain;
+// `
 // --------------------------- [ id] -------------------------
 export const SectionList = styled.div`
   display: grid;

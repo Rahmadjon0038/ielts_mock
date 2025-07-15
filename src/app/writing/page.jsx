@@ -1,34 +1,35 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { GlobalContainer } from '@/globalStyle'
-import { AnswerBox, Container, StyledTextarea, SubmitButton, TabButton, TabRow, TaskBox, WordCount } from './style'
-
-const tasks = {
-  part1: `Describe a time when you received good news. You should say:
-
-– what the news was  
-– who told you the news  
-– how you reacted  
-– and explain why this news was important to you.
-
-Receiving good news can make a significant impact on your emotions and overall outlook. Think about a personal experience that left a lasting impression on you.
-`,
-  part2: `Some people believe that unpaid community service such as helping the elderly, working in a charity, or teaching underprivileged children should be a compulsory part of high school programs.
-
-To what extent do you agree or disagree with this opinion? Support your point of view with relevant examples and explanations.
-`
-}
+import {
+  AnswerBox,
+  Container,
+  StyledTextarea,
+  SubmitButton,
+  TabButton,
+  TabRow,
+  TaskBox,
+  WordCount
+} from './style'
+import { useLatestMonth } from '@/hooks/useLatestMonth'
+import { usegetWritingAdmin } from '@/hooks/writing'
+import Cookies from 'js-cookie'
+import Loader from '@/components/loader/Loader'
+import NoResult from '@/components/NoResult'
 
 function Writing() {
-  const [activeTab, setActiveTab] = useState('part1')
+  const { data: latestMonth, isLoading: monthLoading } = useLatestMonth()
+  const { data: writingTask, isLoading: writingLoading, refetch } = usegetWritingAdmin(latestMonth?.id)
+  Cookies.set('activemonth', latestMonth?.id)
+
+  const [activeTab, setActiveTab] = useState('task1')
   const [answers, setAnswers] = useState({
-    part1: '',
-    part2: ''
+    task1: '',
+    task2: ''
   })
 
   const wordCount = answers[activeTab].trim().split(/\s+/).filter(Boolean).length
-
   const handleChange = (e) => {
     const value = e.target.value
     setAnswers((prev) => ({
@@ -46,36 +47,44 @@ function Writing() {
     alert(`${activeTab.toUpperCase()} yuborildi!`)
   }
 
+  if (monthLoading || writingLoading) {
+    return <Loader />
+  }
+
   return (
     <GlobalContainer full={'full'}>
-      <h2 style={{ marginBottom: '1.5rem' }}>✍️ Writing Task</h2>
+      <h2 style={{ marginBottom: '1.5rem' }}>✍️ Writing Task  {latestMonth?.month}</h2>
+      <h2>task id {latestMonth?.id}</h2>
 
+      {!writingTask ? <NoResult message='There are currently no Writing tests in this section. Stay tuned for updates soon!'/> :
+        <div>
+          <Container>
+            <TaskBox>
+              <p>{writingTask[activeTab]}</p>
+            </TaskBox>
 
-      <Container>
-        <TaskBox>
-          <p>{tasks[activeTab]}</p>
-        </TaskBox>
+            <AnswerBox>
+              <StyledTextarea
+                rows="10"
+                value={answers[activeTab]}
+                onChange={handleChange}
+                placeholder="250+ ta so‘zli javob yozing..."
+              />
+              <WordCount>So‘zlar soni: {wordCount}</WordCount>
+              <SubmitButton onClick={handleSubmit}>Yuborish</SubmitButton>
+            </AnswerBox>
+          </Container>
 
-        <AnswerBox>
-          <StyledTextarea
-            rows="10"
-            value={answers[activeTab]}
-            onChange={handleChange}
-            placeholder="250+ ta so‘zli javob yozing..."
-          />
-          <WordCount>So‘zlar soni: {wordCount}</WordCount>
-          <SubmitButton onClick={handleSubmit}>Yuborish</SubmitButton>
-        </AnswerBox>
-      </Container>
-
-      <TabRow>
-        <TabButton active={activeTab === 'part1'} onClick={() => setActiveTab('part1')}>
-          Part 1
-        </TabButton>
-        <TabButton active={activeTab === 'part2'} onClick={() => setActiveTab('part2')}>
-          Part 2
-        </TabButton>
-      </TabRow>
+          <TabRow>
+            <TabButton active={activeTab === 'task1'} onClick={() => setActiveTab('task1')}>
+              Part 1
+            </TabButton>
+            <TabButton active={activeTab === 'task2'} onClick={() => setActiveTab('task2')}>
+              Part 2
+            </TabButton>
+          </TabRow>
+        </div>
+      }
     </GlobalContainer>
   )
 }

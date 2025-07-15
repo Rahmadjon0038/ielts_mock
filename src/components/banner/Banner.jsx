@@ -5,13 +5,14 @@ import { useAuth } from '@/context/userData'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
 
-function BannerComponent({info}='sa') {
+function BannerComponent({ info } = 'sa') {
   const { user, setUser } = useAuth()
   const router = useRouter();
   const data = user?.user
   const logOut = () => {
     Cookies.remove('token');
     setUser(null)
+    // window.location.reload(); //
     router.push('/');
   }
   return (
@@ -19,7 +20,7 @@ function BannerComponent({info}='sa') {
       <Banner>
         <Title>Salom, {data?.username}!</Title>
         <Subtitle>
-         {info}
+          {info}
         </Subtitle>
         <p>Email: {data?.email}</p>
         <LogOut onClick={logOut}>Logout</LogOut>

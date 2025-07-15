@@ -7,7 +7,6 @@ const notify = getNotify()
 
 const addWritingAdmin = async (addWritingAdminData) => {
     const { id, task1, task2 } = addWritingAdminData
-    console.log(id, { task1, task2 })
     const response = await instance.post(`/api/mock/${id}/writing/add`, { task1, task2 });
     return response.data;
 };
@@ -32,7 +31,7 @@ export const useaddWritingAdmin = (id) => {
 
 // --------------------- get writing admin ----------------
 
-
+    
 const getWritingAdmin = async (id) => {
     const response = await instance.get(`/api/mock/${id}/writing/get`)
     return response.data
