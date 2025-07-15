@@ -1,46 +1,67 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { instance } from "./api";
 import { getNotify } from "./notify";
-const notify = getNotify()
+const notify = getNotify();
 
-// --------------------- add writing admin ----------------
 
-const addWritingAdmin = async (addWritingAdminData) => {
-    const { id, task1, task2 } = addWritingAdminData
-    const response = await instance.post(`/api/mock/${id}/writing/add`, { task1, task2 });
-    return response.data;
+// --------------------- Add Writing (Admin) ----------------
+const addWritingAdmin = async ({ id, task1, task2 }) => {
+  const response = await instance.post(`/api/mock/${id}/writing/add`, { task1, task2 });
+  return response.data;
 };
 
-export const useaddWritingAdmin = (id) => {
-    const queryClient = useQueryClient(); // <
-    const addWritingAdminMuation = useMutation({
-         mutationFn: (addWritingAdminData) => addWritingAdmin(addWritingAdminData),
-        onSuccess: (data) => {
-            console.log(data)
-            notify('ok', data.msg)
-            queryClient.invalidateQueries({ queryKey: ['writing',id] });
-        },
-        onError: (error) => {
-            console.log(error)
-            notify('err', error?.response?.data?.msg || 'Already available this month');
-        }
-    })
-    return addWritingAdminMuation
-}
+export const useAddWritingAdmin = (id) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data) => addWritingAdmin(data),
+    onSuccess: (data) => {
+      notify("ok", data.msg);
+      queryClient.invalidateQueries({ queryKey: ["writing-admin", id] });
+    },
+    onError: (error) => {
+      notify("err", error?.response?.data?.msg || "Already available this month");
+    },
+  });
+};
 
-
-// --------------------- get writing admin ----------------
-
-    
+// --------------------- Get Writing (Admin) ----------------
 const getWritingAdmin = async (id) => {
-    const response = await instance.get(`/api/mock/${id}/writing/get`)
-    return response.data
+  const response = await instance.get(`/api/mock/${id}/writing/get`);
+  return response.data;
 };
-export const usegetWritingAdmin = (id) => {
-    const { data, isLoading, error, refetch } = useQuery({
-        queryKey: ['writing', id],
-        queryFn: () => getWritingAdmin(id),
-    })
 
-    return { data, isLoading, error, refetch }
+export const useGetWritingAdmin = (id) => {
+  return useQuery({
+    queryKey: ["writing-admin", id],
+    queryFn: () => getWritingAdmin(id),
+    enabled: !!id,
+  });
+};
+
+// --------------------- Get User Writing Answers (Admin) ----------------
+const getWritingAnswerMonthAdmin = async ({ monthid, userid }) => {
+  const response = await instance.get(`/api/mock/writing/answers/${monthid}/${userid}`);
+  return response.data;
+};
+
+export const useGetWritingAnswerMonthAdmin = ({ monthid, userid }) => {
+  return useQuery({
+    queryKey: ["writing-answers-admin", monthid, userid],
+    queryFn: () => getWritingAnswerMonthAdmin({ monthid, userid }),
+    enabled: !!monthid && !!userid,
+  });
+};
+
+// --------------------- Get Writing Answer Users (Users list) ----------------
+const getWritingAnswerMonthUsers = async (monthid) => {
+  const response = await instance.get(`/api/mock/users/${monthid}/users`);
+  return response.data;
+};
+
+export const useGetWritingAnswerMonthUsers = (monthid) => {
+  return useQuery({
+    queryKey: ["writing-users", monthid],
+    queryFn: () => getWritingAnswerMonthUsers(monthid),
+    enabled: !!monthid,
+  });
 };

@@ -3,20 +3,17 @@
 import React, { useState } from 'react'
 import { useParams } from 'next/navigation'
 import { GlobalContainer } from '@/globalStyle'
-import { useaddWritingAdmin, usegetWritingAdmin } from '@/hooks/writing'
 import Loader from '@/components/loader/Loader'
 import { Card, Form, Message, TaskTitle,Button, Input } from './style'
-
-
+import { useAddWritingAdmin, useGetWritingAdmin } from '@/hooks/writing'
 
 function WritingPage() {
-  const { id } = useParams()
-  const { data, isLoading, error, refetch } = usegetWritingAdmin(id)
-  const addWritingAdminMuation = useaddWritingAdmin(id);
-
+  const { id ,sectionId} = useParams()
+  console.log(sectionId)
+  const { data, isLoading, error, refetch } = useGetWritingAdmin(id)
+  const addWritingAdminMuation = useAddWritingAdmin(id);
   const [task1, setTask1] = useState('')
   const [task2, setTask2] = useState('')
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     addWritingAdminMuation.mutate({ id, task1, task2 })
@@ -29,8 +26,8 @@ function WritingPage() {
   }
   return (
     <GlobalContainer>
+      <h1>{sectionId}</h1>
       <h2 style={{ marginBottom: '20px' }}>📄 Writing assignments</h2>
-
       {data?.task1 && data?.task2 ? (
         <Card>
           <TaskTitle>Task 1</TaskTitle>

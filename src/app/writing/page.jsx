@@ -13,15 +13,20 @@ import {
   WordCount
 } from './style'
 import { useLatestMonth } from '@/hooks/useLatestMonth'
-import { usegetWritingAdmin } from '@/hooks/writing'
 import Cookies from 'js-cookie'
 import Loader from '@/components/loader/Loader'
 import NoResult from '@/components/NoResult'
+import { getNotify } from '@/hooks/notify'
+import { usePathname } from 'next/navigation'
+import { useAuth } from '@/context/userData'
+import { useGetWritingAdmin } from '@/hooks/writing'
 
 function Writing() {
   const { data: latestMonth, isLoading: monthLoading } = useLatestMonth()
-  const { data: writingTask, isLoading: writingLoading, refetch } = usegetWritingAdmin(latestMonth?.id)
+  const { data: writingTask, isLoading: writingLoading, refetch } = useGetWritingAdmin(latestMonth?.id)
   Cookies.set('activemonth', latestMonth?.id)
+  const notify = getNotify();
+  const { user } = useAuth()
 
   const [activeTab, setActiveTab] = useState('task1')
   const [answers, setAnswers] = useState({
@@ -30,6 +35,7 @@ function Writing() {
   })
 
   const wordCount = answers[activeTab].trim().split(/\s+/).filter(Boolean).length
+
   const handleChange = (e) => {
     const value = e.target.value
     setAnswers((prev) => ({
@@ -37,15 +43,26 @@ function Writing() {
       [activeTab]: value
     }))
   }
+  const pathname = usePathname()
 
   const handleSubmit = () => {
+    const section = pathname.split('/').pop() // oxirgi qismni olamiz
+
     if (wordCount < 250) {
-      alert('Kamida 250 ta so‘z yozilishi kerak!')
+      notify('err', 'Kamida 250 ta so‘z yozilishi kerak!')
       return
     }
-    console.log(`Yuborilgan [${activeTab}] matn:`, answers[activeTab])
-    alert(`${activeTab.toUpperCase()} yuborildi!`)
+    let newAnswer = {
+      userId: user?.user?.id,
+      monthId: latestMonth?.id,
+      section: section,
+      answers
+    }
+    console.log(newAnswer, 'salom')
+    notify(`ok`, `${activeTab.toUpperCase()} yuborildi!`)
   }
+
+
 
   if (monthLoading || writingLoading) {
     return <Loader />
@@ -56,7 +73,7 @@ function Writing() {
       <h2 style={{ marginBottom: '1.5rem' }}>✍️ Writing Task  {latestMonth?.month}</h2>
       <h2>task id {latestMonth?.id}</h2>
 
-      {!writingTask ? <NoResult message='There are currently no Writing tests in this section. Stay tuned for updates soon!'/> :
+      {!writingTask ? <NoResult message='There are currently no Writing tests in this section. Stay tuned for updates soon!' /> :
         <div>
           <Container>
             <TaskBox>
@@ -76,16 +93,17 @@ function Writing() {
           </Container>
 
           <TabRow>
-            <TabButton active={activeTab === 'task1'} onClick={() => setActiveTab('task1')}>
+            <TabButton onClick={() => setActiveTab('task1')}>
               Part 1
             </TabButton>
-            <TabButton active={activeTab === 'task2'} onClick={() => setActiveTab('task2')}>
+            <TabButton  onClick={() => setActiveTab('task2')}>
               Part 2
             </TabButton>
           </TabRow>
         </div>
       }
     </GlobalContainer>
+    // active={activeTab === 'task2'}
   )
 }
 

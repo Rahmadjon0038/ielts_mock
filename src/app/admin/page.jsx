@@ -22,7 +22,6 @@ function Adminpage() {
   const addMonthMuation = useaddMonth();
   const deleteMonthMuation = usedeleteMonth();
   const activeAddMutation = useAddActiveMonhId(); // <- aktiv qilish funksiyasi
-  console.log(Cookies.get('activemonth'))
   const [activeMockId, setActiveMockId] = useState(null);
 
   useEffect(() => {
@@ -65,7 +64,7 @@ function Adminpage() {
       <Container>
         <h2>Oylik Mock Testlar <CreateMockModal addMock={addMock} /></h2>
         <CardList>
-          {allMonths.length > 0 ? (
+          {allMonths?.length > 0 ? (
             allMonths.map((item) => (
               <CardItem key={item.id}>
                 <p>ID: {item.id}</p>
