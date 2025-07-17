@@ -5,37 +5,52 @@ import { GlobalContainer } from '@/globalStyle'
 import styled from 'styled-components'
 import Link from 'next/link'
 import BannerComponent from '@/components/banner/Banner'
-
-// Oylik mock testlar — backenddan keladi (hozircha local array)
-const months = [
-  { id: 1, title: 'January 2025', status: 'completed' },
-  { id: 2, title: 'February 2025', status: 'submitted' },
-  { id: 3, title: 'March 2025', status: 'incomplete' },
-  { id: 4, title: 'April 2025', status: 'completed' },
-  { id: 5, title: 'May 2025', status: 'incomplete' },
-]
+import { useGetAllUsersRatingsMonth } from '@/hooks/writing'
+import Loader from '@/components/loader/Loader'
+import { useAuth } from '@/context/userData'
+import NoResult from '@/components/NoResult'
+import { Title } from './results/[id]/style'
 
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 10px;
+  gap: 20px;
 `
+
 function UserProfile() {
+  const { user } = useAuth();
+  const { data, isLoading, error } = useGetAllUsersRatingsMonth(user?.user.id)
+  // console.log(data)
+  const formatMonth = (dateStr) => {
+    const date = new Date(dateStr)
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  }
+  if (isLoading) {
+    return <Loader />
+  }
+
+
   return (
     <GlobalContainer>
-      <BannerComponent info={' Bu bo‘limda siz ILST Mook testidagi natijalaringizni kuzatishingiz mumkin.'}/>
-      <Grid>
-        {months.map((month, index) => (
-          <Link key={month.id} href={`/user/results/${month.id}`}>
-            <MonthCard
-              key={index}
-              title={month.title}
-              status={month.status}
-            />
-          </Link>
-        ))}
-      </Grid>
-    </GlobalContainer>
+      <BannerComponent info={'Bu bo‘limda siz IELTS Mock testidagi natijalaringizni kuzatishingiz mumkin.'} />
+      <Title className=''>Siz qatnashgan ielst testlari</Title>
+      {error ? <NoResult message='siz yechgan testlar mavjud emas yiki admin hali baxolamagan' />
+        :
+        < Grid >
+          {data?.map((monthItem) => (
+            <Link key={monthItem.id} href={`/user/results/${monthItem.id}`}>
+              <MonthCard
+                title={formatMonth(monthItem.month)}
+              />
+            </Link>
+          ))}
+        </Grid>
+      }
+    </GlobalContainer >
   )
 }
 

@@ -5,24 +5,30 @@ const notify = getNotify();
 
 
 // --------------------- Add Writing (Admin) ----------------
-const addWritingAdmin = async ({ id, task1, task2 }) => {
-  const response = await instance.post(`/api/mock/${id}/writing/add`, { task1, task2 });
+const addWritingAdmin = async (id, formData) => {
+  const response = await instance.post(`/api/mock/${id}/writing/add`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 };
 
 export const useAddWritingAdmin = (id) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data) => addWritingAdmin(data),
+    mutationFn: (formData) => addWritingAdmin(id, formData), // ✅ id tashqaridan kelmoqda
     onSuccess: (data) => {
       notify("ok", data.msg);
       queryClient.invalidateQueries({ queryKey: ["writing-admin", id] });
     },
     onError: (error) => {
-      notify("err", error?.response?.data?.msg || "Already available this month");
+      console.log(error, 'xatolik');
+      // notify("err", error?.response?.data?.msg || "Already available this month");
     },
   });
 };
+
 
 // --------------------- Get Writing (Admin) ----------------
 const getWritingAdmin = async (id) => {
@@ -64,4 +70,93 @@ export const useGetWritingAnswerMonthUsers = (monthid) => {
     queryFn: () => getWritingAnswerMonthUsers(monthid),
     enabled: !!monthid,
   });
+};
+
+
+
+
+// --------------------- ser Writing Answer adminga yuborishi) ----------------
+const setWritingAnswer = async (data) => {
+  const response = await instance.post(`/api/mock/writing/submit`, data);
+  return response.data;
+};
+
+export const usesetWritingAnswer = () => {
+  const queryClient = useQueryClient();
+  const setAnswerWriting = useMutation({
+    mutationFn: setWritingAnswer,
+    onSuccess: (data) => {
+      // notify("ok", data.msg);
+      console.log(data)
+      queryClient.invalidateQueries({ queryKey: ["writing-user-answer"] });
+    },
+    onError: (error) => {
+      console.log(error)
+      // notify("err", error?.response?.data?.msg || "Already available this month");
+    },
+  });
+  return setAnswerWriting
+};
+
+
+// ----------------------------- RAITINGS qaysi oyga qatnashganini bilishi uchun -------------------------
+
+const getUserMonthAnswer = async (userId) => {
+  const response = await instance.get(`/api/user/participated-months/${userId}`);
+  return response.data;
+};
+
+export const useGetAllUsersRatingsMonth = (id) => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['month-raitings', id],
+    queryFn: () => getUserMonthAnswer(id),
+    enabled: !!id
+  });
+
+  return { data, isLoading, error };
+};
+
+// ----------------------------- RAITINGS USER HAMMA BOLIMLARINI BAXOSINI KORISHI -------------------------
+
+const getAlluserRatings = async ({ queryKey }) => {
+  const [_key, { monthId, userId }] = queryKey;
+
+  const response = await instance.get(`/api/mock/writing/getallraitings/${monthId}/${userId}`);
+  return response.data;
+}
+
+export const useGetAllusersRatings = ({ monthId, userId }) => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['raitings', { monthId, userId }],
+    queryFn: getAlluserRatings,
+    enabled: !!monthId && !!userId
+  });
+
+  return { data, isLoading, error };
+};
+
+
+// ------------------------------- userlarni baxolash ------------------------------------
+
+const assessment = async (data) => {
+  const { comment, score, section, paramdata: { id, userid } } = data
+  const response = await instance.post(`/api/mock/writing/setraitings/${id}/${userid}`, { comment, score, section });
+  return response.data;
+};
+
+export const useAassessment = () => {
+  const queryClient = useQueryClient();
+  const setAassessment = useMutation({
+    mutationFn: assessment,
+    onSuccess: (data) => {
+      notify("ok", data.msg);
+      console.log(data)
+      queryClient.invalidateQueries({ queryKey: ["raitings"] });
+    },
+    onError: (error) => {
+      console.log(error)
+      // notify("err", error?.response?.data?.msg || "Already available this month");
+    },
+  });
+  return setAassessment
 };

@@ -27,7 +27,6 @@ export const useAddActiveMonhId = () => {
         mutationFn: addActiveMontId,
         onSuccess: (data) => {
             notify('ok', data.msg)
-            console.log(data)
             Cookies.set('activemonth', data?.mockId)
             queriClinet.invalidateQueries({ queryKey: ['latestMonth'] })
 

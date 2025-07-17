@@ -1,12 +1,17 @@
 import styled, { css } from 'styled-components'
 
-export const Title = styled.h1`
-  font-size: 2rem;
+export const Title = styled.h2`
   font-weight: 700;
   margin-bottom: 40px;
   color: #1E293B;
-  text-align: center;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: 0AF74D;
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 6px solid #B91613;
+  border-top: 2px solid #B91613;
+  border-right: 2px solid #B91613;
+  border-bottom: 2px solid #B91613;
 `
 
 export const SectionsWrapper = styled.div`
@@ -40,16 +45,21 @@ export const SectionCard = styled.div`
   ${({ status }) =>
     status
       ? css`
-          border: 2.5px solid rgb(240, 72, 25);
+          background-color: white;
+          border-left: 8px solid #B91613;
+          border-top: 2px solid #B91613;
+          border-right: 2px solid #B91613;
+          border-bottom: 2px solid #B91613;
+
           cursor: pointer;
 
           &:hover {
-            transform: translateY(-7px);
-          }
-        `
+          transform: translateY(-7px);
+}
+`
       : css`
-          border: 2.5px dashed #adb5bd;
-          cursor: default;
-          opacity: 0.75;
-        `}
+border: 2.5px dashed #adb5bd;
+cursor: default ;
+opacity: 0.75;
+`}
 `

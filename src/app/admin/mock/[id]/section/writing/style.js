@@ -14,6 +14,9 @@ export const TaskTitle = styled.h3`
   margin-bottom: 1rem;
   color: #333;
 `
+export const Images = styled.img`
+  width: 60%;
+`
 
 export const Message = styled.p`
   font-size: 1.1rem;

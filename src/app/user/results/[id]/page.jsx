@@ -2,48 +2,45 @@
 import React from 'react'
 import { useParams } from 'next/navigation'
 import { GlobalContainer } from '@/globalStyle'
-import { SectionCard, Title, SectionsWrapper } from './style' // styled faylimizni import qilyapmiz
-
-const mockResults = [
-  {
-    id: 1,
-    month: 'January 2025',
-    sections: [
-      { name: 'Reading', score: 7.5 },
-      { name: 'Listening', score: 8.0 },
-      { name: 'Writing', score: null },
-      { name: 'Speaking', score: null },
-    ],
-  },
-  {
-    id: 2,
-    month: 'February 2025',
-    sections: [
-      { name: 'Reading', score: 6.5 },
-      { name: 'Listening', score: 7.0 },
-      { name: 'Writing', score: 5.5 },
-      { name: 'Speaking', score: 6.0 },
-    ],
-  },
-]
+import { SectionCard, Title, SectionsWrapper } from './style'
+import { useGetAllusersRatings } from '@/hooks/writing'
+import { useAuth } from '@/context/userData'
+import Loader from '@/components/loader/Loader'
+import NoResult from '@/components/NoResult'
 
 function MonthResultPage() {
+  const { user } = useAuth()
   const { id } = useParams()
-  const monthData = mockResults.find((item) => item.id === Number(id))
 
-  if (!monthData) return <GlobalContainer>Natija topilmadi</GlobalContainer>
+  const { data, isLoading, error } = useGetAllusersRatings({
+    monthId: id,
+    userId: user?.user?.id,
+  })
+
+  if (isLoading) return <Loader />
+  if (error || !data) return <NoResult message='Ma’lumot topilmadi' />
 
   return (
     <GlobalContainer>
-      <Title>{monthData.month} uchun natijalar</Title>
+      <Title>Mock natijalari</Title>
+
       <SectionsWrapper>
-        {monthData.sections.map((section, index) => (
+        {data.map((section, index) => (
           <SectionCard key={index} status={section.score !== null}>
-            <h3>{section.name}</h3>
+            <h3>{section.section}</h3>
             <p>
-              Ball:{" "}
-              {section.score !== null ? section.score : <em>Coming soon...</em>}
+              Ball:{' '}
+              {section.score !== null ? (
+                <strong>{section.score}</strong>
+              ) : (
+                <em>Tekshirilmoqda...</em>
+              )}
             </p>
+            {section.comment && (
+              <p>
+                <strong>Izoh:</strong> {section.comment}
+              </p>
+            )}
           </SectionCard>
         ))}
       </SectionsWrapper>

@@ -7,6 +7,7 @@ import { UserCard, UserList } from '@/components/Navbar/style'
 import { usegetMontId } from '@/hooks/mockMonth'
 import Loader from '@/components/loader/Loader'
 import { useGetWritingAnswerMonthUsers } from '@/hooks/writing'
+import NoResult from '@/components/NoResult'
 
 const sections = [
   { id: 'listening', title: 'Listening' },
@@ -47,18 +48,21 @@ function AdminResult() {
           </SectionCard>
         ))}
       </SectionList>
-
-      <h3 style={{ marginTop: '3rem' }}>📊 Foydalanuvchilar natijalari</h3>
+      <h3 style={{ margin: '2rem 0' }}>📊 Foydalanuvchilar natijalari</h3>
       <UserList>
-        {userResults && userResults?.map((user) => (
+        {userResults?.length ? userResults?.map((user) => (
           <UserCard key={user.id}>
             <div>
               <strong>{user.username}</strong><br />
             </div>
             <button onClick={() => handleUserCheck(user.id)}>Ko‘rish</button>
           </UserCard>
-        ))}
+        ))
+          : <NoResult message='natijalalar hali kelmagan' />
+        }
       </UserList>
+
+
     </GlobalContainer>
   )
 }
