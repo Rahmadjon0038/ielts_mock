@@ -4,9 +4,8 @@ import { Container } from './style'
 
 function MonthCard({ title, status }) {
   
-
   return (
-    <Container status={status}>
+    <Container  status={status}>
       <h2>{title}</h2>
     </Container>
   )

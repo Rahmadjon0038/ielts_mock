@@ -15,12 +15,13 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
+
 `
 
 function UserProfile() {
   const { user } = useAuth();
   const { data, isLoading, error } = useGetAllUsersRatingsMonth(user?.user.id)
-  // console.log(data)
+
   const formatMonth = (dateStr) => {
     const date = new Date(dateStr)
     return date.toLocaleDateString('en-US', {
@@ -29,28 +30,26 @@ function UserProfile() {
       day: 'numeric',
     })
   }
-  if (isLoading) {
-    return <Loader />
-  }
-
 
   return (
     <GlobalContainer>
       <BannerComponent info={'Bu bo‘limda siz IELTS Mock testidagi natijalaringizni kuzatishingiz mumkin.'} />
-      <Title className=''>Siz qatnashgan ielst testlari</Title>
-      {error ? <NoResult message='siz yechgan testlar mavjud emas yiki admin hali baxolamagan' />
-        :
-        < Grid >
+      <Title>Siz qatnashgan ielst testlari</Title>
+
+      {error ? (
+        <NoResult message='Siz yechgan testlar mavjud emas yoki admin hali baxolamagan' />
+      ) : isLoading ? (
+        <div style={{ position: 'relative',minHeight:'200px',marginTop:'30px' }}><Loader /></div>
+      ) : (
+        <Grid>
           {data?.map((monthItem) => (
             <Link key={monthItem.id} href={`/user/results/${monthItem.id}`}>
-              <MonthCard
-                title={formatMonth(monthItem.month)}
-              />
+              <MonthCard title={formatMonth(monthItem.month)} />
             </Link>
           ))}
         </Grid>
-      }
-    </GlobalContainer >
+      )}
+    </GlobalContainer>
   )
 }
 

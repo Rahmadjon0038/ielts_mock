@@ -1,9 +1,15 @@
 'use client'
+
 import Loader from '@/components/loader/Loader'
 import { GlobalContainer } from '@/globalStyle'
-import { useAassessment, useGetAllusersRatings, useGetWritingAdmin, useGetWritingAnswerMonthAdmin } from '@/hooks/writing'
+import {
+  useAassessment,
+  useGetAllusersRatings,
+  useGetWritingAdmin,
+  useGetWritingAnswerMonthAdmin,
+} from '@/hooks/writing'
 import { useParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import {
   SectionContainer,
   SectionTitle,
@@ -15,26 +21,27 @@ import {
 } from './style'
 
 function Page() {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
   const paramdata = useParams()
-  // --------------------------------Writing uchun admin uzi yozgan savoolarini olish -------------------
-  const { data: writingTask, isLoading: writingLoading, refetch } = useGetWritingAdmin(paramdata?.id)
 
-  // --------------------------------Writing uchun user  yozgan javoblarni olish -------------------
+  // ===== Hooks
+  const { data: writingTask, isLoading: writingLoading } = useGetWritingAdmin(paramdata?.id)
   const { data: writingData, isLoading } = useGetWritingAnswerMonthAdmin({
     monthid: paramdata?.id,
     userid: paramdata?.userid,
   })
-
-  const { data: assessmentData, isLoading: userIsLoading, error } = useGetAllusersRatings({
+  const { data: assessmentData } = useGetAllusersRatings({
     monthId: paramdata?.id,
     userId: paramdata?.userid,
   })
 
-  const [reading, setReading] = useState(null)
-  const [listening, setListening] = useState(null)
+  // ===== useRefs for comments
+  const writingCommentRef = useRef(null)
+  const readingCommentRef = useRef(null)
+  const listeningCommentRef = useRef(null)
+  const speakingCommentRef = useRef(null)
 
+  // ===== Grades state
   const [grades, setGrades] = useState({
     Writing: '',
     Reading: '',
@@ -42,6 +49,7 @@ function Page() {
     Speaking: '',
   })
 
+  // Normalize fetched data
   const normalizeGrades = (gradesArray) => {
     const result = {}
     gradesArray.forEach(({ section, score, comment }) => {
@@ -49,7 +57,6 @@ function Page() {
     })
     return result
   }
-
 
   useEffect(() => {
     if (assessmentData?.length) {
@@ -62,33 +69,32 @@ function Page() {
         Speaking: normalized.Speaking?.score || '',
       })
 
-      document.getElementById("Writing-comment").value = normalized.Writing?.comment || ''
-      document.getElementById("Reading-comment").value = normalized.Reading?.comment || ''
-      document.getElementById("Listening-comment").value = normalized.Listening?.comment || ''
-      document.getElementById("Speaking-comment").value = normalized.Speaking?.comment || ''
+      if (writingCommentRef.current) writingCommentRef.current.value = normalized.Writing?.comment || ''
+      if (readingCommentRef.current) readingCommentRef.current.value = normalized.Reading?.comment || ''
+      if (listeningCommentRef.current) listeningCommentRef.current.value = normalized.Listening?.comment || ''
+      if (speakingCommentRef.current) speakingCommentRef.current.value = normalized.Speaking?.comment || ''
     }
   }, [assessmentData])
 
+  // ===== Save handler
+  const setAassessment = useAassessment()
+  const handleSaveGrade = (section) => {
+    let comment = ''
+    if (section === 'Writing') comment = writingCommentRef.current?.value || ''
+    if (section === 'Reading') comment = readingCommentRef.current?.value || ''
+    if (section === 'Listening') comment = listeningCommentRef.current?.value || ''
+    if (section === 'Speaking') comment = speakingCommentRef.current?.value || ''
 
-
-
-
-  // --------------------------- assasment- -------------------------------
-  const setAassessment = useAassessment();
-  const handleSaveGrade = async (section) => {
-    const grade = grades[section];
-    const commentInput = document.getElementById(`${section}-comment`);
-    const comment = commentInput?.value || "";
+    const grade = grades[section]
     setAassessment.mutate({
-      section: section,
+      section,
       score: grade,
-      comment: comment,
-      paramdata
+      comment,
+      paramdata,
     })
-  };
+  }
 
-
-  if (isLoading) return <Loader />
+  if (isLoading || writingLoading) return <Loader />
 
   return (
     <GlobalContainer>
@@ -106,7 +112,6 @@ function Page() {
             />
             <br />
             <br />
-
             <TaskText>2) {writingTask?.task2}</TaskText>
             <TaskText>{item.question}</TaskText>
 
@@ -114,15 +119,15 @@ function Page() {
             <TaskText>1) {item.task1}</TaskText>
             <hr />
             <TaskText>2) {item.task2}</TaskText>
+
             <Label>Admin yozgan baho:</Label>
             <Input
               placeholder="e.g. 6.5"
-              defaultValue={grades?.Writing}
               value={grades.Writing}
               onChange={(e) => setGrades({ ...grades, Writing: e.target.value })}
             />
             <Input
-              id="Writing-comment"
+              ref={writingCommentRef}
               placeholder="comment"
             />
             <SaveButton onClick={() => handleSaveGrade('Writing')}>Save Grade</SaveButton>
@@ -134,13 +139,13 @@ function Page() {
       <SectionContainer>
         <SectionTitle>Reading</SectionTitle>
         <Label>Savol:</Label>
-        <TaskText>{reading?.question}</TaskText>
+        <TaskText>No data</TaskText>
 
         <Label>Correct Answer (Admin):</Label>
-        <TaskText>{reading?.correctAnswer}</TaskText>
+        <TaskText>No data</TaskText>
 
         <Label>User Answer:</Label>
-        <TaskText>{reading?.userAnswer}</TaskText>
+        <TaskText>No data</TaskText>
 
         <Label>Bahoni tekshiring (avtomatik):</Label>
         <Input
@@ -148,12 +153,10 @@ function Page() {
           value={grades.Reading}
           onChange={(e) => setGrades({ ...grades, Reading: e.target.value })}
         />
-
         <Input
-          id="Reading-comment"
+          ref={readingCommentRef}
           placeholder="comment"
         />
-
         <SaveButton onClick={() => handleSaveGrade('Reading')}>Save Grade</SaveButton>
       </SectionContainer>
 
@@ -161,13 +164,13 @@ function Page() {
       <SectionContainer>
         <SectionTitle>Listening</SectionTitle>
         <Label>Savol:</Label>
-        <TaskText>{listening?.question}</TaskText>
+        <TaskText>No data</TaskText>
 
         <Label>Correct Answer (Admin):</Label>
-        <TaskText>{listening?.correctAnswer}</TaskText>
+        <TaskText>No data</TaskText>
 
         <Label>User Answer:</Label>
-        <TaskText>{listening?.userAnswer}</TaskText>
+        <TaskText>No data</TaskText>
 
         <Label>Bahoni tekshiring (avtomatik):</Label>
         <Input
@@ -175,9 +178,8 @@ function Page() {
           value={grades.Listening}
           onChange={(e) => setGrades({ ...grades, Listening: e.target.value })}
         />
-
         <Input
-          id="Listening-comment"
+          ref={listeningCommentRef}
           placeholder="comment"
         />
         <SaveButton onClick={() => handleSaveGrade('Listening')}>Save Grade</SaveButton>
@@ -193,7 +195,7 @@ function Page() {
           onChange={(e) => setGrades({ ...grades, Speaking: e.target.value })}
         />
         <Input
-          id="Speaking-comment"
+          ref={speakingCommentRef}
           placeholder="comment"
         />
         <SaveButton onClick={() => handleSaveGrade('Speaking')}>Save Grade</SaveButton>

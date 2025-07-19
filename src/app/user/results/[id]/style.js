@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 export const Title = styled.h2`
-  font-weight: 700;
+  font-weight: 500;
   margin-bottom: 40px;
   color: #1E293B;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

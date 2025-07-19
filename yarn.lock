@@ -2787,6 +2787,11 @@ react-transition-group@^4.4.5:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
+react-wavify@^1.11.1:
+  version "1.11.1"
+  resolved "https://registry.yarnpkg.com/react-wavify/-/react-wavify-1.11.1.tgz#4c632d9903686c68e222e59bf669aa2c08e31143"
+  integrity sha512-9MWGSwdVBri2XsegpysGyxWAeqIKdikwj+6Dg2Ssi3xFoY5HUVDiPbEZ62ZP30DefKE5IzWKNdFjyIEJfVikhw==
+
 react@^19.0.0:
   version "19.1.0"
   resolved "https://registry.npmjs.org/react/-/react-19.1.0.tgz"

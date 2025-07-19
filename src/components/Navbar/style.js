@@ -97,23 +97,59 @@ export const UserList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-`
 
+`
 export const UserCard = styled.div`
-  background: #fff;
-  padding: 1rem 1.5rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 1rem 1rem;
+  background: #ffffff;
+  color: #111827;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border: 1px solid #AEEDD6;
+
+  .wave-bg {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 140%; /* Shu yerda agar xohlasang dinamik balandlik bersang ham bo'ladi */
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  .user-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  strong {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+  }
 
   button {
     background: #10b981;
-    border: none;
     color: white;
-    padding: 0.5rem 1rem;
+    border: none;
+    padding: 0.4rem 0.8rem;
     border-radius: 6px;
     cursor: pointer;
+    transition: background 0.3s ease;
+    z-index: 2;
+
+    &:hover {
+      background: #059669;
+    }
   }
-`
+
+`;

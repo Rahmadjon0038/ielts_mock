@@ -29,7 +29,7 @@ function MonthResultPage() {
           <SectionCard key={index} status={section.score !== null}>
             <h3>{section.section}</h3>
             <p>
-              Ball:{' '}
+              Ball:{''}
               {section.score !== null ? (
                 <strong>{section.score}</strong>
               ) : (

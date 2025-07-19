@@ -13,7 +13,6 @@ export const TaskBox = styled.div`
   border-radius: 10px;
   background: #fff;
   color: #1e293b;
-
   p{
     line-height: 24px;
   }
@@ -59,7 +58,6 @@ export const SubmitButton = styled.button`
     background: #d62828;
   }
 `
-
 export const WordCount = styled.p`
   margin-top: 0.5rem;
   color: #475569;
@@ -72,7 +70,9 @@ export const TabRow = styled.div`
   margin-top: 1.5rem;
   gap: 1rem;
 `
-export const TabButton = styled.button`
+export const TabButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== 'active'
+})`
   background: ${(props) => (props.active ? '#d62828' : '#f1f5f9')};
   color: ${(props) => (props.active ? '#fff' : '#1e293b')};
   padding: 0.5rem 1.25rem;
@@ -81,6 +81,7 @@ export const TabButton = styled.button`
   border-radius: 6px;
   cursor: pointer;
   transition: 0.2s;
+
   &:hover {
     background: #d62828;
     color: white;
