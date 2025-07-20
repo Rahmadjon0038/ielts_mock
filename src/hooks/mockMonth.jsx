@@ -41,7 +41,7 @@ export const usegetMonth = () => {
     return { data, isLoading, error, refetch }
 };
 
-// --------------------- del month  id----------------
+// --------------------- get month  id----------------
 const getMontId = async (id) => {
     const response = await instance.get(`/api/mock/get/${id}`)
     return response.data

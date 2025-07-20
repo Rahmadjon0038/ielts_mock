@@ -15,8 +15,15 @@ function Home() {
             notify("err", "Iltimos, avval tizimga kiring!");
             return;
         }
+
+        if (user?.user?.role === "admin") {
+            router.push("/admin");
+            return;
+        }
+
         router.push(path);
     };
+
 
     return (
         <Conatiner>

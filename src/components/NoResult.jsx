@@ -1,3 +1,4 @@
+import { GlobalContainer } from "@/globalStyle";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
@@ -14,6 +15,8 @@ const Wrapper = styled.div`
   border-radius: 12px;
   background-color: #f9fafb;
   border: 2px dashed #e0e0e0;
+  margin: ${({ writing }) => writing == 'writing' ? '50px 100px' : '0'};
+
 
   @media (max-width: 768px) {
     height: 300px;
@@ -29,9 +32,9 @@ const Text = styled.p`
   text-align: center;
 `;
 
-const NoResult = ({ message = "Natija topilmadi" }) => {
+const NoResult = ({ message = "Natija topilmadi", writing }) => {
   return (
-    <Wrapper>
+    <Wrapper writing={writing}>
       <Text>{message}</Text>
     </Wrapper>
   );

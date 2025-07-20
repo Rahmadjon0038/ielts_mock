@@ -23,7 +23,6 @@ function AdminResult() {
   const { data: userResults, isLoading: usersisLoading, error: userserror } = useGetWritingAnswerMonthUsers(id)//javob yuborgan userlar bu oy uchun
   const router = useRouter()
 
-  console.log(userResults)
   // ----------------------- admin stast ---------------
   const { data: stast, isLoading: stastLoading, err: stastError, refetch: refetchStats } = usegetAdminStast({ id })
 
