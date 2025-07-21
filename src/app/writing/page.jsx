@@ -26,7 +26,7 @@ import { Times } from '@/components/reading/style'
 
 function Writing() {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-
+  
   const { data: latestMonth, isLoading: monthLoading } = useLatestMonth()
   const { data: writingTask, isLoading: writingLoading, refetch } = useGetWritingAdmin(latestMonth?.id)
   const setAnswerWriting = usesetWritingAnswer()
@@ -113,7 +113,7 @@ function Writing() {
 
 
   if (monthLoading || writingLoading) {
-    return <div style={{position:'relative',height:'500px'}}><Loader/></div>
+    return <div style={{ position: 'relative', height: '500px' }}><Loader /></div>
   }
 
   // NoResult — writing yo‘q bo‘lsa yoki bo‘sh bo‘lsa
@@ -123,14 +123,14 @@ function Writing() {
 
   return (
     <GlobalContainer full={'full'}>
-      <h2 style={{ marginBottom: '1.5rem', marginLeft: '20px' }}>✍️ Writing Task {latestMonth?.month}</h2>
-      <Times>
-        <p>{formatTime(timeLeft)}</p>
-      </Times>
       {data?.submitted ?
         <Untied />
         :
-        <div>
+        <>
+          <h2 style={{ marginBottom: '1.5rem', marginLeft: '20px' }}>✍️ Writing Task {latestMonth?.month}</h2>
+          <Times>
+            <p>{formatTime(timeLeft)}</p>
+          </Times>
 
 
           <Container>
@@ -179,8 +179,9 @@ function Writing() {
               Part 2
             </TabButton>
           </TabRow>
-        </div>
+        </>
       }
+
     </GlobalContainer>
   )
 }

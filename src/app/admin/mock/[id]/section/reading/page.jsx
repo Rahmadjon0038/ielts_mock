@@ -6,10 +6,12 @@ import {
 } from './style'
 import axios from 'axios'
 import { useParams } from 'next/navigation'
+import { useAddReadingQuestion } from '@/hooks/user'
 
 function ReadingAdmin() {
   const params = useParams()
-  const monthId = Number(params.monthId)
+  const monthId = params?.id
+  const addReadingQuestionMutatin = useAddReadingQuestion();
   const [activePart, setActivePart] = useState(1)
 
   const [data, setData] = useState({
@@ -72,18 +74,20 @@ function ReadingAdmin() {
       passage,
       questions: questions.map(({ correctAnswer, ...rest }) => rest)
     }
+    // addReadingQuestionMutatin.mutate(readingData)
+    console.log(readingData)
 
-    const answerData = {
-      monthId,
-      part: activePart,
-      correctAnswers: questions.map((q, index) => ({
-        index,
-        answer: q.correctAnswer
-      }))
-    }
+    // const answerData = {
+    //   monthId,
+    //   part: activePart,
+    //   correctAnswers: questions.map((q, index) => ({
+    //     index,
+    //     answer: q.correctAnswer
+    //   }))
+    // }
 
-    console.log('savollar', readingData)
-    console.log('answerData', answerData)
+    // console.log('savollar', readingData)
+    // console.log('answerData', answerData)
 
   }
 

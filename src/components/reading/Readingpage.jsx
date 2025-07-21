@@ -32,7 +32,6 @@ function ReadingPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(false)
-
   const pathname = usePathname()
   const section = pathname.split('/').pop();
   const untied = {
@@ -124,7 +123,7 @@ function ReadingPage() {
             <RightBox>
               {current && current?.questions.map((q) => (
                 <QuestionBox key={q.id}>
-                  <p><strong>{q.id}.</strong> {q.text}</p>
+                  <p><strong>{q.number}.</strong> {q.text}</p>
 
                   {q.type === 'radio' && q.options.map((opt, index) => (
                     <label key={index}>
