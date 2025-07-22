@@ -1,12 +1,12 @@
 'use client'
-import Readingpage from '@/components/reading/Readingpage'
+import ReadingLayout from '@/components/reading/ReadingLayout'
 import { GlobalContainer } from '@/globalStyle'
 import React from 'react'
 
 function Reading() {
   return (
     <GlobalContainer full='full'>
-      <Readingpage />
+      <ReadingLayout />
     </GlobalContainer>
   )
 }

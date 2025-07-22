@@ -4,7 +4,7 @@ export const Container = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
-  height: 80vh;
+  height: 100vh;
 `
 
 export const Times = styled.div`
@@ -35,13 +35,14 @@ export const LeftBox = styled.div`
   border: 1px solid rgb(185, 182, 182);
   background-color: #fff;
   padding: 20px;
-  border-radius: 10px 0 0 10px;
   overflow: auto;
-
   p {
     margin-top: 5px;
     color: #1f1f1f;
     line-height: 26px;
+  }
+  h3{
+    text-align: center;
   }
 `
 
@@ -49,11 +50,47 @@ export const RightBox = styled.div`
   border: 1px solid rgb(185, 182, 182);
   background-color: #fff;
   padding: 20px;
-  border-radius: 10px 0 0 10px;
   overflow: auto;
 
-`
+  .questionid{
+    margin: 10px 0;
+  }
+  p{
+    line-height: 30px;
+  }
 
+  .answerInput{
+    margin-top: 7px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .input-text{
+    color: blue;
+    line-height: 24px;
+  }
+
+  .question-title{
+    color: green;
+    margin-top: 20px;
+  }
+
+`
+export const Tables = styled.table`
+  border-collapse: collapse;
+  padding: 10px;
+  width: 100%;
+
+  tr{
+    border: 1px solid;
+  width: 100%;
+  
+}
+  td ,th{
+    padding: 10px;
+
+  }
+`
 export const QuestionBox = styled.div`
   margin-bottom: 20px;
 
