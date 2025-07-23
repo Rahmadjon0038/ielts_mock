@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Container, Introduction, LeftBox, Parts, Partsitem, RightBox, Tables, Times } from './style';
-import { useGetReadingQuestion } from '@/hooks/user';
+import { useGetReadingQuestion, useSubmitReadingAnswers } from '@/hooks/user';
 import { useLatestMonth } from '@/hooks/useLatestMonth';
+import { useAuth } from '@/context/userData';
 
 function ReadingLayout() {
   const [timeLeft, setTimeLeft] = useState(60 * 60); // 1 soat
@@ -14,6 +15,10 @@ function ReadingLayout() {
 
   const [partReplacement, setPartReplacement] = useState(0);
   const parts = readingdata && readingdata[partReplacement];
+  const { user } = useAuth()
+  const userId = user?.user?.id
+  const monthId = data?.id
+  const { mutate, isLoading: sumbitLoding, isSuccess, isError, error: sumbitError } = useSubmitReadingAnswers();
 
   // Timer logikasi (agar kerak bo'lsa, oching)
   // useEffect(() => {
@@ -87,8 +92,11 @@ function ReadingLayout() {
       });
     });
 
-    console.log(result); // Backendga yuborish uchun
-    // axios.post("/api/reading-answers", { userId: "...", monthId: "...", answers: result });
+
+    mutate({
+      userId, monthId,
+      questions: result
+    })
   };
 
   return (
@@ -190,91 +198,91 @@ function ReadingLayout() {
                           </Tables>
                         </div>
                       )
-                      : item?.type === 'checkbox' ? (
-                        <>
-                          <div className="questionid mb-2">
-                            <b>{item?.number}.</b> {item?.question}
-                          </div>
-                          <div className="ml-4">
-                            {item?.options?.map((opt, idx) => (
-                              <label key={idx} className="block mb-1">
-                                <div className="answerInput flex items-center gap-2">
-                                  <input
-                                    type="checkbox"
-                                    value={opt}
-                                    checked={answers[partReplacement]?.[`testNum${item.number}`]?.includes(opt) || false}
-                                    onChange={(e) => {
-                                      const prev = answers[partReplacement]?.[`testNum${item.number}`] || [];
-                                      const updated = e.target.checked
-                                        ? [...prev, e.target.value]
-                                        : prev.filter((val) => val !== e.target.value);
-                                      handleAnswerChange(item.number, updated);
-                                    }}
-                                  />
-                                  {opt}
-                                </div>
-                              </label>
-                            ))}
-                          </div>
-                        </>
-                      )
-                      : (
-                        <>
-                          <div className="questionid mb-2">
-                            <b>{item?.number}.</b>
-                            {item?.type === 'text' ? (
-                              <span>
-                                {item?.question?.split('[]').map((part, index, arr) => (
-                                  <span key={index}>
-                                    {part}
-                                    {index !== arr.length - 1 && (
+                        : item?.type === 'checkbox' ? (
+                          <>
+                            <div className="questionid mb-2">
+                              <b>{item?.number}.</b> {item?.question}
+                            </div>
+                            <div className="ml-4">
+                              {item?.options?.map((opt, idx) => (
+                                <label key={idx} className="block mb-1">
+                                  <div className="answerInput flex items-center gap-2">
+                                    <input
+                                      type="checkbox"
+                                      value={opt}
+                                      checked={answers[partReplacement]?.[`testNum${item.number}`]?.includes(opt) || false}
+                                      onChange={(e) => {
+                                        const prev = answers[partReplacement]?.[`testNum${item.number}`] || [];
+                                        const updated = e.target.checked
+                                          ? [...prev, e.target.value]
+                                          : prev.filter((val) => val !== e.target.value);
+                                        handleAnswerChange(item.number, updated);
+                                      }}
+                                    />
+                                    {opt}
+                                  </div>
+                                </label>
+                              ))}
+                            </div>
+                          </>
+                        )
+                          : (
+                            <>
+                              <div className="questionid mb-2">
+                                <b>{item?.number}.</b>
+                                {item?.type === 'text' ? (
+                                  <span>
+                                    {item?.question?.split('[]').map((part, index, arr) => (
+                                      <span key={index}>
+                                        {part}
+                                        {index !== arr.length - 1 && (
+                                          <input
+                                            type="text"
+                                            className="inline-block border border-gray-300 rounded px-2 py-1 mx-1 w-40"
+                                            value={answers[partReplacement]?.[`testNum${item.number}`] || ''}
+                                            onChange={(e) => handleAnswerChange(item.number, e.target.value)}
+                                          />
+                                        )}
+                                      </span>
+                                    ))}
+                                  </span>
+                                ) : (
+                                  <span>{item?.question}</span>
+                                )}
+                              </div>
+
+                              {item?.type === 'radio' &&
+                                item?.options?.map((i, idx) => (
+                                  <label key={idx} className="block ml-4">
+                                    <div className="answerInput flex items-center gap-2">
                                       <input
-                                        type="text"
-                                        className="inline-block border border-gray-300 rounded px-2 py-1 mx-1 w-40"
-                                        value={answers[partReplacement]?.[`testNum${item.number}`] || ''}
+                                        type="radio"
+                                        name={`question-${item.id}`}
+                                        value={i}
+                                        checked={answers[partReplacement]?.[`testNum${item.number}`] === i}
                                         onChange={(e) => handleAnswerChange(item.number, e.target.value)}
                                       />
-                                    )}
-                                  </span>
+                                      {i}
+                                    </div>
+                                  </label>
                                 ))}
-                              </span>
-                            ) : (
-                              <span>{item?.question}</span>
-                            )}
-                          </div>
 
-                          {item?.type === 'radio' &&
-                            item?.options?.map((i, idx) => (
-                              <label key={idx} className="block ml-4">
-                                <div className="answerInput flex items-center gap-2">
-                                  <input
-                                    type="radio"
-                                    name={`question-${item.id}`}
-                                    value={i}
-                                    checked={answers[partReplacement]?.[`testNum${item.number}`] === i}
+                              {item?.type === 'select' && (
+                                <div className="ml-4 mt-2">
+                                  <select
+                                    className="border border-gray-300 rounded px-2 py-1"
+                                    value={answers[partReplacement]?.[`testNum${item.number}`] || ''}
                                     onChange={(e) => handleAnswerChange(item.number, e.target.value)}
-                                  />
-                                  {i}
+                                  >
+                                    <option value="" disabled>Javobni tanlang</option>
+                                    {item?.options?.map((opt, i) => (
+                                      <option key={i} value={opt}>{opt}</option>
+                                    ))}
+                                  </select>
                                 </div>
-                              </label>
-                            ))}
-
-                          {item?.type === 'select' && (
-                            <div className="ml-4 mt-2">
-                              <select
-                                className="border border-gray-300 rounded px-2 py-1"
-                                value={answers[partReplacement]?.[`testNum${item.number}`] || ''}
-                                onChange={(e) => handleAnswerChange(item.number, e.target.value)}
-                              >
-                                <option value="" disabled>Javobni tanlang</option>
-                                {item?.options?.map((opt, i) => (
-                                  <option key={i} value={opt}>{opt}</option>
-                                ))}
-                              </select>
-                            </div>
+                              )}
+                            </>
                           )}
-                        </>
-                      )}
                   </div>
                 ))}
               </div>

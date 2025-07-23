@@ -13,8 +13,6 @@ function WritingPage() {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
-
-
   const [task1, setTask1] = useState('')
   const [task2, setTask2] = useState('')
   const [task1Image, setTask1Image] = useState(null)

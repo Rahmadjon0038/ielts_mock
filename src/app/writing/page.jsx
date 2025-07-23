@@ -45,26 +45,24 @@ function Writing() {
     section: section,
   }
   const { data, isLoading, error } = useGetUntied(untied); // bu yechilgan malumotni olish
-  useEffect(() => {
-    // Agar writing task yo'q bo‘lsa yoki allaqachon submitted bo‘lsa — timerni to‘xtatamiz
-    if (!writingTask || Object.keys(writingTask).length === 0 || data?.submitted) {
-      clearInterval(timerRef.current);
-      setTimeLeft(0);
-      return;
-    }
+ useEffect(() => {
+  if (!writingTask || Object.keys(writingTask).length === 0 || data?.submitted) {
+    return;
+  }
 
-    if (timeLeft <= 0) {
-      clearInterval(timerRef.current);
-      handleSubmit();
-      return;
-    }
+  timerRef.current = setInterval(() => {
+    setTimeLeft((prev) => {
+      if (prev <= 1) {
+        clearInterval(timerRef.current);
+        handleSubmit();
+        return 0;
+      }
+      return prev - 1;
+    });
+  }, 1000);
 
-    timerRef.current = setInterval(() => {
-      setTimeLeft(prev => prev - 1);
-    }, 1000);
-
-    return () => clearInterval(timerRef.current);
-  }, [timeLeft, data?.submitted, writingTask]);
+  return () => clearInterval(timerRef.current);
+}, [writingTask, data?.submitted]);
 
   const formatTime = (totalSeconds) => {
     const min = Math.floor(totalSeconds / 60)

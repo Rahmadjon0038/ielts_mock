@@ -19,6 +19,7 @@ import {
   SaveButton,
   Images,
 } from './style'
+import ReadingAnswer from '@/components/admin/CreateMockModal/section/ReadingAnswer'
 
 function Page() {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
@@ -146,7 +147,7 @@ function Page() {
 
         <Label>User Answer:</Label>
         <TaskText>No data</TaskText>
-
+        <ReadingAnswer/>
         <Label>Bahoni tekshiring (avtomatik):</Label>
         <Input
           placeholder="e.g. 8"
@@ -159,6 +160,9 @@ function Page() {
         />
         <SaveButton onClick={() => handleSaveGrade('Reading')}>Save Grade</SaveButton>
       </SectionContainer>
+
+
+
 
       {/* === LISTENING === */}
       <SectionContainer>

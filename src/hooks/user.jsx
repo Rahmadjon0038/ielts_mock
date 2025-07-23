@@ -31,7 +31,7 @@ export const useAddReadingQuestion = () => {
   const addReadingQuestionMutatin = useMutation({
     mutationFn: addReadingQuestion,
     onSuccess: (data) => {
-      notify('ok',data?.message)
+      notify('ok', data?.message)
       console.log(data, '-----------------')
       queriClinet.invalidateQueries({ queryKey: ['reading'] })
 
@@ -59,3 +59,48 @@ export const useGetReadingQuestion = (id) => {
 
   return { data, isLoading, error }
 }
+
+// -------------------------------- reading answer admin uchun user javoblarini olish ------------------
+// ✅ API chaqiruvi
+const getUserReadingAnswer = async ({ queryKey }) => {
+  const [_key, userId, monthId] = queryKey;
+  const response = await instance.get(`/api/reading/answers?userId=${userId}&monthId=${monthId}`);
+  return response.data;
+};
+
+// ✅ React Query bilan foydalanish
+
+export const useGetUserReadingAnswer = (userId, monthId) => {
+
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['readingAnswers', userId, monthId],
+    queryFn: getUserReadingAnswer,
+    enabled: !!userId && !!monthId,
+  });
+
+  return { data, isLoading, error, refetch };
+};
+
+// -------------------  user javibini yuborishi -----------------------
+
+const submitReadingAnswers = async (data) => {
+  const response = await instance.post('/api/reading/sumbit', data);
+  return response.data;
+};
+
+// 🔸 React Query mutation hook
+export const useSubmitReadingAnswers = () => {
+
+  const mutation = useMutation({
+    mutationFn: submitReadingAnswers,
+    onSuccess: (data) => {
+      notify('ok',data?.message)
+    },
+    onError: (err) => {
+      console.log(err)
+      notify('ok',data?.message || 'xatolik yuz berdi')
+    }
+  });
+
+  return mutation;
+};
