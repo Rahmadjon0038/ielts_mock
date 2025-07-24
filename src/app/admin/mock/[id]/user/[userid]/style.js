@@ -5,7 +5,6 @@ export const SectionContainer = styled.div`
   border: 1px solid #ddd;
   border-radius: 16px;
   margin-bottom: 32px;
-  background: #fafafa;
 `
 
 export const SectionTitle = styled.h2`

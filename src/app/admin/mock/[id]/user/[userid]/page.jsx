@@ -20,6 +20,7 @@ import {
   Images,
 } from './style'
 import ReadingAnswer from '@/components/admin/CreateMockModal/section/ReadingAnswer'
+import UserAnswer from '@/components/listening/UserAnswer'
 
 function Page() {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
@@ -117,9 +118,13 @@ function Page() {
             <TaskText>{item.question}</TaskText>
 
             <Label>User Javobi:</Label>
-            <TaskText>1) {item.task1}</TaskText>
+            <TaskText>
+              1) {item.task1 && item.task1.trim() ? item.task1 : "javob bermagan"}
+            </TaskText>
             <hr />
-            <TaskText>2) {item.task2}</TaskText>
+            <TaskText>
+              2) {item.task2 && item.task2.trim() ? item.task2 : "javob bermagan"}
+            </TaskText>
 
             <Label>Admin yozgan baho:</Label>
             <Input
@@ -138,17 +143,9 @@ function Page() {
 
       {/* === READING === */}
       <SectionContainer>
-        <SectionTitle>Reading</SectionTitle>
-        <Label>Savol:</Label>
-        <TaskText>No data</TaskText>
+        <ReadingAnswer />
 
-        <Label>Correct Answer (Admin):</Label>
-        <TaskText>No data</TaskText>
-
-        <Label>User Answer:</Label>
-        <TaskText>No data</TaskText>
-        <ReadingAnswer/>
-        <Label>Bahoni tekshiring (avtomatik):</Label>
+        <Label>Bahoni qo'yish</Label>
         <Input
           placeholder="e.g. 8"
           value={grades.Reading}
@@ -162,21 +159,12 @@ function Page() {
       </SectionContainer>
 
 
-
-
       {/* === LISTENING === */}
       <SectionContainer>
-        <SectionTitle>Listening</SectionTitle>
-        <Label>Savol:</Label>
-        <TaskText>No data</TaskText>
 
-        <Label>Correct Answer (Admin):</Label>
-        <TaskText>No data</TaskText>
+        <UserAnswer />
 
-        <Label>User Answer:</Label>
-        <TaskText>No data</TaskText>
-
-        <Label>Bahoni tekshiring (avtomatik):</Label>
+        <Label>Bahoni q'yish</Label>
         <Input
           placeholder="e.g. 7"
           value={grades.Listening}

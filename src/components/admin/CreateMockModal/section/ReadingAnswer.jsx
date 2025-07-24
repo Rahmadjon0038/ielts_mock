@@ -11,17 +11,13 @@ const safeParse = (str) => {
     const parsed = JSON.parse(str);
     return Array.isArray(parsed) ? parsed : parsed.replace(/"/g, '');
   } catch {
-    return str.replace(/"/g, '');
+    return str?.replace(/"/g, '');
   }
 };
 
 // Styled Components
 const Page = styled.main`
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 24px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f9fafa;
   min-height: 100vh;
 `;
 

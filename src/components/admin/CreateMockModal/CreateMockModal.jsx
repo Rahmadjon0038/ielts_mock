@@ -37,13 +37,13 @@ function CreateMockModal({ addMock }) {
                 aria-describedby="modal-modal-description">
                 <Box sx={style}>
                     <Form onSubmit={handleSumbit}>
-                        <Label>🗓 Sana tanlang:</Label>
+                        <Label>🗓Select a date:</Label>
                         <Input
                             required
                             type="date"
                             onChange={(e) => setDate(e.target.value)}
                         />
-                        <Button type="submit"><FaPlus /> Mock yaratish</Button>
+                        <Button type="submit"><FaPlus /> Create a mock</Button>
                     </Form>
                 </Box>
             </Modal>

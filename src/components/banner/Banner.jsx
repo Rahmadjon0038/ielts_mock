@@ -18,7 +18,7 @@ function BannerComponent({ info } = 'sa') {
   return (
     <Container>
       <Banner>
-        <Title>Salom, {data?.username}!</Title>
+        <Title>Hello, {data?.username}!</Title>
         <Subtitle>
           {info}
         </Subtitle>

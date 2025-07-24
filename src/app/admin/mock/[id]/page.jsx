@@ -42,17 +42,17 @@ function AdminResult() {
 
   return (
     <GlobalContainer>
-      <h2 style={{ marginBottom: '2rem' }}>Mock: {data?.month} uchun bo‘limlar</h2>
+      <h2 style={{ marginBottom: '2rem' }}>Mock Sections for{data?.month}</h2>
 
       <SectionList>
         {sections?.map((item) => (
           <SectionCard key={item.id}>
             <h3>{item?.title}</h3>
-            <button onClick={() => handleGo(item.id)}>Bo‘limga o‘tish</button>
+            <button onClick={() => handleGo(item.id)}>Go to section</button>
           </SectionCard>
         ))}
       </SectionList>
-      <h3 style={{ margin: '2rem 0' }}>📊 Foydalanuvchilar natijalari</h3>
+      <h3 style={{ margin: '2rem 0' }}>📊 User results</h3>
       <UserList>
         {userResults?.length ? userResults?.map((user) => {
           const ratedData = stast?.find((item) => item.user_id === user.id);
@@ -75,11 +75,11 @@ function AdminResult() {
               </div>
               <strong>{user.username}</strong>
               <p>4/{ratedCount}</p>
-              <button onClick={() => handleUserCheck(user.id)}>Ko‘rish</button>
+              <button onClick={() => handleUserCheck(user.id)}>View</button>
             </UserCard>
           );
         }) : (
-          <NoResult message='natijalalar hali kelmagan' />
+          <NoResult message='The results are not yet available.' />
         )}
       </UserList>
 

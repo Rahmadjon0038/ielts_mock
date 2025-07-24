@@ -60,9 +60,9 @@ function Adminpage() {
 
   return (
     <GlobalContainer>
-      <BannerComponent info="Mocklar yaratish va boshqarish sahifasi" />
+      <BannerComponent info="Mock creation and management page" />
       <Container>
-        <h2>Oylik Mock Testlar <CreateMockModal addMock={addMock} /></h2>
+        <h2>Monthly Mock Test <CreateMockModal addMock={addMock} /></h2>
         <CardList>
           {allMonths?.length > 0 ? (
             allMonths.map((item) => (
@@ -79,12 +79,12 @@ function Adminpage() {
                   >
                     {activeMockId === item.id ? 'Active' : 'Inactive'}
                   </ActiveButton>
-                  <DeleteMock handledelete={handledelete} id={item.id} info={`O‘chirishda ehtiyot bo‘ling, qayta tiklab bo‘lmaydi!`} />
+                  <DeleteMock handledelete={handledelete} id={item.id} info={`Be careful when deleting, otherwise the data cannot be restored!`} />
                 </div>
               </CardItem>
             ))
           ) : (
-            <NoResult message="Mock testlar mavjud emas" />
+            <NoResult message="Mock tests are not available." />
           )}
         </CardList>
       </Container>
