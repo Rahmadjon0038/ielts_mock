@@ -5,7 +5,6 @@ const notify = getNotify();
 const { instance } = require("./api")
 
 const register = async (registerData) => {
-    console.log(registerData, 'api')
     const response = await instance.post('/api/auth/register', registerData);
     return response.data;
 };
