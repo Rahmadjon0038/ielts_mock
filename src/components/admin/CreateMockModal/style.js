@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const CustomModal = styled.div`
   text-align: center;
 `
-export const AddBtn = styled.div`
+export const AddBtn = styled.button`
     background-color:#B0100D;
     color: white;
     border: none;

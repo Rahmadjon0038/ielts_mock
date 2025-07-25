@@ -8,13 +8,14 @@ import {
   ViewButton
 } from './style'
 import Link from 'next/link'
-import CreateMockModal from '@/components/admin/CreateMockModal/CreateMockModal'
+
 import { useaddMonth, usedeleteMonth, usegetMonth } from '@/hooks/mockMonth'
 import Loader from '@/components/loader/Loader'
 import { useAddActiveMonhId, useLatestMonth } from '@/hooks/useLatestMonth'
 import Cookies from 'js-cookie'
 import NoResult from '@/components/NoResult'
 import DeleteMock from '@/components/admin/CreateMockModal/DeleteMock'
+import CreateMockModal from '@/components/admin/CreateMockModal/CreateMockModal'
 
 function Adminpage() {
   const { data: allMonths, isLoading } = usegetMonth();
