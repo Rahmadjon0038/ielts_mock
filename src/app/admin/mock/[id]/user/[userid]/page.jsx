@@ -126,7 +126,7 @@ function Page() {
               2) {item.task2 && item.task2.trim() ? item.task2 : "did not answer"}
             </TaskText>
 
-            <Label>Assessment</Label>
+            <Label>Assessment </Label>
             <Input
               placeholder="e.g. 6.5"
               value={grades.Writing}
