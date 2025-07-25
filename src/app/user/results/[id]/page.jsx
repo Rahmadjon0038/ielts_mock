@@ -18,27 +18,27 @@ function MonthResultPage() {
   })
 
   if (isLoading) return <Loader />
-  if (error || !data) return <NoResult message='Ma’lumot topilmadi' />
+  if (error || !data) return <NoResult message='Information not found' />
 
   return (
     <GlobalContainer>
-      <Title>Mock natijalari</Title>
+      <Title>Results</Title>
 
       <SectionsWrapper>
         {data.map((section, index) => (
           <SectionCard key={index} status={section.score !== null}>
             <h3>{section.section}</h3>
             <p>
-              Ball:{''}
+              Score:{''}
               {section.score !== null ? (
                 <strong>{section.score}</strong>
               ) : (
-                <em>Tekshirilmoqda...</em>
+                <em>Checking...</em>
               )}
             </p>
             {section.comment && (
               <p>
-                <strong>Izoh:</strong> {section.comment}
+                <strong>Note:</strong> {section.comment}
               </p>
             )}
           </SectionCard>

@@ -79,8 +79,8 @@ function UserAnswer() {
   return (
     <MainContainer>
       <HeaderSection>
-        <Title>Listening Natijalari</Title>
-        <Subtitle>Foydalanuvchi javoblari tahlili</Subtitle>
+        <Title>Listening Results</Title>
+        <Subtitle>User response analysis</Subtitle>
       </HeaderSection>
 
       <QuestionDisplay>

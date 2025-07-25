@@ -93,12 +93,13 @@ export const useSubmitReadingAnswers = () => {
 
   const mutation = useMutation({
     mutationFn: submitReadingAnswers,
-    onSuccess: (data) => {
-      notify('ok',data?.message)
+    onSuccess: (data, vars) => {
+      notify('ok', data?.message)
+      vars.onSucess(data)
     },
     onError: (err) => {
       console.log(err)
-      notify('ok',data?.message || 'xatolik yuz berdi')
+      notify('ok', data?.message || 'xatolik yuz berdi')
     }
   });
 

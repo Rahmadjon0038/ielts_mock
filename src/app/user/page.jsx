@@ -33,11 +33,11 @@ function UserProfile() {
 
   return (
     <GlobalContainer>
-      <BannerComponent info={'Bu bo‘limda siz IELTS Mock testidagi natijalaringizni kuzatishingiz mumkin.'} />
-      <Title>Siz qatnashgan ielst testlari</Title>
+      <BannerComponent info={'In this section, you can track your IELTS Mock test results.'} />
+      <Title>IELTS tests you have taken</Title>
 
       {error ? (
-        <NoResult message='Siz yechgan testlar mavjud emas yoki admin hali baxolamagan' />
+        <NoResult message='The tests you have taken do not exist or have not yet been graded by the admin.' />
       ) : isLoading ? (
         <div style={{ position: 'relative',minHeight:'200px',marginTop:'30px' }}><Loader /></div>
       ) : (

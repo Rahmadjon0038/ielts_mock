@@ -53,7 +53,8 @@ export const SubmitButton = styled.button`
   cursor: pointer;
   align-self: flex-end;
   transition: 0.2s ease;
-  margin-top: 10px;
+  margin-top: 30px;
+  margin: 30px auto;
   &:hover {
     background: #d62828;
   }

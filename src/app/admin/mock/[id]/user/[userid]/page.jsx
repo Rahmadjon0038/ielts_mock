@@ -105,7 +105,7 @@ function Page() {
         <SectionTitle>Writing</SectionTitle>
         {writingData?.map((item) => (
           <div key={item.id}>
-            <Label>Savol (Admin tomonidan):</Label>
+            <Label>Question (by Admin):</Label>
             <TaskText>1) {writingTask?.task1}</TaskText>
             <Images
               src={`${baseUrl}/uploads/${writingTask?.task1_image}`}
@@ -117,16 +117,16 @@ function Page() {
             <TaskText>2) {writingTask?.task2}</TaskText>
             <TaskText>{item.question}</TaskText>
 
-            <Label>User Javobi:</Label>
+            <Label>User Answer:</Label>
             <TaskText>
-              1) {item.task1 && item.task1.trim() ? item.task1 : "javob bermagan"}
+              1) {item.task1 && item.task1.trim() ? item.task1 : "did not answer"}
             </TaskText>
             <hr />
             <TaskText>
-              2) {item.task2 && item.task2.trim() ? item.task2 : "javob bermagan"}
+              2) {item.task2 && item.task2.trim() ? item.task2 : "did not answer"}
             </TaskText>
 
-            <Label>Admin yozgan baho:</Label>
+            <Label>Assessment</Label>
             <Input
               placeholder="e.g. 6.5"
               value={grades.Writing}
@@ -145,7 +145,7 @@ function Page() {
       <SectionContainer>
         <ReadingAnswer />
 
-        <Label>Bahoni qo'yish</Label>
+        <Label>Assessment</Label>
         <Input
           placeholder="e.g. 8"
           value={grades.Reading}
@@ -164,7 +164,7 @@ function Page() {
 
         <UserAnswer />
 
-        <Label>Bahoni q'yish</Label>
+        <Label>Assessment</Label>
         <Input
           placeholder="e.g. 7"
           value={grades.Listening}

@@ -45,10 +45,10 @@ function Untied() {
   return (
     <Container>
       <Message>
-        Siz bu bo‘limni yechdingiz javoblaringiz adminga yuborildi
+    You have solved this section, your answers have been sent to the admin.
       </Message>
       <StyledLink href="/user">
-        Profilga o‘tish <FaArrowRight />
+        Go to profile <FaArrowRight />
       </StyledLink>
     </Container>
   );

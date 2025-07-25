@@ -86,7 +86,7 @@
     const setAnswerWriting = useMutation({
       mutationFn: setWritingAnswer,
       onSuccess: (data) => {
-        // notify("ok", data.msg);
+        notify("ok", data.msg);
         console.log(data)
         queryClient.invalidateQueries({ queryKey: ["writing-user-answer"] });
       },

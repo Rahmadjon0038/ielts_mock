@@ -5,6 +5,8 @@ export const Container = styled.div`
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   height: 100vh;
+
+
 `
 
 export const Times = styled.div`
@@ -66,12 +68,10 @@ export const RightBox = styled.div`
   }
 
   .input-text{
-    color: blue;
     line-height: 24px;
   }
 
   .question-title{
-    color: green;
     margin-top: 20px;
   }
 
@@ -100,15 +100,26 @@ export const QuestionBox = styled.div`
     cursor: pointer;
   }
 
-  input[type="text"],
-  select {
-    margin-top: 8px;
-    padding: 6px 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    width: 100%;
-    margin-bottom: 10px;
-  }
+  
+ 
+`
+export const Selectted = styled.select`
+  padding: 6px 12px;
+  font-size: 16px;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  margin-top: 5px;
+  max-width: 400px;
+  width: 100%;
+`
+export const Input = styled.input`
+  margin-top: 5px;
+  padding: 6px 12px;
+  font-size: 16px;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 400px;
 `
 
 
@@ -136,3 +147,11 @@ export const Partsitem = styled.div`
     transform: scale(0.97);
   }
 `;
+export const SumbitButton = styled.div`
+  padding: 10px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  background-color: blue;
+  display: inline-block;
+`
