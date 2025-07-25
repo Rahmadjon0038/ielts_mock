@@ -7,13 +7,17 @@ export const NavbarConatiner = styled.div`
     justify-content: space-between;
     padding: 10px 40px;
 
+    @media(max-width:768px){
+    padding: 10px 10px;
+    }
+
 `
 export const Logocont = styled.div`
     color: #B61304;
     text-align: center;
     display: flex;
     align-items: center;
-    .logoimg{   
+    .logoimg{ 
     }
     h3{
         font-size: 24px;
@@ -22,6 +26,22 @@ export const Logocont = styled.div`
         font-size: 14px;
         font-weight: bold;
         margin-top: 3px;
+    }
+
+    @media(max-width:768px){
+    h3{
+        font-size: 18px;
+    }
+    p{
+        font-size: 12px;
+        font-weight: bold;
+        margin-top: 3px;
+    }
+
+     .logoimg{ 
+      width: 80px;
+      height: 60px;
+    }
     }
 `
 export const Buttons = styled.div`
@@ -48,6 +68,14 @@ export const Buttons = styled.div`
 
         }
     }
+
+
+    @media(max-width:768px){
+    button{
+        padding: 8px 20px;
+      
+    }
+  }
 
 `
 export const Profile = styled.div`

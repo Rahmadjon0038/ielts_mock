@@ -80,7 +80,7 @@ function Listening() {
             key={`input-${task.number}-${i}`}
             style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}
           >
-            <span style={{ fontWeight: 'bold' }}>{`${task.number}.${inputNumber}.`}</span>
+            {/* <span style={{ fontWeight: 'bold' }}>{`${task.number}.${inputNumber}.`}</span> */}
             <Input
               placeholder="Answer"
               style={{ margin: '0 5px', maxWidth: '150px' }}

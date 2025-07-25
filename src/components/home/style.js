@@ -3,6 +3,9 @@ import styled from "styled-components";
 export const Conatiner = styled.div`
   padding: 40px;
   margin: 30px 100px;
+  @media(max-width:768px){
+  margin: 10px 10px;
+  }
 `
 export const TitleInfo = styled.div`
   text-align: center;
