@@ -35,7 +35,7 @@ export const useAddUntied = () => {
     const queriClinet = useQueryClient();
     const untiedmutation = useMutation({
         mutationFn: addUntied,
-        onSuccess: (data) => {
+        onSuccess: (data) => {  
           console.log(data)
             queriClinet.invalidateQueries({ queryKey: ['untied'] })
         },
