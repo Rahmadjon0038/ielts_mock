@@ -16,7 +16,9 @@ function ReadingLayout() {
   const { data: readingdataS, isLoading: readingLoading, error: readingLoader } = useGetReadingQuestion(data?.id);
 
 
-  const readingdata = readingdataS.sort((a, b) => a.id - b.id)
+const readingdata = Array.isArray(readingdataS)
+  ? readingdataS.sort((a, b) => a.id - b.id)
+  : [];
 
   const [answers, setAnswers] = useState({}); //
   const { user } = useAuth()
