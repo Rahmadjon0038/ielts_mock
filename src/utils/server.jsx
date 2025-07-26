@@ -8,8 +8,6 @@
      
   "text": "Fauna vanished with a whimper, not a bang. Some discoveries are so unusual it takes decades and sometimes even centuries to understand their full significance. One such discovery is the fossil bed known as the ago. It was discovered in the Canadian Rockies over a century ago and was popularised in 1989 in a book, Wonderful Life, by Stephen Jay Gould, an American palaeontologist. The Burgess Shale fossils were created at a time when the future Canadian land mass was situated near the Earth's equator. The creatures were preserved when an entire marine ecosystem was buried in mud that eventually hardened and became exposed hundreds of millions of years later in an outcrop of the Rocky Mountains. American palaeontologist Charles Walcott, following reports of fabulous fossil finds by construction workers on Canadian railways who were digging in the mountains in the late 19th century, is said to have tripped over a block of shale in 1909 that revealed the area's remarkable supply of specimens. It has long been believed that the curious fauna that lived there vanished in a series of extinction because the fossil record ends abruptly, but that no longer appears to be the case. The Burgess Shale began to form soon after a period of time known as the Cambrian explosion, when most major groups of complex animals arose over a surprisingly short time."
 ,
-
-  
       "question": [
         {
           "questionTitle": "Questions 1-5",

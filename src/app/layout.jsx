@@ -4,6 +4,7 @@ import ClientProviders from "./Providers";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar/Navbar";
 import { AuthProvider } from "@/context/userData";
+import StyledComponentsRegistry from "./StyledComponentsRegistry";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -23,16 +24,19 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <ClientProviders>
-          <AuthProvider>
-            <Navbar/>
-            <Toaster
-              position="top-center"
-              reverseOrder={false}
-            />
-            {children}
-          </AuthProvider>
-        </ClientProviders>
+        <StyledComponentsRegistry>
+
+          <ClientProviders>
+            <AuthProvider>
+              <Navbar />
+              <Toaster
+                position="top-center"
+                reverseOrder={false}
+              />
+              {children}
+            </AuthProvider>
+          </ClientProviders>
+        </StyledComponentsRegistry>
       </body>
     </html>
   );
