@@ -1,8 +1,9 @@
 import styled from 'styled-components'
 
 export const Container = styled.div`
-  margin-top: 2rem;
-
+  min-width: 100vh;
+  height: 100vh;
+  
   h2{
     display: flex;
     align-items: center;
@@ -10,7 +11,6 @@ export const Container = styled.div`
   }
 
 `
-
 export const CardList = styled.div`
   gap: 1.5rem;
   margin-top: 1rem;

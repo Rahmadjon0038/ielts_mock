@@ -34,8 +34,9 @@ function Writing() {
   Cookies.set('activemonth', latestMonth?.id)
 
   const notify = getNotify()
+
   const { user } = useAuth()
-  const [timeLeft, setTimeLeft] = useState(60 * 60)
+  const [timeLeft, setTimeLeft] = useState(0.2 * 60)
   const timerRef = useRef(null)
 
   const pathname = usePathname()
@@ -67,7 +68,6 @@ function Writing() {
 
     return () => clearInterval(timerRef.current);
   }, [data]);
-
 
 
   const formatTime = (totalSeconds) => {
@@ -112,6 +112,7 @@ function Writing() {
 
     // Doim ikkala task yuboriladi
     setAnswerWriting.mutate(newAnswer);
+    console.log(newAnswer,'page')
     untiedmutation.mutate(untied);
     clearInterval(timerRef.current); // vaqtni to‘xtatamiz
     setTimeLeft(0);
@@ -130,15 +131,14 @@ function Writing() {
     <GlobalContainer full={'full'}>
 
       {
-        data?.submitted ?
-          <Untied />
-          :
+        // data?.submitted ?
+        //   <Untied />
+        //   :
           <>
             <h2 style={{ marginBottom: '1.5rem', marginLeft: '20px' }}>✍️ Writing Task {latestMonth?.month}</h2>
             <Times>
               <p>{formatTime(timeLeft)}</p>
             </Times>
-
 
             <Container>
               <TaskBox>

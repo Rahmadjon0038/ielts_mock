@@ -22,28 +22,30 @@ function MonthResultPage() {
 
   return (
     <GlobalContainer>
-      <Title>Results</Title>
+      <div style={{ minHeight: '100vh' }}>
+        <Title>Results</Title>
 
-      <SectionsWrapper>
-        {data.map((section, index) => (
-          <SectionCard key={index} status={section.score !== null}>
-            <h3>{section.section}</h3>
-            <p>
-              Score:{''}
-              {section.score !== null ? (
-                <strong>{section.score}</strong>
-              ) : (
-                <em>Checking...</em>
-              )}
-            </p>
-            {section.comment && (
+        <SectionsWrapper>
+          {data.map((section, index) => (
+            <SectionCard key={index} status={section.score !== null}>
+              <h3>{section.section}</h3>
               <p>
-                <strong>Note:</strong> {section.comment}
+                Score:{''}
+                {section.score !== null ? (
+                  <strong>{section.score}</strong>
+                ) : (
+                  <em>Checking...</em>
+                )}
               </p>
-            )}
-          </SectionCard>
-        ))}
-      </SectionsWrapper>
+              {section.comment && (
+                <p>
+                  <strong>Note:</strong> {section.comment}
+                </p>
+              )}
+            </SectionCard>
+          ))}
+        </SectionsWrapper>
+      </div>
     </GlobalContainer>
   )
 }

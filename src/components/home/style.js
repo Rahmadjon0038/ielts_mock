@@ -1,10 +1,20 @@
 import styled from "styled-components";
 
 export const Conatiner = styled.div`
-  padding: 40px;
-  margin: 30px 100px;
+  padding: 100px 100px;
   @media(max-width:768px){
-  margin: 10px 10px;
+  padding: 50px 10px;
+ 
+  }
+  background-color: #ffffff;
+  min-height: 100vh;
+  
+
+  .leaf{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: -1;
   }
 `
 export const TitleInfo = styled.div`
@@ -13,11 +23,18 @@ export const TitleInfo = styled.div`
   h1{
     font-size: 44px;
     color: #1E293B;
+     @media(max-width:768px){
+        font-size: 24px;
+  }
   }
   p{
     font-size: 20px;
     margin-top: 10px;
     color: #000000;
+
+     @media(max-width:768px){
+        font-size: 16px;
+  }
   }
 `
 export const Title = styled.h1`
@@ -25,6 +42,10 @@ export const Title = styled.h1`
     color: #1E293B;
     margin-top: 30px;
     font-size: 36px;
+
+     @media(max-width:768px){
+        font-size: 20px;
+  }
 
 `
 export const Cards = styled.div`
@@ -55,4 +76,8 @@ export const CardInfo = styled.div`
   font-size:20px;
   padding: 10px;
   border-radius:inherit;
+  @media(max-width:768px){
+        font-size: 16px;
+  }
+
 `

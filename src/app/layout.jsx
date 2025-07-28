@@ -5,6 +5,7 @@ import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar/Navbar";
 import { AuthProvider } from "@/context/userData";
 import StyledComponentsRegistry from "./StyledComponentsRegistry";
+import Footer from "@/components/Footer";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -24,9 +25,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <StyledComponentsRegistry>
-
-          <ClientProviders>
+        <ClientProviders>
+          <StyledComponentsRegistry>
             <AuthProvider>
               <Navbar />
               <Toaster
@@ -34,9 +34,10 @@ export default function RootLayout({ children }) {
                 reverseOrder={false}
               />
               {children}
+              <Footer/>
             </AuthProvider>
-          </ClientProviders>
-        </StyledComponentsRegistry>
+          </StyledComponentsRegistry>
+        </ClientProviders>
       </body>
     </html>
   );

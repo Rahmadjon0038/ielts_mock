@@ -22,7 +22,7 @@ function Navbar() {
         <NavbarConatiner>
             <Link href={'/'}>
                 <Logocont>
-                    <Image width={100} className='logoimg' src={logo} alt='img' />
+                    <Image width={100} className='logoimg' src={logo} alt='logo'/>
                     <div>
                         <h3>Taraqqiyot</h3>
                         <p>Teaching center</p>

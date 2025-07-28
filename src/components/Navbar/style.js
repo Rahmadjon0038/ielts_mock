@@ -1,11 +1,12 @@
 import styled from "styled-components";
 
 export const NavbarConatiner = styled.div`
-    background-color: white;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 40px;
+    padding: 10px 20px;
+    width: 100%;
+    background-color: white;
 
     @media(max-width:768px){
     padding: 10px 10px;
@@ -30,17 +31,16 @@ export const Logocont = styled.div`
 
     @media(max-width:768px){
     h3{
-        font-size: 18px;
+        font-size: 12px;
     }
     p{
-        font-size: 12px;
+        font-size: 10px;
         font-weight: bold;
-        margin-top: 3px;
     }
 
      .logoimg{ 
-      width: 80px;
-      height: 60px;
+      width: 60px;
+      height: 40px;
     }
     }
 `
@@ -56,7 +56,6 @@ export const Buttons = styled.div`
         border: 2px solid #B61304;
         background-color: white;
         color: #B61304;
-        transition: 0.3s;
         &:hover{
             background-color: #B61304;
             color: white;
@@ -72,7 +71,10 @@ export const Buttons = styled.div`
 
     @media(max-width:768px){
     button{
-        padding: 8px 20px;
+        padding: 4px 10px;
+        font-size: 12px;
+        border: 1px solid #B61304;
+        border-radius: 4px;
       
     }
   }

@@ -5,13 +5,16 @@ export const Title = styled.h2`
   margin-bottom: 40px;
   color: #1E293B;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: 0AF74D;
   padding: 20px;
   border-radius: 10px;
   border-left: 6px solid #B91613;
   border-top: 2px solid #B91613;
   border-right: 2px solid #B91613;
   border-bottom: 2px solid #B91613;
+
+  @media(max-width:468px){
+    font-size: 20px;
+  }
 `
 
 export const SectionsWrapper = styled.div`

@@ -7,20 +7,26 @@ import { uselogin } from '@/hooks/auth';
 import { useAuth } from '@/context/userData';
 import { useRouter } from 'next/navigation';
 import { usegetUser } from '@/hooks/user';
+import { useMediaQuery } from 'react-responsive';
 
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    p: 2,
-    outline: 'none',
-    borderRadius: '8px'
-};
+
+
+
 
 export default function Login({ children }) {
+    const isMobile = useMediaQuery({ maxWidth: 480 });
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: isMobile ? 280 : 400,
+        bgcolor: 'background.paper',
+        p: isMobile ? 1 : 2,
+        outline: 'none',
+        borderRadius: '8px'
+    };
+    console.log(isMobile)
 
     const { user, setUser } = useAuth();
     const { refetch } = usegetUser();
