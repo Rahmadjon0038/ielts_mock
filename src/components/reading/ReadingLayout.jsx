@@ -8,6 +8,9 @@ import { usePathname } from 'next/navigation';
 import Untied from '../untied';
 import Loader from '../loader/Loader';
 import NoResult from '../NoResult';
+import usePreventRefresh from '../BlockendReload';
+import TimerModal from '../Timer/TimerComponent';
+import Countdown from 'react-countdown';
 
 function ReadingLayout() {
   const [timeLeft, setTimeLeft] = useState(60 * 60);
@@ -16,9 +19,9 @@ function ReadingLayout() {
   const { data: readingdataS, isLoading: readingLoading, error: readingLoader } = useGetReadingQuestion(data?.id);
 
 
-const readingdata = Array.isArray(readingdataS)
-  ? readingdataS.sort((a, b) => a.id - b.id)
-  : [];
+  const readingdata = Array.isArray(readingdataS)
+    ? readingdataS.sort((a, b) => a.id - b.id)
+    : [];
 
   const [answers, setAnswers] = useState({}); //
   const { user } = useAuth()
@@ -39,32 +42,6 @@ const readingdata = Array.isArray(readingdataS)
   const monthId = data?.id
   const { mutate, isLoading: sumbitLoding, isSuccess, isError, error: sumbitError } = useSubmitReadingAnswers();
 
-  useEffect(() => {
-    if (untiedHok?.submitted) return; // agar oldin yuborgan bo‘lsa — timer ishlamasin
-
-    timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current);
-          handleSubmit();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timerRef.current);
-  }, [untiedHok]);
-
-
-  const formatTime = (totalSeconds) => {
-    const safeSeconds = Math.max(0, totalSeconds); // -1, -2 bo‘lsa ham 0 ko‘rsatadi
-    const min = Math.floor(safeSeconds / 60);
-    const sec = safeSeconds % 60;
-    return `${min}:${sec < 10 ? `0${sec}` : sec}`;
-  };
-
-
   const handleAnswerChange = (num, taskValue, partIndex = partReplacement) => {
     setAnswers((prev) => ({
       ...prev,
@@ -77,7 +54,6 @@ const readingdata = Array.isArray(readingdataS)
 
   const handleSubmit = () => {
     if (untiedHok?.submitted) return; // oldin yuborgan bo‘lsa qayt
-
     const result = [];
 
     readingdata?.forEach((part, partIndex) => {
@@ -130,7 +106,21 @@ const readingdata = Array.isArray(readingdataS)
     untiedmutation.mutate(untied);
 
   };
+    const endTimeRef = useRef(Date.now() + 0.1 * 60 * 1000);
+    const renderer = ({ minutes, seconds, completed }) => {
+      if (completed) {
+        return <TimerModal untieddata={untiedHok?.submitted} handleSubmit={handleSubmit} show={true} />;;
+      } else {
+        return <span>{minutes}:{seconds.toString().padStart(2, '0')}</span>;
+      }
+    };
+    usePreventRefresh();
+
+
+
+
   //  const { data: readingdata, isLoading: readingLoading, error: readingLoader } 
+
 
   if (readingLoading || readingLoading) {
     return <div style={{ position: 'relative', height: '500px' }}><Loader /></div>
@@ -141,16 +131,16 @@ const readingdata = Array.isArray(readingdataS)
     return <NoResult writing={'writing'} message="There are no reading tests." />
   }
 
-
   return (
     <>
-    <h1>salom</h1>
       {
         untiedHok?.submitted ?
           <Untied />
           :
           <div>
-            <Times>{formatTime(timeLeft)}</Times>
+            <Times>
+              <p><Countdown date={endTimeRef.current} renderer={renderer} /></p>
+            </Times>
             <Introduction>
               <b>{parts?.part}</b>
               <p>{parts?.intro}</p>

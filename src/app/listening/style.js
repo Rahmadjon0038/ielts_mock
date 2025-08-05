@@ -59,23 +59,22 @@ export const Select = styled.select`
 `
 
 export const TabContainer = styled.div`
-  display: flex;
-  gap: 10px;
-  margin: 60px 0;
+display: flex;
+  margin-top: 1.5rem;
+  gap: 1rem;
   flex-wrap: wrap;
 `
-// ✅ Bu JS (yoki JSX) fayl uchun to‘g‘ri:
 export const TabButton = styled.button`
-  padding: 10px 20px;
+  padding: 0.5rem 1.25rem;
   border: none;
-  background-color: ${({ $active }) => ($active ? '#007bff' : '#ddd')};
-  color: ${({ $active }) => ($active ? '#fff' : '#000')};
-  border-radius: 8px;
+  background-color: ${({ $active }) => ($active ? '#d62828' : '#f1f5f9')};
+  color: ${({ $active }) => ($active ? '#fff' : '#1e293b')};
+  border-radius: 6px;
+  border: 2px solid #d62828;
   cursor: pointer;
   transition: 0.2s ease;
-
-  &:hover {
-    background-color: #0056b3;
+   &:hover {
+    background: #d62828;
     color: white;
   }
 `;
@@ -83,4 +82,20 @@ export const TabButton = styled.button`
 
 export const TabContent = styled.div`
   margin-top: 20px;
+`
+export const Button = styled.button`
+  background: #d62828;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  align-self: flex-end;
+  transition: 0.2s ease;
+  margin-top: 30px;
+  margin: 30px auto;
+  &:hover {
+    background: #d62828;
+  }
 `

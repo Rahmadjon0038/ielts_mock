@@ -30,14 +30,16 @@ const Message = styled.h3`
 
 function Speaking() {
   return (
-    <GlobalContainer>
-      <Wrapper>
-        <Message>
-          The speaking test will be conducted <span>offline</span> for now, in the form of a <span>direct interview</span> by the instructors.  
-          Please make sure to be <span>prepared</span> and present at the scheduled time.
-        </Message>
-      </Wrapper>
-    </GlobalContainer>
+    <div style={{minHeight:'100vh'}}>
+      <GlobalContainer>
+        <Wrapper>
+          <Message>
+            The speaking test will be conducted <span>offline</span> for now, in the form of a <span>direct interview</span> by the instructors.
+            Please make sure to be <span>prepared</span> and present at the scheduled time.
+          </Message>
+        </Wrapper>
+      </GlobalContainer>
+    </div>
   )
 }
 
