@@ -144,13 +144,13 @@ const readingdata = Array.isArray(readingdataS)
 
   return (
     <>
+    <h1>salom</h1>
       {
         untiedHok?.submitted ?
           <Untied />
           :
           <div>
             <Times>{formatTime(timeLeft)}</Times>
-
             <Introduction>
               <b>{parts?.part}</b>
               <p>{parts?.intro}</p>

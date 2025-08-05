@@ -9,10 +9,6 @@ import { useRouter } from 'next/navigation';
 import { usegetUser } from '@/hooks/user';
 import { useMediaQuery } from 'react-responsive';
 
-
-
-
-
 export default function Login({ children }) {
     const isMobile = useMediaQuery({ maxWidth: 480 });
     const style = {
@@ -26,7 +22,6 @@ export default function Login({ children }) {
         outline: 'none',
         borderRadius: '8px'
     };
-    console.log(isMobile)
 
     const { user, setUser } = useAuth();
     const { refetch } = usegetUser();

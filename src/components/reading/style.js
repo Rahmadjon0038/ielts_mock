@@ -4,9 +4,7 @@ export const Container = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
-  height: 100vh;
-
-
+  min-height: 00vh;
 `
 
 export const Times = styled.div`

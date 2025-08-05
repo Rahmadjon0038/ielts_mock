@@ -38,7 +38,7 @@ function WritingPage() {
         setTask2('')
         setTask1Image(null)
         setTask2Image(null)
-        refetch() // 🟢 Yangi ma'lumotlarni olish
+        refetch() 
       }
     })
   }
@@ -46,7 +46,8 @@ function WritingPage() {
   if (isLoading) return <Loader />
 
   return (
-    <GlobalContainer>
+    <div style={{minHeight:'100vh'}}>
+      <GlobalContainer>
       <h1>{sectionId}</h1>
       <h2 style={{ marginBottom: '20px' }}>📄 Writing assignments</h2>
 
@@ -110,6 +111,7 @@ function WritingPage() {
         <Button type="submit">Save</Button>
       </Form>
     </GlobalContainer>
+    </div>
   )
 }
 

@@ -43,14 +43,16 @@ const StyledLink = styled(Link)`
 
 function Untied() {
   return (
-    <Container>
-      <Message>
-    You have solved this section, your answers have been sent to the admin.
-      </Message>
-      <StyledLink href="/user">
-        Go to profile <FaArrowRight />
-      </StyledLink>
-    </Container>
+    <div style={{ minHeight: '100vh' }}>
+      <Container>
+        <Message>
+          You have solved this section, your answers have been sent to the admin.
+        </Message>
+        <StyledLink href="/user">
+          Go to profile <FaArrowRight />
+        </StyledLink>
+      </Container>
+    </div>
   );
 }
 

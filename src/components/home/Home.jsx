@@ -9,7 +9,6 @@ import { useGetHome } from '@/hooks/home'
 import Loader from '../loader/Loader'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
-import Image from 'next/image'
 
 gsap.registerPlugin(useGSAP)
 
@@ -72,7 +71,6 @@ function Home() {
                     </Card>
                 ))}
             </Cards>
-            <img className='leaf' src="/images/cocktail-left-leaf.png" alt='img'/>
         </Conatiner>
     )
 }

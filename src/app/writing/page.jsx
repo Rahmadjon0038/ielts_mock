@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { GlobalContainer } from '@/globalStyle'
 import {
   AnswerBox,
@@ -23,7 +23,8 @@ import { useGetWritingAdmin, usesetWritingAnswer } from '@/hooks/writing'
 import { useAddUntied, useGetUntied } from '@/hooks/untied'
 import Untied from '@/components/untied'
 import { Times } from '@/components/reading/style'
-
+import Countdown from 'react-countdown';
+import TimerModal from '@/components/Timer/TimerComponent'
 function Writing() {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -33,11 +34,9 @@ function Writing() {
   const untiedmutation = useAddUntied() //  bolimni yechgani haqida malumot
   Cookies.set('activemonth', latestMonth?.id)
 
-  const notify = getNotify()
 
   const { user } = useAuth()
-  const [timeLeft, setTimeLeft] = useState(0.2 * 60)
-  const timerRef = useRef(null)
+
 
   const pathname = usePathname()
   const section = pathname.split('/').pop();
@@ -48,35 +47,8 @@ function Writing() {
   }
   const { data, isLoading, error } = useGetUntied(untied); // bu yechilgan malumotni olish
 
-  useEffect(() => {
-    if (data?.submitted) {
-      clearInterval(timerRef.current); // <-- MUHIM
-      setTimeLeft(0);
-      return;
-    }
-
-    timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current);
-          handleSubmit();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timerRef.current);
-  }, [data]);
-
-
-  const formatTime = (totalSeconds) => {
-    const min = Math.floor(totalSeconds / 60)
-    const sec = totalSeconds % 60
-    return `${min}:${sec < 10 ? `0${sec}` : sec}`
-  }
-
   // --------------- untied data --------------
+
 
 
   const [activeTab, setActiveTab] = useState('task1')
@@ -95,12 +67,13 @@ function Writing() {
     }))
   }
 
-  const handleSubmit = () => {
-    if (data?.submitted) return;
+
+  function handleSubmit() {
+    // if (data?.submitted) return;
 
     const sanitizedAnswer = {
-      task1: answer.task1?.trim() === '' ? ' ' : answer.task1,
-      task2: answer.task2?.trim() === '' ? ' ' : answer.task2,
+      task1: answer.task1,
+      task2: answer.task2
     };
 
     const newAnswer = {
@@ -110,13 +83,20 @@ function Writing() {
       answer: sanitizedAnswer,
     };
 
-    // Doim ikkala task yuboriladi
     setAnswerWriting.mutate(newAnswer);
-    console.log(newAnswer,'page')
+    console.log(newAnswer, 'page')
     untiedmutation.mutate(untied);
-    clearInterval(timerRef.current); // vaqtni to‘xtatamiz
-    setTimeLeft(0);
   };
+
+  const endTimeRef = useRef(Date.now() + 0.1 * 60 * 1000);
+  const renderer = ({ minutes, seconds, completed }) => {
+    if (completed) {
+      return <TimerModal untieddata={data?.submitted} handleSubmit={handleSubmit} show={true} />;;
+    } else {
+      return <span>{minutes}:{seconds.toString().padStart(2, '0')}</span>;
+    }
+  };
+
 
   if (monthLoading || writingLoading) {
     return <div style={{ position: 'relative', height: '500px' }}><Loader /></div>
@@ -128,70 +108,71 @@ function Writing() {
   }
 
   return (
-    <GlobalContainer full={'full'}>
+    <div style={{ minHeight: '100vh' }}>
+      <GlobalContainer full={'full'}>
+        {
+          data?.submitted ?
+            <Untied />
+            :
+            <>
+              <h2 style={{ marginBottom: '1.5rem', marginLeft: '20px' }}>✍️ Writing Task {latestMonth?.month}</h2>
+              <Times>
+                <p><Countdown date={endTimeRef.current} renderer={renderer} /></p>
+              </Times>
 
-      {
-        // data?.submitted ?
-        //   <Untied />
-        //   :
-          <>
-            <h2 style={{ marginBottom: '1.5rem', marginLeft: '20px' }}>✍️ Writing Task {latestMonth?.month}</h2>
-            <Times>
-              <p>{formatTime(timeLeft)}</p>
-            </Times>
+              <Container>
+                <TaskBox>
+                  <p>{writingTask[activeTab]}</p>
+                  {activeTab === 'task1' && writingTask.task1_image && (
+                    <img
+                      src={`${baseUrl}/uploads/${writingTask.task1_image}`}
+                      alt="Task 1"
+                      style={{ maxWidth: '100%', marginTop: '1rem' }}
+                    />
+                  )}
 
-            <Container>
-              <TaskBox>
-                <p>{writingTask[activeTab]}</p>
-                {activeTab === 'task1' && writingTask.task1_image && (
-                  <img
-                    src={`${baseUrl}/uploads/${writingTask.task1_image}`}
-                    alt="Task 1"
-                    style={{ maxWidth: '100%', marginTop: '1rem' }}
+                  {activeTab === 'task2' && writingTask.task2_image && (
+                    <img
+                      src={`${baseUrl}/uploads/${writingTask.task2_image}`}
+                      alt="Task 2"
+                      style={{ maxWidth: '100%', marginTop: '1rem' }}
+                    />
+                  )}
+
+                </TaskBox>
+                <AnswerBox>
+                  <StyledTextarea
+                    rows="10"
+                    value={answer[activeTab]}
+                    onChange={handleChange}
+                    placeholder={
+                      activeTab === 'task1'
+                        ? 'Write a 150+ word answer...'
+                        : 'Write a 250+ word answer...'
+                    }
                   />
-                )}
-
-                {activeTab === 'task2' && writingTask.task2_image && (
-                  <img
-                    src={`${baseUrl}/uploads/${writingTask.task2_image}`}
-                    alt="Task 2"
-                    style={{ maxWidth: '100%', marginTop: '1rem' }}
-                  />
-                )}
-
-              </TaskBox>
-              <AnswerBox>
-                <StyledTextarea
-                  rows="10"
-                  value={answer[activeTab]}
-                  onChange={handleChange}
-                  placeholder={
-                    activeTab === 'task1'
-                      ? 'Write a 150+ word answer...'
-                      : 'Write a 250+ word answer...'
-                  }
-                />
-                <WordCount>Number of words: {wordCount}</WordCount>
+                  <WordCount>Number of words: {wordCount}</WordCount>
 
 
-              </AnswerBox>
-            </Container>
+                </AnswerBox>
+              </Container>
 
-            <TabRow>
-              <TabButton active={activeTab === 'task1'} onClick={() => setActiveTab('task1')}>
-                Part 1
-              </TabButton>
-              <TabButton active={activeTab === 'task2'} onClick={() => setActiveTab('task2')}>
-                Part 2
-              </TabButton>
-            </TabRow>
-            <SubmitButton onClick={handleSubmit}>
-              {'Yakuniy yuborish'}
-            </SubmitButton>
-          </>
-      }
+              <TabRow>
+                <TabButton active={activeTab === 'task1'} onClick={() => setActiveTab('task1')}>
+                  Part 1
+                </TabButton>
+                <TabButton active={activeTab === 'task2'} onClick={() => setActiveTab('task2')}>
+                  Part 2
+                </TabButton>
+              </TabRow>
+              <SubmitButton onClick={handleSubmit}>
+                {'Yakuniy yuborish'}
+              </SubmitButton>
+            </>
+        }
 
-    </GlobalContainer>
+      </GlobalContainer>
+    </div>
   )
 }
 

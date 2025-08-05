@@ -34,9 +34,10 @@ const Text = styled.p`
 
 const NoResult = ({ message = "Natija topilmadi", writing }) => {
   return (
-    <Wrapper writing={writing}>
-      <Text>{message}</Text>
-    </Wrapper>
+    <div style={{ minHeight: '100vh' }}>
+      <Wrapper writing={writing}>
+        <Text>{message}</Text>
+      </Wrapper></div>
   );
 };
 
