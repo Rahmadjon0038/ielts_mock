@@ -2,7 +2,7 @@
 import React from 'react'
 import { GlobalContainer } from '@/globalStyle'
 import { useParams, useRouter } from 'next/navigation'
-import { SectionCard, SectionList } from '../../style'
+import { SectionCard, SectionList, Title } from '../../style'
 import { UserCard, UserList } from '@/components/Navbar/style'
 import { usegetMontId } from '@/hooks/mockMonth'
 import Loader from '@/components/loader/Loader'
@@ -43,7 +43,7 @@ function AdminResult() {
   return (
     <div style={{minHeight:'100vh'}}>
       <GlobalContainer>
-        <h2 style={{ marginBottom: '2rem' }}>Mock Sections for{data?.month}</h2>
+        <Title style={{ marginBottom: '2rem' }}>Mock Sections for {data?.month}</Title>
 
         <SectionList>
           {sections?.map((item) => (

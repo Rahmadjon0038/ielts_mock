@@ -97,6 +97,13 @@ export const SectionList = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1.5rem;
 `
+export const Title = styled.h2`
+
+  @media(max-width:768px){
+    font-size: 20px;
+  }
+`
+
 
 export const SectionCard = styled.div`
   padding: 1.5rem;

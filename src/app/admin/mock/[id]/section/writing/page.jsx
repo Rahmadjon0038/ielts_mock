@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import { useParams } from 'next/navigation'
-import { GlobalContainer } from '@/globalStyle'
+import { GlobalContainer,TextBlock } from '@/globalStyle'
 import Loader from '@/components/loader/Loader'
 import { Card, Form, Message, TaskTitle, Button, Input, Images } from './style'
 import { useAddWritingAdmin, useGetWritingAdmin } from '@/hooks/writing'
@@ -54,7 +54,7 @@ function WritingPage() {
       {data?.task1 && data?.task2 ? (
         <Card>
           <TaskTitle>Task 1</TaskTitle>
-          <p>{data.task1}</p>
+          <TextBlock>{data.task1}</TextBlock>
           {data.task1_image && (
             <Images
               src={`${baseUrl}/uploads/${data.task1_image}`}
@@ -64,7 +64,7 @@ function WritingPage() {
           )}
 
           <TaskTitle style={{ marginTop: '2rem' }}>Task 2</TaskTitle>
-          <p>{data.task2}</p>
+          <TextBlock>{data.task2}</TextBlock>
           {data.task2_image && (
             <Images
               src={`${baseUrl}/uploads/${data.task2_image}`}

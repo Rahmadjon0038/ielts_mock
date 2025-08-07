@@ -8,7 +8,7 @@ const Footer = () => {
       <FooterContent>
         <Logo>Taraqqiyot</Logo>
         <Nav>
-          <NavItem href="#">Bosh sahifa</NavItem>
+          <NavItem href="/">Bosh sahifa</NavItem>
           <NavItem href="#">IELTS Mock</NavItem>
           <NavItem href="#">Biz haqimizda</NavItem>
           <NavItem href="#">Aloqa</NavItem>
@@ -24,7 +24,6 @@ const Footer = () => {
 
 export default Footer;
 
-// Styled Components
 const FooterContainer = styled.footer`
   background: #131a29;
   color: #e2e8f0;

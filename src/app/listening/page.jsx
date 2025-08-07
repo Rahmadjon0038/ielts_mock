@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo,  useState } from 'react';
 import {
   AudioSection,
   Button,
@@ -13,7 +13,7 @@ import {
   TabContainer,
   TabContent,
 } from './style';
-import { GlobalContainer } from '@/globalStyle';
+import { GlobalContainer,TextBlock } from '@/globalStyle';
 import { Introduction, Times } from '@/components/reading/style';
 import { useAddListeningAnswers } from '@/hooks/listening';
 import { useAuth } from '@/context/userData';
@@ -27,6 +27,8 @@ import NoResult from '@/components/NoResult';
 import Countdown from 'react-countdown';
 import TimerModal from '@/components/Timer/TimerComponent';
 import usePreventRefresh from '@/components/BlockendReload';
+import { useAddtimer, useGetTimer } from '@/hooks/timer';
+import MiniLoader from '@/components/MiniLoader/MiniLoader';
 function Listening() {
   const [activeTab, setActiveTab] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -43,7 +45,21 @@ function Listening() {
   }
   const { data: untieddata, isLoading, error } = useGetUntied(untied); // bu yechilgan malumotni olish
 
-  const endTimeRef = useRef(Date.now() + 60 * 60 * 1000);
+  const timerMutation = useAddtimer();
+  const { data: timer, isLoading: timerLoading, error: timerError } = useGetTimer(user?.user?.id, section, latesMonth?.id)  // vaqtni olish
+
+  useEffect(() => {
+    if (user?.user?.id && section) {
+      timerMutation.mutate({ userId: user?.user?.id, section: section, monthId: latesMonth?.id });
+    }
+  }, []);
+  usePreventRefresh()
+
+  const endTime = useMemo(() => {
+    if (!timer?.startTime) return null; // hali kelmagan bo‘lsa
+    return new Date(new Date(timer.startTime).getTime() + 60 * 60 * 1000);
+  }, [timer?.startTime]);
+
   const renderer = ({ minutes, seconds, completed }) => {
     if (completed) {
       return <TimerModal untieddata={untieddata?.submitted} handleSubmit={handleSubmit} show={true} />;;
@@ -51,7 +67,6 @@ function Listening() {
       return <span>{minutes}:{seconds.toString().padStart(2, '0')}</span>;
     }
   };
-  usePreventRefresh();
 
   const renderLabelWithInputs = (label, idx, task) => {
     const parts = label.split(/(\[\])/g);
@@ -170,9 +185,16 @@ function Listening() {
             :
             <div>
               <Times>
-                <p><Countdown date={endTimeRef.current} renderer={renderer} /></p>
+                <p>
+                  {endTime ? (
+                    <>
+                    <Countdown date={endTime} renderer={renderer} />
+                    </>
+                  ) : (
+                    <MiniLoader/> // yoki hech narsa
+                  )}
+                </p>
               </Times>
-
               <TabContent>
                 <Introduction>
                   <h3>{data.sections[activeTab].part}</h3>

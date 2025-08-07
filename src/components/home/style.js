@@ -77,7 +77,8 @@ export const CardInfo = styled.div`
   padding: 10px;
   border-radius:inherit;
   @media(max-width:768px){
-        font-size: 16px;
+    margin: 20px;
+    font-size: 14px;
   }
 
 `

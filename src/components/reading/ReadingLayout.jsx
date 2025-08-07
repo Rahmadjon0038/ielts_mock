@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Container, Input, Introduction, LeftBox, Parts, Partsitem, RightBox, Selectted, Tables, Times } from './style';
 import { useGetReadingQuestion, useSubmitReadingAnswers } from '@/hooks/user';
 import { useLatestMonth } from '@/hooks/useLatestMonth';
@@ -8,25 +8,33 @@ import { usePathname } from 'next/navigation';
 import Untied from '../untied';
 import Loader from '../loader/Loader';
 import NoResult from '../NoResult';
-import usePreventRefresh from '../BlockendReload';
 import TimerModal from '../Timer/TimerComponent';
 import Countdown from 'react-countdown';
+import { useAddtimer, useGetTimer } from '@/hooks/timer';
+import MiniLoader from '../MiniLoader/MiniLoader';
 
 function ReadingLayout() {
-  const [timeLeft, setTimeLeft] = useState(60 * 60);
-  const timerRef = useRef(null);
   const { data, isLoading, error, refetch } = useLatestMonth();
   const { data: readingdataS, isLoading: readingLoading, error: readingLoader } = useGetReadingQuestion(data?.id);
+  const [answers, setAnswers] = useState({}); //
+  const { user } = useAuth()
+  const pathname = usePathname()
+  const section = pathname.split('/').pop();
+
+  const timerMutation = useAddtimer();
+  const { data: timer, isLoading: timerLoading, error: timerError } = useGetTimer(user?.user?.id, section, data?.id)  // vaqtni olish
+
+  useEffect(() => {
+    if (user?.user?.id && section) {
+      timerMutation.mutate({ userId: user?.user?.id, section: section, monthId: data?.id });
+    }
+  }, []);
 
 
   const readingdata = Array.isArray(readingdataS)
     ? readingdataS.sort((a, b) => a.id - b.id)
     : [];
 
-  const [answers, setAnswers] = useState({}); //
-  const { user } = useAuth()
-  const pathname = usePathname()
-  const section = pathname.split('/').pop();
   const untied = {
     monthId: data?.id,
     userId: user?.user?.id,
@@ -106,17 +114,18 @@ function ReadingLayout() {
     untiedmutation.mutate(untied);
 
   };
-    const endTimeRef = useRef(Date.now() + 0.1 * 60 * 1000);
-    const renderer = ({ minutes, seconds, completed }) => {
-      if (completed) {
-        return <TimerModal untieddata={untiedHok?.submitted} handleSubmit={handleSubmit} show={true} />;;
-      } else {
-        return <span>{minutes}:{seconds.toString().padStart(2, '0')}</span>;
-      }
-    };
-    usePreventRefresh();
+  const endTime = useMemo(() => {
+    if (!timer?.startTime) return null; // hali kelmagan bo‘lsa
+    return new Date(new Date(timer.startTime).getTime() + 60 * 60 * 1000);
+  }, [timer?.startTime]);
 
-
+  const renderer = ({ minutes, seconds, completed }) => {
+    if (completed) {
+      return <TimerModal untieddata={untiedHok?.submitted} handleSubmit={handleSubmit} show={true} />;;
+    } else {
+      return <span>{minutes}:{seconds.toString().padStart(2, '0')}</span>;
+    }
+  };
 
 
   //  const { data: readingdata, isLoading: readingLoading, error: readingLoader } 
@@ -139,7 +148,14 @@ function ReadingLayout() {
           :
           <div>
             <Times>
-              <p><Countdown date={endTimeRef.current} renderer={renderer} /></p>
+              <p>
+                {endTime ? (
+                  <Countdown date={endTime} renderer={renderer} />
+                ) : (
+                  <MiniLoader/>
+                )}
+
+              </p>
             </Times>
             <Introduction>
               <b>{parts?.part}</b>

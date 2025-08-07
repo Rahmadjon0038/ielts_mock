@@ -32,25 +32,25 @@ function UserProfile() {
 
 
 
-  if (userLoading || isLoading) return <Loader />
-
   return (
     <GlobalContainer>
       <div style={{ minHeight: '100vh' }}>
         <BannerComponent info={'In this section, you can track your IELTS Mock test results.'} />
         <Title>IELTS tests you have taken</Title>
+        {
+          userLoading || isLoading ? <div style={{position:'relative',minHeight:'300px'}}><Loader /></div> :
 
-        {error ? (
-          <NoResult message='The tests you have taken do not exist or have not yet been graded by the admin.' />
-        ) : (
-          <Grid>
-            {data?.map((monthItem) => (
-              <Link key={monthItem.id} href={`/user/results/${monthItem.id}`}>
-                <MonthCard title={formatMonth(monthItem.month)} />
-              </Link>
-            ))}
-          </Grid>
-        )}
+            error ? (
+              <NoResult message='The tests you have taken do not exist or have not yet been graded by the admin.' />
+            ) : (
+              <Grid>
+                {data?.map((monthItem) => (
+                  <Link key={monthItem.id} href={`/user/results/${monthItem.id}`}>
+                    <MonthCard title={formatMonth(monthItem.month)} />
+                  </Link>
+                ))}
+              </Grid>
+            )}
       </div>
     </GlobalContainer>
   )
