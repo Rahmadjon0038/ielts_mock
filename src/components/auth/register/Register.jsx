@@ -15,7 +15,7 @@ export default function Register({ children }) {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: isMobile ? 280 : 400,
+        width: isMobile ? 280 : 600,
         bgcolor: 'background.paper',
         p: isMobile ? 1 : 2,
         outline: 'none',

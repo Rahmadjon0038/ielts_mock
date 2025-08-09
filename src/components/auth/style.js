@@ -13,14 +13,14 @@ export const CustomModal = styled.div`
     input{
         width: 100%;
         margin-bottom: 16px;
-        padding: 10px;
+        padding: 12px;
         border-radius: 4px;
         border: none;
         border: 1px solid #1E293B;
     }
     button{
         width: 100%;
-        padding: 10px;
+        padding: 12px;
         border-radius: 4px;
         border: none;
         background-color: #B61304;
