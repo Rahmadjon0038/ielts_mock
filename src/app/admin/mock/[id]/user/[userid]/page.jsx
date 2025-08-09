@@ -1,7 +1,7 @@
 'use client'
 
 import Loader from '@/components/loader/Loader'
-import { GlobalContainer } from '@/globalStyle'
+import { GlobalContainer, TextBlock } from '@/globalStyle'
 import {
   useAassessment,
   useGetAllusersRatings,
@@ -93,7 +93,7 @@ function Page() {
       score: grade,
       comment,
       paramdata,
-    })
+    })  
   }
 
   if (isLoading || writingLoading) return <Loader />
@@ -106,7 +106,7 @@ function Page() {
         {writingData?.map((item) => (
           <div key={item.id}>
             <Label>Question (by Admin):</Label>
-            <TaskText>1) {writingTask?.task1}</TaskText>
+            <TextBlock>1) {writingTask?.task1}</TextBlock>
             <Images
               src={`${baseUrl}/uploads/${writingTask?.task1_image}`}
               alt="Task 1"
@@ -114,17 +114,17 @@ function Page() {
             />
             <br />
             <br />
-            <TaskText>2) {writingTask?.task2}</TaskText>
-            <TaskText>{item.question}</TaskText>
+            <TextBlock>2) {writingTask?.task2}</TextBlock>
+            <TextBlock>{item.question}</TextBlock>
 
             <Label>User Answer:</Label>
-            <TaskText>
+            <TextBlock>
               1) {item.task1 && item.task1.trim() ? item.task1 : "did not answer"}
-            </TaskText>
+            </TextBlock>
             <hr />
-            <TaskText>
+            <TextBlock>
               2) {item.task2 && item.task2.trim() ? item.task2 : "did not answer"}
-            </TaskText>
+            </TextBlock>
 
             <Label>Assessment </Label>
             <Input

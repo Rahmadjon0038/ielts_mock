@@ -95,7 +95,9 @@ export const useSubmitReadingAnswers = () => {
     mutationFn: submitReadingAnswers,
     onSuccess: (data, vars) => {
       notify('ok', data?.message)
+     if(vars.onSucess){
       vars.onSucess(data)
+     }
     },
     onError: (err) => {
       console.log(err)

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useMemo,  useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { GlobalContainer, TextBlock } from '@/globalStyle'
 import {
   AnswerBox,
@@ -73,11 +73,11 @@ function Writing() {
   }
 
   function handleSubmit() {
-    if (data?.submitted) return;
+    // if (data?.submitted) return;
 
     const sanitizedAnswer = {
-      task1: answer.task1,
-      task2: answer.task2
+      task1: answer.task1 || " ",
+      task2: answer.task2 || " "
     };
 
     const newAnswer = {
@@ -86,15 +86,19 @@ function Writing() {
       section: section,
       answer: sanitizedAnswer,
     };
-
-    setAnswerWriting.mutate(newAnswer);
-    console.log(newAnswer, 'page')
-    untiedmutation.mutate(untied);
+    setAnswerWriting.mutate(newAnswer, {
+      onSuccess: (data) => {
+        untiedmutation.mutate(untied);
+      },
+      onError: (err) => {
+      }
+    },
+    );
   };
 
   const endTime = useMemo(() => {
     if (!timer?.startTime) return null; // hali kelmagan bo‘lsa
-    return new Date(new Date(timer.startTime).getTime() + 660 * 60 * 1000);
+    return new Date(new Date(timer.startTime).getTime() + 60 * 60 * 1000);
   }, [timer?.startTime]);
 
 
@@ -115,7 +119,6 @@ function Writing() {
     return <NoResult writing={'writing'} message="❌ There are no writing tests." />
   }
 
-  console.log(writingTask)
 
   return (
     <div style={{ minHeight: '100vh' }}>
@@ -131,7 +134,7 @@ function Writing() {
                   {endTime ? (
                     <Countdown date={endTime} renderer={renderer} />
                   ) : (
-                    <MiniLoader/>
+                    <MiniLoader />
                   )}
 
                 </p>
@@ -139,7 +142,7 @@ function Writing() {
 
               <Container>
                 <TaskBox>
-                  
+
                   <TextBlock>{writingTask[activeTab]}</TextBlock>
                   {activeTab === 'task1' && writingTask.task1_image && (
                     <img
@@ -185,7 +188,7 @@ function Writing() {
                 </TabButton>
               </TabRow>
               <SubmitButton onClick={handleSubmit}>
-                {'Send'}
+                {setAnswerWriting.isLoading ? <MiniLoader /> : "Send"}
               </SubmitButton>
             </>
         }

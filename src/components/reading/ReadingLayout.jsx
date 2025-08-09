@@ -108,10 +108,11 @@ function ReadingLayout() {
       userId,
       monthId,
       questions: result,
-      onSucess: () => {
+      onSucess: (data) => {
+        untiedmutation.mutate(untied);
       },
     });
-    untiedmutation.mutate(untied);
+
 
   };
   const endTime = useMemo(() => {
@@ -152,7 +153,7 @@ function ReadingLayout() {
                 {endTime ? (
                   <Countdown date={endTime} renderer={renderer} />
                 ) : (
-                  <MiniLoader/>
+                  <MiniLoader />
                 )}
 
               </p>

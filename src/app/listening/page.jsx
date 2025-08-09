@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo,  useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   AudioSection,
   Button,
@@ -13,7 +13,7 @@ import {
   TabContainer,
   TabContent,
 } from './style';
-import { GlobalContainer,TextBlock } from '@/globalStyle';
+import { GlobalContainer, TextBlock } from '@/globalStyle';
 import { Introduction, Times } from '@/components/reading/style';
 import { useAddListeningAnswers } from '@/hooks/listening';
 import { useAuth } from '@/context/userData';
@@ -128,7 +128,7 @@ function Listening() {
   };
 
   const handleSubmit = () => {
-    if (untieddata.submitted) return;
+    // if (untieddata.submitted) return;
     const submissionData = {
       monthId: latesMonth?.id,
       userId: user?.user?.id,
@@ -162,9 +162,12 @@ function Listening() {
       });
     });
 
-    mutation.mutate(submissionData);
-    untiedmutation.mutate(untied)
-    console.log(submissionData)
+    mutation.mutate(submissionData,{
+        onSuccess: (data) => {
+          untiedmutation.mutate(untied)
+        }
+      }
+    );
   };
 
   if (monthLoading) {
@@ -188,10 +191,10 @@ function Listening() {
                 <p>
                   {endTime ? (
                     <>
-                    <Countdown date={endTime} renderer={renderer} />
+                      <Countdown date={endTime} renderer={renderer} />
                     </>
                   ) : (
-                    <MiniLoader/> // yoki hech narsa
+                    <MiniLoader /> // yoki hech narsa
                   )}
                 </p>
               </Times>

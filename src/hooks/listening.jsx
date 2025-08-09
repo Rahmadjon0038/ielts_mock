@@ -14,8 +14,10 @@ export const useAddListeningAnswers = () => {
 
     const mutation = useMutation({
         mutationFn: addListeningAnswers,
-        onSuccess: (data) => {
-            console.log(data)
+        onSuccess: (data, vars) => {
+            if (vars.onSuccess) {
+                vars.onSuccess(data)
+            }
             notify('ok', 'Javoblar muvaffaqiyatli saqlandi');
             queryClient.invalidateQueries({ queryKey: ['listeningAnswers'] });
         },

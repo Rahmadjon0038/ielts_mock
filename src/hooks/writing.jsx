@@ -83,14 +83,18 @@ export const usesetWritingAnswer = () => {
   const queryClient = useQueryClient();
   const setAnswerWriting = useMutation({
     mutationFn: setWritingAnswer,
-    onSuccess: (data) => {
+    onSuccess: (data,vars) => {
+      if(vars.onSuccess){
+        vars.onSuccess(data)
+      }
       notify("ok", data.msg);
-      console.log(data)
       queryClient.invalidateQueries({ queryKey: ["writing-user-answer"] });
     },
-    onError: (error) => {
-      console.log(error)
-      // notify("err", error?.response?.data?.msg || "Already available this month");
+    onError: (error,vars) => {
+       if(vars.onError){
+        vars.onSuccess(data)
+      }
+      notify("err", error?.response?.data?.msg || "Already available this month");
     },
   });
   return setAnswerWriting
