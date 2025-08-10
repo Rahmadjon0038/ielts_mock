@@ -357,7 +357,7 @@
 //                 "number": 14,
 //                 "type": "radio",
 //                 "question": "Tbecoming interested in people of the other gender",
-//                 "options": ["A early adolescence", "B middle adolescence", "B middle adolescence"]
+//                 "options": ["A early adolescence", "B middle adolescence", "C late adolescence"]
 //               },
 //               {
 //                 "number": 15,

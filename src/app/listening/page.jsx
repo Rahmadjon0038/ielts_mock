@@ -178,7 +178,6 @@ function Listening() {
     return <NoResult writing={'writing'} message="❌ There are no listening tests." />
   }
 
-
   return (
     <div style={{ minHeight: '100vh' }}>
       <GlobalContainer>
