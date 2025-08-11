@@ -118,22 +118,26 @@ const Option = styled.span`
 
 // Matndagi [] larni userAnswer orqali to'ldirish
 const renderTextMulti = (text, userAnswer) => {
-  const answers = Array.isArray(userAnswer) ? userAnswer : [{ number: null, answer: userAnswer }];
-  let index = 0;
+  
+  const answers = Array.isArray(userAnswer)
+    ? [...userAnswer].sort((a, b) => (a.number || 0) - (b.number || 0))
+    : [{ number: null, answer: userAnswer }];
 
-  return text.split('[]').map((part, i) => (
+  let index = 0;
+  const parts = text.split('[]');
+  return parts.map((part, i) => (
     <React.Fragment key={i}>
       {part}
-      {i < text.split('[]').length - 1 && (
+      {i < parts.length - 1 && (
         <AnswerValue>
-          {answers[index] ? (
-            // Raqam va javob birga chiqariladi
-            <>
-              <strong>{answers[index].number}.</strong> {answers[index++].answer}
-            </>
-          ) : (
-            <i style={{ color: 'red' }}>[?]</i>
-          )}
+          {answers[index] && answers[index].answer
+            ? (
+              <>
+                <strong>{answers[index].number}.</strong> {answers[index++].answer}
+              </>
+            )
+            : <i style={{ color: 'red' }}>[?]</i>
+          }
         </AnswerValue>
       )}
     </React.Fragment>
@@ -146,51 +150,25 @@ const ReadingAnswer = () => {
   const monthId = Array.isArray(params.id) ? params.id[0] : params.id;
 
   const { data, isLoading, error } = useGetUserReadingAnswer(userId, monthId);
+  console.log('ReadingAnswer data:', data);
 
   const filteredItems = useMemo(() => {
-    if (!data) return [];
-    
-    const result = [];
-    const groupedTextMulti = {}; // text-multi savollarni guruhlash uchun
+  if (!data) return [];
 
-    data.forEach((item, index) => {
-      // Birinchi itemmi yoki part o'zgarganini aniqlash
-      const prevItem = data[index - 1];
-      const isNewPart = !prevItem || prevItem.part !== item.part;
-
-      if (item.type === 'text-multi') {
-        const key = `${item.part}-${item.questionText}`;
-        if (!groupedTextMulti[key]) {
-          groupedTextMulti[key] = {
-            ...item,
-            showPartHeader: isNewPart,
-            userAnswersWithNumbers: [],
-          };
-        }
-        groupedTextMulti[key].userAnswersWithNumbers.push({
-          number: item.questionNumber,
-          answer: safeParse(item.userAnswer),
-        });
-      } else {
-        result.push({
-          ...item,
-          showPartHeader: isNewPart,
-        });
-      }
+  const result = [];
+  data.forEach((item, index) => {
+    const prevItem = data[index - 1];
+    const isNewPart = !prevItem || prevItem.part !== item.part;
+    result.push({
+      ...item,
+      showPartHeader: isNewPart,
     });
+  });
 
-    // Guruhi qilingan text-multi savollarni natija massiviga qo'shish
-    const textMultiItems = Object.values(groupedTextMulti).map(group => ({
-        ...group,
-        userAnswer: group.userAnswersWithNumbers,
-    }));
-    
-    // Natijalarni to'g'ri tartibda birlashtiramiz
-    let finalResult = [...result, ...textMultiItems];
-    finalResult.sort((a, b) => a.questionNumber - b.questionNumber);
-
-    return finalResult;
-  }, [data]);
+  // questionNumber bo‘yicha sort qilamiz
+  result.sort((a, b) => (a.questionNumber || 0) - (b.questionNumber || 0));
+  return result;
+}, [data]);
 
   if (isLoading) {
     return <Page><p style={{ textAlign: 'center', color: '#718096' }}>Yuklanmoqda...</p></Page>;
@@ -213,50 +191,33 @@ const ReadingAnswer = () => {
 
       {filteredItems.map((item) => {
         const options = Array.isArray(safeParse(item.options)) ? safeParse(item.options) : [];
-        const userAnswer = item.type === 'text-multi' ? item.userAnswer : safeParse(item.userAnswer);
+        const userAnswer = safeParse(item.userAnswer);
         const isMissing = !userAnswer || userAnswer === 'jAVOB BER' || userAnswer === '';
 
         return (
           <Card key={item.id}>
             {item.showPartHeader && <PartLabel>{item.part.toUpperCase()}</PartLabel>}
 
-            {/* text-multi uchun maxsus format */}
-            {item.type === 'text-multi' ? (
-              <Question>
-                {renderTextMulti(item.questionText, userAnswer)}
-              </Question>
-            ) : (
-              <Question>
-                <strong>{item.questionNumber}.</strong> {item.questionText}
-              </Question>
-            )}
+            <Question>
+              <strong>{item.questionNumber}.</strong> {item.questionText}
+            </Question>
 
-            {/* Oddiy savollar uchun foydalanuvchi javobi (text-multi emas) */}
-            {item.type !== 'text-multi' && (
-              <div>
-                <AnswerLabel>Javob:</AnswerLabel>
-                {isMissing ? (
-                  <AnswerValue missing>javob berilmagan</AnswerValue>
-                ) : Array.isArray(userAnswer) ? (
-                  userAnswer.map((ans, i) => <AnswerValue key={i}>{ans}</AnswerValue>)
-                ) : (
-                  <AnswerValue>{userAnswer}</AnswerValue>
-                )}
-              </div>
-            )}
+            <div>
+              <AnswerLabel>Javob:</AnswerLabel>
+              {isMissing ? (
+                <AnswerValue missing>javob berilmagan</AnswerValue>
+              ) : (
+                <AnswerValue>{userAnswer}</AnswerValue>
+              )}
+            </div>
 
             {['radio', 'select', 'checkbox'].includes(item.type) && options.length > 0 && (
               <OptionsList>
-                {options.map((opt) => {
-                  const isCorrect = Array.isArray(userAnswer)
-                    ? userAnswer.includes(opt)
-                    : userAnswer === opt;
-                  return (
-                    <Option key={opt} isCorrect={isCorrect}>
-                      {opt}
-                    </Option>
-                  );
-                })}
+                {options.map((opt, idx) => (
+                  <Option key={opt + '-' + idx} isCorrect={userAnswer === opt}>
+                    {opt}
+                  </Option>
+                ))}
               </OptionsList>
             )}
           </Card>

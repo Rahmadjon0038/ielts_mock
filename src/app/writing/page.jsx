@@ -40,20 +40,28 @@ function Writing() {
   const timerMutation = useAddtimer();
   const { data: timer, isLoading: timerLoading, error: timerError } = useGetTimer(user?.user?.id, section, latestMonth?.id)  // vaqtni olish
   Cookies.set('activemonth', latestMonth?.id)
-
-  useEffect(() => {
-    if (user?.user?.id && section) {
-      timerMutation.mutate({ userId: user?.user?.id, section: section, monthId: latestMonth?.id });
-    }
-  }, []);
-
-  const untied = {
+ const untied = {
     monthId: latestMonth?.id,
     userId: user?.user?.id,
     section: section,
   }
   const { data, isLoading, error } = useGetUntied(untied); // bu yechilgan malumotni olish
 
+ useEffect(() => {
+  // writingTask borligini va hali submit qilinmaganini tekshiramiz
+  if (
+    user?.user?.id &&
+    section &&
+    writingTask &&
+    Object.keys(writingTask).length > 0 &&
+    !data?.submitted
+  ) {
+    timerMutation.mutate({ userId: user?.user?.id, section: section, monthId: latestMonth?.id });
+  }
+  // else: timer boshlanmaydi
+}, [user?.user?.id, section, latestMonth?.id, writingTask, data?.submitted]);
+
+ 
   // --------------- untied data --------------
 
   const [activeTab, setActiveTab] = useState('task1')

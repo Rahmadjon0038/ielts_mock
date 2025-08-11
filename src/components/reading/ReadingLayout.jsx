@@ -12,6 +12,7 @@ import TimerModal from '../Timer/TimerComponent';
 import Countdown from 'react-countdown';
 import { useAddtimer, useGetTimer } from '@/hooks/timer';
 import MiniLoader from '../MiniLoader/MiniLoader';
+import { useAassessment } from '@/hooks/writing';
 
 function ReadingLayout() {
   const { data, isLoading, error, refetch } = useLatestMonth();
@@ -24,6 +25,10 @@ function ReadingLayout() {
   const timerMutation = useAddtimer();
   const { data: timer, isLoading: timerLoading, error: timerError } = useGetTimer(user?.user?.id, section, data?.id)  // vaqtni olish
 
+  // ------ baxolash ------------------------
+  const setAassessment = useAassessment()
+
+  const paramdata = { id: data?.id, userid: user?.user?.id }
   useEffect(() => {
     if (user?.user?.id && section) {
       timerMutation.mutate({ userId: user?.user?.id, section: section, monthId: data?.id });
@@ -34,6 +39,8 @@ function ReadingLayout() {
   const readingdata = Array.isArray(readingdataS)
     ? readingdataS.sort((a, b) => a.id - b.id)
     : [];
+
+  console.log(readingdataS);
 
   const untied = {
     monthId: data?.id,
@@ -61,48 +68,121 @@ function ReadingLayout() {
   };
 
   const handleSubmit = () => {
-    if (untiedHok?.submitted) return; // oldin yuborgan bo‘lsa qayt
     const result = [];
+    let correctCount = 0;
+    let totalCount = 0;
+
+    function getBandScore(rawScore) {
+      if (rawScore >= 39) return 9;
+      if (rawScore >= 37) return 8.5;
+      if (rawScore >= 35) return 8;
+      if (rawScore >= 33) return 7.5;
+      if (rawScore >= 30) return 7;
+      if (rawScore >= 27) return 6.5;
+      if (rawScore >= 23) return 6;
+      if (rawScore >= 19) return 5.5;
+      if (rawScore >= 15) return 5;
+      if (rawScore >= 13) return 4.5;
+      if (rawScore >= 10) return 4;
+      if (rawScore >= 7) return 3.5;
+      if (rawScore >= 5) return 3;
+      if (rawScore >= 3) return 2.5;
+      return 0;
+    }
+
+    function isCorrect(userAns, correctAns) {
+      if (typeof userAns !== 'string' || typeof correctAns !== 'string') return false;
+      return userAns.trim().toLowerCase() === correctAns.trim().toLowerCase();
+    }
 
     readingdata?.forEach((part, partIndex) => {
       part?.question?.forEach((section) => {
         section?.questionsTask?.forEach((q) => {
-          if (q.type === 'text-multi' && Array.isArray(q.numbers)) {
-            q.numbers.forEach((num) => {
+          // 1. TABLE: table.rows[].answer asosiy!
+          if (q.type === 'table' && q.table?.[0]?.rows?.length) {
+            q.table[0].rows.forEach((row) => {
+              const userAns = answers[partIndex]?.[`testNum${row.number}`] || '';
+              const correctAns = row.answer || '';
+              result.push({
+                part: part.part,
+                questionNumber: row.number,
+                questionText: row.question,
+                userAnswer: userAns,
+                correctAnswer: correctAns,
+                type: q.type,
+                options: [],
+              });
+              totalCount++;
+              if (userAns.trim() && isCorrect(userAns, correctAns)) {
+                correctCount++;
+              }
+            });
+          }
+          // 2. Multi-text (numbers va answer array bor)
+          else if (q.type === 'text-multi' && Array.isArray(q.numbers) && Array.isArray(q.answer)) {
+            q.numbers.forEach((num, idx) => {
+              const userAns = answers[partIndex]?.[`testNum${num}`] || '';
+              const correctAns = q.answer[idx] || '';
               result.push({
                 part: part.part,
                 questionNumber: num,
                 questionText: q.question,
-                userAnswer: answers[partIndex]?.[`testNum${num}`] || null,
+                userAnswer: userAns,
+                correctAnswer: correctAns,
                 type: q.type,
                 options: q.options || [],
               });
+              totalCount++;
+              if (userAns.trim() && isCorrect(userAns, correctAns)) {
+                correctCount++;
+              }
             });
-          } else if (q.type === 'table' && Array.isArray(q.numbers)) {
-            q.numbers.forEach((num) => {
-              const row = q.table?.[0]?.rows?.find((r) => r.number === num);
+          }
+          // 3. TABLE yoki multi-answer savollar (numbers va answers array bor)
+          else if (Array.isArray(q.numbers) && Array.isArray(q.answers) && q.answers.length) {
+            q.numbers.forEach((num, idx) => {
+              const correctAns = q.answers[idx]?.answer || '';
+              const userAns = answers[partIndex]?.[`testNum${num}`] || '';
               result.push({
                 part: part.part,
                 questionNumber: num,
-                questionText: row?.question || null,
-                userAnswer: answers[partIndex]?.[`testNum${num}`] || null,
+                questionText: q.answers[idx]?.question || '',
+                userAnswer: userAns,
+                correctAnswer: correctAns,
                 type: q.type,
-                options: [],
+                options: q.options || [],
               });
+              totalCount++;
+              if (userAns.trim() && isCorrect(userAns, correctAns)) {
+                correctCount++;
+              }
             });
-          } else {
+          }
+          // 4. Oddiy radio/select savollar (number va answer bor)
+          else if (typeof q.number === 'number' && typeof q.answer === 'string') {
+            const userAns = answers[partIndex]?.[`testNum${q.number}`] || '';
+            const correctAns = q.answer;
             result.push({
               part: part.part,
               questionNumber: q.number,
               questionText: q.question,
-              userAnswer: answers[partIndex]?.[`testNum${q.number}`] || null,
+              userAnswer: userAns,
+              correctAnswer: correctAns,
               type: q.type,
               options: q.options || [],
             });
+            totalCount++;
+            if (userAns.trim() && isCorrect(userAns, correctAns)) {
+              correctCount++;
+            }
           }
         });
       });
     });
+
+    const bandScore = getBandScore(correctCount);
+    console.log(`To'g'ri javoblar soni: ${correctCount} / ${totalCount}`);
+    console.log('Batafsil natijalar:', result);
 
     mutate({
       userId,
@@ -110,10 +190,14 @@ function ReadingLayout() {
       questions: result,
       onSucess: (data) => {
         untiedmutation.mutate(untied);
+        setAassessment.mutate({
+            section,
+            score: bandScore,
+            comment:"Baxo qo'yildi kamchiliklar admin toponidan tuzatiladi",
+            paramdata,
+          })
       },
     });
-
-
   };
   const endTime = useMemo(() => {
     if (!timer?.startTime) return null; // hali kelmagan bo‘lsa
@@ -129,9 +213,6 @@ function ReadingLayout() {
   };
 
 
-  //  const { data: readingdata, isLoading: readingLoading, error: readingLoader } 
-
-
   if (readingLoading || readingLoading) {
     return <div style={{ position: 'relative', height: '500px' }}><Loader /></div>
   }
@@ -144,224 +225,224 @@ function ReadingLayout() {
   return (
     <>
       {
-        untiedHok?.submitted ?
-          <Untied />
-          :
-          <div>
-            <Times>
-              <p>
-                {endTime ? (
-                  <Countdown date={endTime} renderer={renderer} />
-                ) : (
-                  <MiniLoader />
-                )}
+        // untiedHok?.submitted ?
+        //   <Untied />
+        //   :
+        <div>
+          <Times>
+            <p>
+              {endTime ? (
+                <Countdown date={endTime} renderer={renderer} />
+              ) : (
+                <MiniLoader />
+              )}
 
-              </p>
-            </Times>
-            <Introduction>
-              <b>{parts?.part}</b>
-              <p>{parts?.intro}</p>
-            </Introduction>
+            </p>
+          </Times>
+          <Introduction>
+            <b>{parts?.part}</b>
+            <p>{parts?.intro}</p>
+          </Introduction>
 
-            <Container>
-              <LeftBox>
-                <h3>{parts?.textTitle}</h3>
-                <p>{parts?.text}</p>
-              </LeftBox>
+          <Container>
+            <LeftBox>
+              <h3>{parts?.textTitle}</h3>
+              <p>{parts?.text}</p>
+            </LeftBox>
 
-              <RightBox>
-                <b>{parts?.question?.questionTitle}</b>
-                <p>{parts?.question?.questionIntro}</p>
-                <div>
-                  {parts?.question?.map((section, sectionIdx) => (
-                    <div key={sectionIdx} className="mb-6">
-                      <h3 className="question-title">{section?.questionTitle}</h3>
-                      <p className="text-gray-600 mb-4">{section?.questionIntro}</p>
+            <RightBox>
+              <b>{parts?.question?.questionTitle}</b>
+              <p>{parts?.question?.questionIntro}</p>
+              <div>
+                {parts?.question?.map((section, sectionIdx) => (
+                  <div key={sectionIdx} className="mb-6">
+                    <h3 className="question-title">{section?.questionTitle}</h3>
+                    <p className="text-gray-600 mb-4">{section?.questionIntro}</p>
 
-                      {section?.questionsTask?.map((item) => (
-                        <div key={item?.id} className="mb-4">
-                          {/* TEXT-MULTI TYPE */}
-                          {item?.type === 'text-multi' ? (
-                            <div className="whitespace-pre-wrap leading-8">
-                              {(() => {
-                                const parts = item?.question.split('[]');
-                                const inputs = item?.numbers || [];
-                                return parts.map((part, idx) => (
-                                  <span key={idx}>
-                                    <span className="input-text">{part}</span>
-                                    {idx < inputs.length && (
-                                      <>
-                                        <label className="inline-block font-semibold mr-1">
-                                          <b>{inputs[idx]}</b>.
-                                        </label>
-                                        <Input
-                                          type="text"
-                                          className="inline-block border border-gray-300 rounded px-2 py-1 mx-1 w-40"
-                                          value={answers[partReplacement]?.[`testNum${inputs[idx]}`] || ''}
-                                          onChange={(e) => handleAnswerChange(inputs[idx], e.target.value)}
-                                        />
-                                      </>
-                                    )}
-                                  </span>
-                                ));
-                              })()}
+                    {section?.questionsTask?.map((item) => (
+                      <div key={item?.id} className="mb-4">
+                        {/* TEXT-MULTI TYPE */}
+                        {item?.type === 'text-multi' ? (
+                          <div className="whitespace-pre-wrap leading-8">
+                            {(() => {
+                              const parts = item?.question.split('[]');
+                              const inputs = item?.numbers || [];
+                              return parts.map((part, idx) => (
+                                <span key={idx}>
+                                  <span className="input-text">{part}</span>
+                                  {idx < inputs.length && (
+                                    <>
+                                      <label className="inline-block font-semibold mr-1">
+                                        <b>{inputs[idx]}</b>.
+                                      </label>
+                                      <Input
+                                        type="text"
+                                        className="inline-block border border-gray-300 rounded px-2 py-1 mx-1 w-40"
+                                        value={answers[partReplacement]?.[`testNum${inputs[idx]}`] || ''}
+                                        onChange={(e) => handleAnswerChange(inputs[idx], e.target.value)}
+                                      />
+                                    </>
+                                  )}
+                                </span>
+                              ));
+                            })()}
+                          </div>
+                        )
+                          // TABLE TYPE
+                          : item?.type === 'table' ? (
+                            <div className="overflow-x-auto">
+                              <Tables borde='1' className="">
+                                <thead>
+                                  <tr className="bg-gray-100">
+                                    <th className="px-3 py-2 border">#</th>
+                                    <th className="px-3 py-2 border"></th>
+                                    <th className="px-3 py-2 border"></th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {item?.table?.[0]?.rows?.map((row, index) => (
+                                    <tr key={index}>
+                                      <td className="px-3 py-2 border text-center">{row.number}</td>
+                                      <td className="px-3 py-2 border">
+                                        {row.question?.split('[]').map((part, idx, arr) => (
+                                          <span key={idx}>
+                                            {part}
+                                            {idx !== arr.length - 1 && (
+                                              <Input
+                                                type="text"
+                                                className="border border-gray-300 rounded px-1 py-0.5 mx-1 w-32 inline-block"
+                                                value={answers[partReplacement]?.[`testNum${row.number}`] || ''}
+                                                onChange={(e) => handleAnswerChange(row.number, e.target.value)}
+                                              />
+                                            )}
+                                          </span>
+                                        ))}
+                                      </td>
+                                      <td className="px-3 py-2 border">
+                                        {!row.question?.includes('[]') && (
+                                          <input
+                                            type="text"
+                                            className="w-full border border-gray-300 rounded px-2 py-1"
+                                            value={answers[partReplacement]?.[`testNum${row.number}`] || ''}
+                                            onChange={(e) => handleAnswerChange(row.number, e.target.value)}
+                                          />
+                                        )}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </Tables>
                             </div>
                           )
-                            // TABLE TYPE
-                            : item?.type === 'table' ? (
-                              <div className="overflow-x-auto">
-                                <Tables borde='1' className="">
-                                  <thead>
-                                    <tr className="bg-gray-100">
-                                      <th className="px-3 py-2 border">#</th>
-                                      <th className="px-3 py-2 border"></th>
-                                      <th className="px-3 py-2 border"></th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {item?.table?.[0]?.rows?.map((row, index) => (
-                                      <tr key={index}>
-                                        <td className="px-3 py-2 border text-center">{row.number}</td>
-                                        <td className="px-3 py-2 border">
-                                          {row.question?.split('[]').map((part, idx, arr) => (
-                                            <span key={idx}>
-                                              {part}
-                                              {idx !== arr.length - 1 && (
-                                                <Input
-                                                  type="text"
-                                                  className="border border-gray-300 rounded px-1 py-0.5 mx-1 w-32 inline-block"
-                                                  value={answers[partReplacement]?.[`testNum${row.number}`] || ''}
-                                                  onChange={(e) => handleAnswerChange(row.number, e.target.value)}
-                                                />
-                                              )}
-                                            </span>
-                                          ))}
-                                        </td>
-                                        <td className="px-3 py-2 border">
-                                          {!row.question?.includes('[]') && (
-                                            <input
-                                              type="text"
-                                              className="w-full border border-gray-300 rounded px-2 py-1"
-                                              value={answers[partReplacement]?.[`testNum${row.number}`] || ''}
-                                              onChange={(e) => handleAnswerChange(row.number, e.target.value)}
-                                            />
-                                          )}
-                                        </td>
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </Tables>
-                              </div>
+                            : item?.type === 'checkbox' ? (
+                              <>
+                                <div className="questionid mb-2">
+                                  <b>{item?.number}.</b> {item?.question}
+                                </div>
+                                <div className="ml-4">
+                                  {item?.options?.map((opt, idx) => (
+                                    <label key={idx} className="block mb-1">
+                                      <div className="answerInput flex items-center gap-2">
+                                        <input
+                                          type="checkbox"
+                                          value={opt}
+                                          checked={answers[partReplacement]?.[`testNum${item.number}`]?.includes(opt) || false}
+                                          onChange={(e) => {
+                                            const prev = answers[partReplacement]?.[`testNum${item.number}`] || [];
+                                            const updated = e.target.checked
+                                              ? [...prev, e.target.value]
+                                              : prev.filter((val) => val !== e.target.value);
+                                            handleAnswerChange(item.number, updated);
+                                          }}
+                                        />
+                                        {opt}
+                                      </div>
+                                    </label>
+                                  ))}
+                                </div>
+                              </>
                             )
-                              : item?.type === 'checkbox' ? (
+                              : (
                                 <>
                                   <div className="questionid mb-2">
-                                    <b>{item?.number}.</b> {item?.question}
+                                    <b>{item?.number}.</b>
+                                    {item?.type === 'text' ? (
+                                      <span>
+                                        {item?.question?.split('[]').map((part, index, arr) => (
+                                          <span key={index}>
+                                            {part}
+                                            {index !== arr.length - 1 && (
+                                              <input
+                                                type="text"
+                                                className="inline-block border border-gray-300 rounded px-2 py-1 mx-1 w-40"
+                                                value={answers[partReplacement]?.[`testNum${item.number}`] || ''}
+                                                onChange={(e) => handleAnswerChange(item.number, e.target.value)}
+                                              />
+                                            )}
+                                          </span>
+                                        ))}
+                                      </span>
+                                    ) : (
+                                      <span>{item?.question}</span>
+                                    )}
                                   </div>
-                                  <div className="ml-4">
-                                    {item?.options?.map((opt, idx) => (
-                                      <label key={idx} className="block mb-1">
+
+                                  {item?.type === 'radio' &&
+                                    item?.options?.map((i, idx) => (
+                                      <label key={idx} className="block ml-4">
                                         <div className="answerInput flex items-center gap-2">
                                           <input
-                                            type="checkbox"
-                                            value={opt}
-                                            checked={answers[partReplacement]?.[`testNum${item.number}`]?.includes(opt) || false}
-                                            onChange={(e) => {
-                                              const prev = answers[partReplacement]?.[`testNum${item.number}`] || [];
-                                              const updated = e.target.checked
-                                                ? [...prev, e.target.value]
-                                                : prev.filter((val) => val !== e.target.value);
-                                              handleAnswerChange(item.number, updated);
-                                            }}
+                                            type="radio"
+                                            name={`question-${item.id}`}
+                                            value={i}
+                                            checked={answers[partReplacement]?.[`testNum${item.number}`] === i}
+                                            onChange={(e) => handleAnswerChange(item.number, e.target.value)}
                                           />
-                                          {opt}
+                                          {i}
                                         </div>
                                       </label>
                                     ))}
-                                  </div>
-                                </>
-                              )
-                                : (
-                                  <>
-                                    <div className="questionid mb-2">
-                                      <b>{item?.number}.</b>
-                                      {item?.type === 'text' ? (
-                                        <span>
-                                          {item?.question?.split('[]').map((part, index, arr) => (
-                                            <span key={index}>
-                                              {part}
-                                              {index !== arr.length - 1 && (
-                                                <input
-                                                  type="text"
-                                                  className="inline-block border border-gray-300 rounded px-2 py-1 mx-1 w-40"
-                                                  value={answers[partReplacement]?.[`testNum${item.number}`] || ''}
-                                                  onChange={(e) => handleAnswerChange(item.number, e.target.value)}
-                                                />
-                                              )}
-                                            </span>
-                                          ))}
-                                        </span>
-                                      ) : (
-                                        <span>{item?.question}</span>
-                                      )}
+
+                                  {item?.type === 'select' && (
+                                    <div className="ml-4 mt-2">
+                                      <Selectted
+                                        className="selectted"
+                                        value={answers[partReplacement]?.[`testNum${item.number}`] || ''}
+                                        onChange={(e) => handleAnswerChange(item.number, e.target.value)}
+                                      >
+                                        <option value="" disabled>Choose the answer</option>
+                                        {item?.options?.map((opt, i) => (
+                                          <option key={i} value={opt}>{opt}</option>
+                                        ))}
+                                      </Selectted>
                                     </div>
+                                  )}
+                                </>
+                              )}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </RightBox>
+          </Container>
 
-                                    {item?.type === 'radio' &&
-                                      item?.options?.map((i, idx) => (
-                                        <label key={idx} className="block ml-4">
-                                          <div className="answerInput flex items-center gap-2">
-                                            <input
-                                              type="radio"
-                                              name={`question-${item.id}`}
-                                              value={i}
-                                              checked={answers[partReplacement]?.[`testNum${item.number}`] === i}
-                                              onChange={(e) => handleAnswerChange(item.number, e.target.value)}
-                                            />
-                                            {i}
-                                          </div>
-                                        </label>
-                                      ))}
-
-                                    {item?.type === 'select' && (
-                                      <div className="ml-4 mt-2">
-                                        <Selectted
-                                          className="selectted"
-                                          value={answers[partReplacement]?.[`testNum${item.number}`] || ''}
-                                          onChange={(e) => handleAnswerChange(item.number, e.target.value)}
-                                        >
-                                          <option value="" disabled>Choose the answer</option>
-                                          {item?.options?.map((opt, i) => (
-                                            <option key={i} value={opt}>{opt}</option>
-                                          ))}
-                                        </Selectted>
-                                      </div>
-                                    )}
-                                  </>
-                                )}
-                        </div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              </RightBox>
-            </Container>
-
-            <Parts>
-              {readingdata?.map((item, index) => (
-                <Partsitem key={index} onClick={() => setPartReplacement(index)}>
-                  <p>{item?.part}</p>
-                </Partsitem>
-              ))}
-            </Parts>
-            <button style={{
-              marginTop: '20px',
-              padding: '10px 20px',
-              background: '#007bff',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '5px',
-            }} onClick={handleSubmit}>Send</button>
-          </div>}
+          <Parts>
+            {readingdata?.map((item, index) => (
+              <Partsitem key={index} onClick={() => setPartReplacement(index)}>
+                <p>{item?.part}</p>
+              </Partsitem>
+            ))}
+          </Parts>
+          <button style={{
+            marginTop: '20px',
+            padding: '10px 20px',
+            background: '#007bff',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+          }} onClick={handleSubmit}>Send</button>
+        </div>}
     </>
   );
 }

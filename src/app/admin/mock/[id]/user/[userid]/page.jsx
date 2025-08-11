@@ -96,6 +96,7 @@ function Page() {
     })  
   }
 
+
   if (isLoading || writingLoading) return <Loader />
 
   return (
