@@ -29,6 +29,7 @@ import TimerModal from '@/components/Timer/TimerComponent';
 import usePreventRefresh from '@/components/BlockendReload';
 import { useAddtimer, useGetTimer } from '@/hooks/timer';
 import MiniLoader from '@/components/MiniLoader/MiniLoader';
+
 function Listening() {
   const [activeTab, setActiveTab] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -127,48 +128,75 @@ function Listening() {
     }
   };
 
-  const handleSubmit = () => {
-    // if (untieddata.submitted) return;
-    const submissionData = {
-      monthId: latesMonth?.id,
-      userId: user?.user?.id,
-      answers: [],
-    };
+ 
 
-    data.sections.forEach((section, tabIndex) => {
-      section.question.forEach((questionGroup) => {
-        questionGroup.questionsTask.forEach((task) => {
-          const questionObj = {
-            questionNumber: task.number,
-            questionText: task.question,
-            type: task.type,
-            userAnswers: [],
-            options: task.options || [],
-          };
+const handleSubmit = () => {
+  const submissionData = {
+    monthId: latesMonth?.id,
+    userId: user?.user?.id,
+    answers: [],
+  };
 
-          if (task.type === 'text') {
-            const inputCount = (task.question.match(/\[\]/g) || []).length;
-            for (let i = 0; i < inputCount; i++) {
-              const key = `${tabIndex}-${task.number}-${i}`;
-              questionObj.userAnswers.push(answers[key] || '');
-            }
-          } else {
-            const key = `${tabIndex}-${task.number}`;
+  data.sections.forEach((section, tabIndex) => {
+    section.question.forEach((questionGroup) => {
+      questionGroup.questionsTask.forEach((task) => {
+        const questionObj = {
+          questionNumber: task.number,
+          questionText: task.question,
+          type: task.type,
+          userAnswers: [],
+          correctAnswer: task.answer, // admin javobi
+          options: task.options || [],
+        };
+
+        // Har qanday turdagi savollar uchun javob yig'ish
+        if (task.type === 'text') {
+          const inputCount = (task.question.match(/\[\]/g) || []).length;
+          for (let i = 0; i < inputCount; i++) {
+            const key = `${tabIndex}-${task.number}-${i}`;
             questionObj.userAnswers.push(answers[key] || '');
           }
+        } else {
+          const key = `${tabIndex}-${task.number}`;
+          questionObj.userAnswers.push(answers[key] || '');
+        }
 
-          submissionData.answers.push(questionObj);
-        });
+        submissionData.answers.push(questionObj);
       });
     });
+  });
 
-    mutation.mutate(submissionData,{
-        onSuccess: (data) => {
-          untiedmutation.mutate(untied)
-        }
-      }
-    );
-  };
+  // Tekshirish
+  let correctCount = 0;
+  let wrongCount = 0;
+
+  submissionData.answers.forEach((q) => {
+    // Admin javobi va user javobini array bo‘lsa ham tekshiradi
+    const userAns = Array.isArray(q.userAnswers)
+      ? q.userAnswers.map(a => a.toString().toLowerCase().trim()).join(',')
+      : (q.userAnswers || '').toString().toLowerCase().trim();
+
+    const correctAns = Array.isArray(q.correctAnswer)
+      ? q.correctAnswer.map(a => a.toString().toLowerCase().trim()).join(',')
+      : (q.correctAnswer || '').toString().toLowerCase().trim();
+
+    if (userAns === correctAns) {
+      correctCount++;
+      console.log(`✅ ${q.questionNumber}-savol: To'g'ri`);
+    } else {
+      wrongCount++;
+    }
+  });
+
+  console.log(`\nNatija: ${correctCount} ta to'g'ri, ${wrongCount} ta noto'g'ri`);
+
+  mutation.mutate(submissionData, {
+    onSuccess: () => {
+      untiedmutation.mutate(untied);
+    }
+  });
+};
+
 
   if (monthLoading) {
     return <div style={{ position: 'relative', height: '500px' }}><Loader /></div>
@@ -178,13 +206,15 @@ function Listening() {
     return <NoResult writing={'writing'} message="❌ There are no listening tests." />
   }
 
+
+
   return (
     <div style={{ minHeight: '100vh' }}>
       <GlobalContainer>
         {
-          untieddata?.submitted ?
-            <Untied />
-            :
+          // untieddata?.submitted ?
+          //   <Untied />
+          //   :
             <div>
               <Times>
                 <p>

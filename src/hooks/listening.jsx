@@ -2,6 +2,28 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { instance } from "./api";
 import { getNotify } from "./notify";
 const notify = getNotify()
+
+
+
+
+const getListeningMonths = async (monthId, userId) => {
+    const response = await instance.get(`/api/listening/getmonths/${monthId}/${userId}`);
+    return response.data;
+};
+
+export const useGetListeningMonths = ({ userId, monthId }) => {
+    const { data, isLoading, error, refetch } = useQuery({
+        queryKey: ['listeningMonths', userId, monthId],
+        queryFn: () => getListeningMonths(monthId, userId),
+        enabled: !!userId && !!monthId // faqat userId va monthId mavjud bo'lsa ishlaydi
+    });
+    return { data, isLoading, error, refetch };
+};
+
+
+
+
+
 // --------------------- add month ----------------
 // ➕ Javoblarni yuborish
 const addListeningAnswers = async (answersData) => {
