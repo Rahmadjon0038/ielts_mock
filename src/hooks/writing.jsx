@@ -143,7 +143,7 @@ export const useGetAllusersRatings = ({ monthId, userId }) => {
 const assessment = async (data) => {
 
   const { comment, score, section, paramdata: { id, userid } } = data
-  console.log('API data:', { comment, score, section });
+  // console.log('API data:', { comment, score, section });
   const response = await instance.post(`/api/mock/writing/setraitings/${id}/${userid}`, { comment, score, section });
   return response.data;
 };

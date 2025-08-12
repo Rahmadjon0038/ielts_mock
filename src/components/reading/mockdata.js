@@ -363,7 +363,7 @@
 //                 "number": 15,
 //                 "type": "radio",
 //                 "question": "beginning to choose a future career",
-//                 "options": ["A early adolescence", "B middle adolescence", "B middle adolescence"]
+//                 "options": ["A early adolescence", "B middle adolescence", "c middle adolescence"]
 
 
 //               },

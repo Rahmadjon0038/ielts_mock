@@ -13,6 +13,7 @@ import Countdown from 'react-countdown';
 import { useAddtimer, useGetTimer } from '@/hooks/timer';
 import MiniLoader from '../MiniLoader/MiniLoader';
 import { useAassessment } from '@/hooks/writing';
+import { TextBlock } from '@/globalStyle';
 
 function ReadingLayout() {
   const { data, isLoading, error, refetch } = useLatestMonth();
@@ -28,28 +29,37 @@ function ReadingLayout() {
   // ------ baxolash ------------------------
   const setAassessment = useAassessment()
 
-  const paramdata = { id: data?.id, userid: user?.user?.id }
-  useEffect(() => {
-    if (user?.user?.id && section) {
-      timerMutation.mutate({ userId: user?.user?.id, section: section, monthId: data?.id });
-    }
-  }, []);
-
-
-  const readingdata = Array.isArray(readingdataS)
-    ? readingdataS.sort((a, b) => a.id - b.id)
-    : [];
-
-  console.log(readingdataS);
-
   const untied = {
     monthId: data?.id,
     userId: user?.user?.id,
     section: section,
   }
   const untiedmutation = useAddUntied() //  bolimni yechgani haqida malumot
-
   const { data: untiedHok } = useGetUntied(untied); // 
+
+  const paramdata = { id: data?.id, userid: user?.user?.id }
+  useEffect(() => {
+    if (
+      user?.user?.id &&
+      section &&
+      readingdataS &&
+      !untiedHok?.submitted
+    ) {
+      timerMutation.mutate({
+        userId: user.user.id,
+        section,
+        monthId: data?.id
+      });
+    }
+  }, [user?.user?.id, section, readingdataS, untiedHok?.submitted, data?.id]);
+
+
+
+  const readingdata = Array.isArray(readingdataS)
+    ? readingdataS.sort((a, b) => a.id - b.id)
+    : [];
+
+
 
   const [partReplacement, setPartReplacement] = useState(0);
   const parts = readingdata && readingdata[partReplacement];
@@ -100,6 +110,7 @@ function ReadingLayout() {
         section?.questionsTask?.forEach((q) => {
           // 1. TABLE: table.rows[].answer asosiy!
           if (q.type === 'table' && q.table?.[0]?.rows?.length) {
+
             q.table[0].rows.forEach((row) => {
               const userAns = answers[partIndex]?.[`testNum${row.number}`] || '';
               const correctAns = row.answer || '';
@@ -119,25 +130,33 @@ function ReadingLayout() {
             });
           }
           // 2. Multi-text (numbers va answer array bor)
-          else if (q.type === 'text-multi' && Array.isArray(q.numbers) && Array.isArray(q.answer)) {
+          else if (q.type === 'text-multi') {
+            const correctAnswers = Array.isArray(q.answer) ? q.answer : JSON.parse(q.answer || "[]");
+            const fullQuestionText = q.question;
+
             q.numbers.forEach((num, idx) => {
               const userAns = answers[partIndex]?.[`testNum${num}`] || '';
-              const correctAns = q.answer[idx] || '';
+              const correctAns = correctAnswers[idx] || '';
+
               result.push({
                 part: part.part,
                 questionNumber: num,
-                questionText: q.question,
+                questionText: fullQuestionText,
                 userAnswer: userAns,
                 correctAnswer: correctAns,
                 type: q.type,
                 options: q.options || [],
               });
+
               totalCount++;
               if (userAns.trim() && isCorrect(userAns, correctAns)) {
                 correctCount++;
               }
             });
           }
+
+
+
           // 3. TABLE yoki multi-answer savollar (numbers va answers array bor)
           else if (Array.isArray(q.numbers) && Array.isArray(q.answers) && q.answers.length) {
             q.numbers.forEach((num, idx) => {
@@ -182,7 +201,8 @@ function ReadingLayout() {
 
     const bandScore = getBandScore(correctCount);
     console.log(`To'g'ri javoblar soni: ${correctCount} / ${totalCount}`);
-    console.log('Batafsil natijalar:', result);
+    // console.log('Batafsil natijalar:', result);
+    console.log(`Band balli: ${bandScore}`);
 
     mutate({
       userId,
@@ -191,14 +211,15 @@ function ReadingLayout() {
       onSucess: (data) => {
         untiedmutation.mutate(untied);
         setAassessment.mutate({
-            section,
-            score: bandScore,
-            comment:"Baxo qo'yildi kamchiliklar admin toponidan tuzatiladi",
-            paramdata,
-          })
+          section,
+          score: bandScore,
+          comment: "Baxo qo'yildi kamchiliklar admin toponidan tuzatiladi",
+          paramdata,
+        })
       },
     });
   };
+
   const endTime = useMemo(() => {
     if (!timer?.startTime) return null; // hali kelmagan bo‘lsa
     return new Date(new Date(timer.startTime).getTime() + 60 * 60 * 1000);
@@ -225,9 +246,9 @@ function ReadingLayout() {
   return (
     <>
       {
-        // untiedHok?.submitted ?
-        //   <Untied />
-        //   :
+        untiedHok?.submitted ?
+          <Untied />
+          :
         <div>
           <Times>
             <p>
@@ -247,7 +268,7 @@ function ReadingLayout() {
           <Container>
             <LeftBox>
               <h3>{parts?.textTitle}</h3>
-              <p>{parts?.text}</p>
+              <TextBlock>{parts?.text}</TextBlock>
             </LeftBox>
 
             <RightBox>
@@ -320,7 +341,7 @@ function ReadingLayout() {
                                       </td>
                                       <td className="px-3 py-2 border">
                                         {!row.question?.includes('[]') && (
-                                          <input
+                                          <Input
                                             type="text"
                                             className="w-full border border-gray-300 rounded px-2 py-1"
                                             value={answers[partReplacement]?.[`testNum${row.number}`] || ''}

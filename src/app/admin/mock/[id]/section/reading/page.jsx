@@ -300,7 +300,7 @@ function ReadingForm() {
                 : type === 'select'
                   ? { type: 'select', question: '', options: [''], answer: '' }
                   : type === 'text-multi'
-                    ? { type: 'text-multi', question: '', answer: [] }
+                    ? { type: 'text-multi', question: '', answer: [] }  // options olib tashlandi
                     : { type: 'table', table: [{ label: '', rows: [{ question: '', answer: '' }] }] }
             ]
           }
@@ -310,6 +310,7 @@ function ReadingForm() {
       : sec
     ))
   }
+
   const removeTask = (sectionIdx, blockIdx, taskIdx) => {
     setSections(sections => sections.map((sec, i) => i === sectionIdx
       ? {

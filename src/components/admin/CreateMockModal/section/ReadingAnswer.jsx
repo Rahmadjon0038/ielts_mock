@@ -155,6 +155,7 @@ const ReadingAnswer = () => {
   const filteredItems = useMemo(() => {
   if (!data) return [];
 
+
   const result = [];
   data.forEach((item, index) => {
     const prevItem = data[index - 1];
