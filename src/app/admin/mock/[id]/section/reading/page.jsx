@@ -600,7 +600,6 @@ function ReadingForm() {
     }
     // console.log('Yig‘ilgan ma’lumot:', data)
     readingAdmuation.mutate(data)
-    alert('Ma’lumotlar console ga chiqarildi!')
   }
 
   // --- Render ---

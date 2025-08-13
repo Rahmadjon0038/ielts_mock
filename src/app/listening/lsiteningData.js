@@ -26,6 +26,7 @@ export const data = {
               "options": [],
               "answer": "mayor"
             },
+            
             {
               "number": 3,
               "type": "text",
@@ -158,8 +159,9 @@ export const data = {
           "questionTitle": "Complete the notes below. Write ONE WORD ONLY for each answer.",
           "questionIntro": "What is it?",
           "questionsTask": [
-            { "number": 31, "type": "text", "question": "• The use of gaming techniques in non-game situations • In business, it is frequently used for [] • Uses people's desire to win a reward • Not a new idea, e.g. incentive schemes were first used by []", "options": [], "answer": "marketing" },
-            { "number": 32, "type": "text", "question": "• The use of gaming techniques in non-game situations • In business, it is frequently used for [] • Uses people's desire to win a reward • Not a new idea, e.g. incentive schemes were first used by []", "options": [], "answer": "retailers" }
+            { "number": 31, "type": "text", "question": "• The use of gaming techniques in non-game situations • In business, it is frequently used for [] • Uses people's desire to win a reward • Not a new idea, e.g. incentive schemes were first used by []", "options": [], "answer": "marketing,salom" },
+
+            { "number": 32, "type": "text", "question": "• The use of gaming techniques in non-game situations • In business, it is frequently used for [] • Uses people's desire to win a reward • Not a new idea, e.g. incentive schemes were first used by []", "options": [], "answer": "retailers, nima gaplar" }
           ]
         },
         {

@@ -8,14 +8,13 @@ const Footer = () => {
       <FooterContent>
         <Logo>Taraqqiyot</Logo>
         <Nav>
-          <NavItem href="/">Bosh sahifa</NavItem>
+          <NavItem href="/">Home</NavItem>
           <NavItem href="#">IELTS Mock</NavItem>
-          <NavItem href="#">Biz haqimizda</NavItem>
-          <NavItem href="#">Aloqa</NavItem>
+          <NavItem href="#">About Us</NavItem>
+          <NavItem href="#">Contact</NavItem>
         </Nav>
         <CopyRight>
-          © {new Date().getFullYear()} Taraqqiyot O‘quv Markazi. Barcha huquqlar
-          himoyalangan.
+          © {new Date().getFullYear()} Tarqqiyot Training Center. All rights reserved.
         </CopyRight>
       </FooterContent>
     </FooterContainer>

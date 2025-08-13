@@ -17,9 +17,7 @@ export const useRegister = () => {
             notify('ok', data.msg)
         },
         onError: (error) => {
-            console.log(error);
-            notify('err', 'Bu foydalanuvchi avvaldan mavjud')
-
+            notify('err', error.response.data.msg)
         }
     })
     return registerMuation
