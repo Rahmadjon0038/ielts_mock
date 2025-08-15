@@ -15,7 +15,7 @@ import {
 } from './style';
 import { GlobalContainer, TextBlock } from '@/globalStyle';
 import { Introduction, Times } from '@/components/reading/style';
-import { useAddListeningAnswers } from '@/hooks/listening';
+import { useAddListeningAnswers, useGetAudioListening } from '@/hooks/listening';
 import { useAuth } from '@/context/userData';
 import { useLatestMonth } from '@/hooks/useLatestMonth';
 import { data } from './lsiteningData';
@@ -34,10 +34,23 @@ import { useAassessment } from '@/hooks/writing';
 
 function Listening() {
   const [activeTab, setActiveTab] = useState(0);
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+
+  // const [audios, setAudios] = useState([
+  //   {id:1, src: '/part1.mp3'},
+  //   {id:2, src: '/part2.mp3'},
+  //   {id:3, src: '/part3.mp3'},
+  //   {id:4, src: '/part4.mp3'},
+  // ]);
+
+  const { data: latesMonth, isLoading: monthLoading } = useLatestMonth()
+  const { data: audios, isLoading: audioLoader, error: audioErr, refetch } = useGetAudioListening({ monthId: latesMonth?.id });
+
+
   const [answers, setAnswers] = useState({});
   const mutation = useAddListeningAnswers()
   const { user } = useAuth()
-  const { data: latesMonth, isLoading: monthLoading } = useLatestMonth()
   const untiedmutation = useAddUntied() //  bolimni yechgani haqida malumot
   const pathname = usePathname()
   const section = pathname.split('/').pop();
@@ -56,25 +69,25 @@ function Listening() {
 
 
 
-  useEffect(() => {
-    if (user?.user?.id && section) {
-      timerMutation.mutate({ userId: user?.user?.id, section: section, monthId: latesMonth?.id });
-    }
-  }, []);
-  usePreventRefresh()
+  // useEffect(() => {
+  //   if (user?.user?.id && section) {
+  //     timerMutation.mutate({ userId: user?.user?.id, section: section, monthId: latesMonth?.id });
+  //   }
+  // }, []);
+  // usePreventRefresh()
 
-  const endTime = useMemo(() => {
-    if (!timer?.startTime) return null; // hali kelmagan bo‘lsa
-    return new Date(new Date(timer.startTime).getTime() + 60 * 60 * 1000);
-  }, [timer?.startTime]);
+  // const endTime = useMemo(() => {
+  //   if (!timer?.startTime) return null; // hali kelmagan bo‘lsa
+  //   return new Date(new Date(timer.startTime).getTime() + 60 * 60 * 1000);
+  // }, [timer?.startTime]);
 
-  const renderer = ({ minutes, seconds, completed }) => {
-    if (completed) {
-      return <TimerModal untieddata={untieddata?.submitted} handleSubmit={handleSubmit} show={true} />;;
-    } else {
-      return <span>{minutes}:{seconds.toString().padStart(2, '0')}</span>;
-    }
-  };
+  // const renderer = ({ minutes, seconds, completed }) => {
+  //   if (completed) {
+  //     return <TimerModal untieddata={untieddata?.submitted} handleSubmit={handleSubmit} show={true} />;;
+  //   } else {
+  //     return <span>{minutes}:{seconds.toString().padStart(2, '0')}</span>;
+  //   }
+  // };
 
   const renderLabelWithInputs = (label, idx, task) => {
     const parts = label.split(/(\[\])/g);
@@ -221,15 +234,17 @@ function Listening() {
 
 
 
+
+  
   return (
     <div style={{ minHeight: '100vh' }}>
       <GlobalContainer>
         {
-          untieddata?.submitted ?
-            <Untied />
-            :
+          // untieddata?.submitted ?
+          //   <Untied />
+          //   :
           <div>
-            <Times>
+            {/* <Times>
               <p>
                 {endTime ? (
                   <>
@@ -238,8 +253,8 @@ function Listening() {
                 ) : (
                   <MiniLoader /> // yoki hech narsa
                 )}
-              </p>
-            </Times>
+            </p>
+            </Times> */}
             <TabContent>
               <Introduction>
                 <h3>{data.sections[activeTab].part}</h3>
@@ -251,17 +266,22 @@ function Listening() {
                 </p>
 
                 <AudioSection>
-                  <audio
-                    key={data.sections[activeTab].audio}
-                    controls
-                    style={{ width: '100%' }}
-                  >
-                    <source
-                      src={data.sections[activeTab].audio}
-                      type="audio/mp3"
-                    />
-                    Your browser does not support the audio element.
-                  </audio>
+                  {audios && audios?.length > 0 ? (
+                    <audio style={{ width: '100%' }}
+                      key={audios[activeTab]?.id || activeTab} // Tab o'zgarsa qayta render bo'ladi
+                      controls
+                    >
+                      <source
+                        src={`${baseUrl}/uploads/audio/${audios[activeTab]?.filename}`}
+                        type={audios[activeTab]?.mimetype}
+                      />
+                      Brauzeringiz audio pleerni qo‘llab-quvvatlamaydi.
+                    </audio>
+                  ) : (
+                    <p>Qo‘shiq yo‘q</p>
+                  )}
+
+
                 </AudioSection>
               </Introduction>
 

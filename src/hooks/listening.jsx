@@ -67,3 +67,47 @@ export const useGetListeningAnswers = ({ userId, monthId }) => {
 
     return { data, isLoading, error, refetch };
 };
+
+
+// --------------------- get audio ----------------
+
+const getAudioListening = async (monthId) => {
+    const response = await instance.get(`/api/audio/get/${monthId}`);
+    return response.data;
+};
+
+export const useGetAudioListening = ({monthId }) => {
+    const { data, isLoading, error, refetch } = useQuery({
+        queryKey: ['audioListening', monthId],
+        queryFn: () => getAudioListening(monthId),
+        enabled: !!monthId // faqat userId va monthId mavjud bo'lsa ishlaydi
+    });
+    return { data, isLoading, error, refetch };
+};
+
+
+const addAudio = async (data) => {
+    console.log(data,'salomat');
+    const response = await instance.post('/api/audio/add', data);
+    return response.data;
+};
+
+export const useAddAudio = () => {
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: addAudio,
+        onSuccess: (data, vars) => {
+            console.log(data, 'Audio muvaffaqiyatli qo\'shildi');
+            if (vars.onSuccess) {
+                vars.onSuccess(data)
+            }
+            queryClient.invalidateQueries({ queryKey: ['audioListening'] });
+        },
+        onError: (error) => {
+            console.log(error);
+        }
+    });
+
+    return mutation;
+};
