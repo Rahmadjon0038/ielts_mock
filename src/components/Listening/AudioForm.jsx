@@ -174,7 +174,7 @@ export default function Audioform() {
                                 </div>
 
                                 <div style={{ marginBottom: '5px', fontWeight: 500, color: '#2c3e50' }}>
-                                    Tanlangan audio: {data[i]?.originalname}
+                                    {/* Tanlangan audio: {data[i]?.originalname} */}
                                 </div>
                                 {data?.[i] && (
 

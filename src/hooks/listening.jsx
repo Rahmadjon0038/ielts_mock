@@ -111,3 +111,29 @@ export const useAddAudio = () => {
 
     return mutation;
 };
+
+
+const deleteAudiosByMonth = async (monthId) => {
+    const response = await instance.delete(`/api/audio/delete/${monthId}`);
+    return response.data;
+};
+
+export const useDeleteAudiosByMonth = () => {
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: deleteAudiosByMonth,
+        onSuccess: (data, vars) => {
+            console.log(data, 'Barcha audio fayllar muvaffaqiyatli o\'chirildi');
+            if (vars.onSuccess) {
+                vars.onSuccess(data);
+            }
+            queryClient.invalidateQueries({ queryKey: ['audioListening'] });
+        },
+        onError: (error) => {
+            console.log('Audio o\'chirishda xatolik:', error);
+        }
+    });
+
+    return mutation;
+};
