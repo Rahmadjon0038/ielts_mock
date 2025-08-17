@@ -122,7 +122,6 @@ export default function Audioform() {
         //   })
         // }
     };
-    console.log('data', data);
 
     return (
         <div >

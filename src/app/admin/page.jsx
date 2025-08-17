@@ -57,39 +57,39 @@ function Adminpage() {
     deleteMonthMuation.mutate(id);
   };
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <div style={{minHeight:'100vh'}}> <Loader /></div>;
 
   return (
-    <GlobalContainer>
-      <BannerComponent info="Mock creation and management page" />
-      <Container>
-        <h2>Monthly Mock Test <CreateMockModal addMock={addMock} /></h2>
-        <CardList>
-          {allMonths?.length > 0 ? (
-            allMonths.map((item) => (
-              <CardItem key={item.id}>
-                <p>ID: {item.id}</p>
-                <CardTitle>{item.month}</CardTitle>
-                <div className="btnbox">
-                  <Link className='link' href={`/admin/mock/${item.id}`}>
-                    <ViewButton>View</ViewButton>
-                  </Link>
-                  <ActiveButton
-                    activemontCookies={activeMockId === item.id}
-                    onClick={() => handleActive(item.id)}
-                  >
-                    {activeMockId === item.id ? 'Active' : 'Inactive'}
-                  </ActiveButton>
-                  <DeleteMock handledelete={handledelete} id={item.id} info={`Be careful when deleting, otherwise the data cannot be restored!`} />
-                </div>
-              </CardItem>
-            ))
-          ) : (
-            <NoResult message="Mock tests are not available." />
-          )}
-        </CardList>
-      </Container>
-    </GlobalContainer>
+      <GlobalContainer>
+        <BannerComponent info="Mock creation and management page" />
+        <Container>
+          <h2>Monthly Mock Test <CreateMockModal addMock={addMock} /></h2>
+          <CardList>
+            {allMonths?.length > 0 ? (
+              allMonths.map((item) => (
+                <CardItem key={item.id}>
+                  <p>ID: {item.id}</p>
+                  <CardTitle>{item.month}</CardTitle>
+                  <div className="btnbox">
+                    <Link className='link' href={`/admin/mock/${item.id}`}>
+                      <ViewButton>View</ViewButton>
+                    </Link>
+                    <ActiveButton
+                      activemontCookies={activeMockId === item.id}
+                      onClick={() => handleActive(item.id)}
+                    >
+                      {activeMockId === item.id ? 'Active' : 'Inactive'}
+                    </ActiveButton>
+                    <DeleteMock handledelete={handledelete} id={item.id} info={`Be careful when deleting, otherwise the data cannot be restored!`} />
+                  </div>
+                </CardItem>
+              ))
+            ) : (
+              <NoResult message="Mock tests are not available." />
+            )}
+          </CardList>
+        </Container>
+      </GlobalContainer>
   );
 }
 

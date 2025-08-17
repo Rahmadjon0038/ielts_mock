@@ -76,7 +76,7 @@ const getAudioListening = async (monthId) => {
     return response.data;
 };
 
-export const useGetAudioListening = ({monthId }) => {
+export const useGetAudioListening = ({ monthId }) => {
     const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['audioListening', monthId],
         queryFn: () => getAudioListening(monthId),
@@ -87,7 +87,7 @@ export const useGetAudioListening = ({monthId }) => {
 
 
 const addAudio = async (data) => {
-    console.log(data,'salomat');
+    console.log(data, 'salomat');
     const response = await instance.post('/api/audio/add', data);
     return response.data;
 };
@@ -137,3 +137,43 @@ export const useDeleteAudiosByMonth = () => {
 
     return mutation;
 };
+
+
+
+// ---------------------- ADD LISTENING - ---------------------
+const addListeningTask = async (data) => {
+    console.log(data,'kelgan data')
+    const response = await instance.post('/api/listening/add', data)
+    return response.data
+}
+
+export const useAddListeningTask = () => {
+    const addListeningMutation = useMutation({
+        mutationFn: addListeningTask,
+        onSuccess: (data) => {
+            console.log(data)
+        },
+        onError: (err) => {
+            console.log(err)
+        }
+    })
+    return addListeningMutation
+}
+
+
+// ---------------------- GET LISTENING - ---------------------
+
+const getListeningTask = async (monthId) => {
+    const response = await instance.get(`/api/listening/get/${monthId}`)
+    return response.data
+}
+
+export const useGetListeningTask = (monthId) => {
+    const { data, error, isLoading } = useQuery({
+        queryKey: ['listeningtask', monthId],  // cache uchun kalit
+        queryFn: () => getListeningTask(monthId), // <-- param bilan chaqiryapmiz
+        enabled: !!monthId, // agar monthId bo‘lsa so‘rov ketadi
+    })
+
+    return { data, error, isLoading }
+}

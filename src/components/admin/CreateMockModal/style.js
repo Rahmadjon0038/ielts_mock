@@ -22,6 +22,10 @@ export const AddBtn = styled.button`
     text-align: center;
     margin: 0 auto;
     width: ${({ modalBtn }) => modalBtn ? '140px' : ''};
+
+      @media(max-width:600px){
+    font-size: 10px;
+  }
 `
 
 export const Form = styled.form`

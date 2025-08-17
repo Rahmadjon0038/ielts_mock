@@ -2,13 +2,19 @@
 import React, { useState } from 'react';
 import { Badge, Button, ButtonGroup, Container, FormContent, FormGroup, FormWrapper, Header, Input, Label, NumberBadge, OptionInput, OptionsList, OptionText, QuestionCard, QuestionHeader, QuestionTitle, Row, SaveButton, SectionCard, SectionHeader, SectionTitle, Subtitle, TaskCard, TaskHeader, TaskType, Textarea, Title } from './style';
 import Audioform from '@/components/Listening/AudioForm';
+import { useAddListeningTask } from '@/hooks/listening';
+import { useParams } from 'next/navigation';
 
 
 export default function ListeningForm() {
+
+  const { id } = useParams()
   const [formData, setFormData] = useState({
-    monthId: new URLSearchParams(window.location.search).get('monthId') || '',
+    monthId: id || '',
     sections: []
   });
+
+  const addListeningMutation = useAddListeningTask()
 
   // Keyingi savol raqamini avtomatik hisoblash
   const getNextQuestionNumber = () => {
@@ -52,7 +58,7 @@ export default function ListeningForm() {
   const updateSection = (sectionIndex, field, value) => {
     setFormData(prev => ({
       ...prev,
-      sections: prev.sections.map((section, index) => 
+      sections: prev.sections.map((section, index) =>
         index === sectionIndex ? { ...section, [field]: value } : section
       )
     }));
@@ -65,10 +71,10 @@ export default function ListeningForm() {
       questionIntro: '',
       questionsTask: []
     };
-    
+
     setFormData(prev => ({
       ...prev,
-      sections: prev.sections.map((section, index) => 
+      sections: prev.sections.map((section, index) =>
         index === sectionIndex ? {
           ...section,
           question: [...section.question, newQuestion]
@@ -81,7 +87,7 @@ export default function ListeningForm() {
   const removeQuestionGroup = (sectionIndex, questionIndex) => {
     setFormData(prev => ({
       ...prev,
-      sections: prev.sections.map((section, index) => 
+      sections: prev.sections.map((section, index) =>
         index === sectionIndex ? {
           ...section,
           question: section.question.filter((_, qIndex) => qIndex !== questionIndex)
@@ -94,10 +100,10 @@ export default function ListeningForm() {
   const updateQuestionGroup = (sectionIndex, questionIndex, field, value) => {
     setFormData(prev => ({
       ...prev,
-      sections: prev.sections.map((section, sIndex) => 
+      sections: prev.sections.map((section, sIndex) =>
         sIndex === sectionIndex ? {
           ...section,
-          question: section.question.map((qGroup, qIndex) => 
+          question: section.question.map((qGroup, qIndex) =>
             qIndex === questionIndex ? { ...qGroup, [field]: value } : qGroup
           )
         } : section
@@ -118,10 +124,10 @@ export default function ListeningForm() {
 
     setFormData(prev => ({
       ...prev,
-      sections: prev.sections.map((section, sIndex) => 
+      sections: prev.sections.map((section, sIndex) =>
         sIndex === sectionIndex ? {
           ...section,
-          question: section.question.map((qGroup, qIndex) => 
+          question: section.question.map((qGroup, qIndex) =>
             qIndex === questionIndex ? {
               ...qGroup,
               questionsTask: [...qGroup.questionsTask, newTask]
@@ -136,10 +142,10 @@ export default function ListeningForm() {
   const removeTask = (sectionIndex, questionIndex, taskIndex) => {
     setFormData(prev => ({
       ...prev,
-      sections: prev.sections.map((section, sIndex) => 
+      sections: prev.sections.map((section, sIndex) =>
         sIndex === sectionIndex ? {
           ...section,
-          question: section.question.map((qGroup, qIndex) => 
+          question: section.question.map((qGroup, qIndex) =>
             qIndex === questionIndex ? {
               ...qGroup,
               questionsTask: qGroup.questionsTask.filter((_, tIndex) => tIndex !== taskIndex)
@@ -154,13 +160,13 @@ export default function ListeningForm() {
   const updateTask = (sectionIndex, questionIndex, taskIndex, field, value) => {
     setFormData(prev => ({
       ...prev,
-      sections: prev.sections.map((section, sIndex) => 
+      sections: prev.sections.map((section, sIndex) =>
         sIndex === sectionIndex ? {
           ...section,
-          question: section.question.map((qGroup, qIndex) => 
+          question: section.question.map((qGroup, qIndex) =>
             qIndex === questionIndex ? {
               ...qGroup,
-              questionsTask: qGroup.questionsTask.map((task, tIndex) => 
+              questionsTask: qGroup.questionsTask.map((task, tIndex) =>
                 tIndex === taskIndex ? { ...task, [field]: value } : task
               )
             } : qGroup
@@ -174,16 +180,16 @@ export default function ListeningForm() {
   const updateOption = (sectionIndex, questionIndex, taskIndex, optionIndex, value) => {
     setFormData(prev => ({
       ...prev,
-      sections: prev.sections.map((section, sIndex) => 
+      sections: prev.sections.map((section, sIndex) =>
         sIndex === sectionIndex ? {
           ...section,
-          question: section.question.map((qGroup, qIndex) => 
+          question: section.question.map((qGroup, qIndex) =>
             qIndex === questionIndex ? {
               ...qGroup,
-              questionsTask: qGroup.questionsTask.map((task, tIndex) => 
+              questionsTask: qGroup.questionsTask.map((task, tIndex) =>
                 tIndex === taskIndex ? {
                   ...task,
-                  options: task.options.map((opt, oIndex) => 
+                  options: task.options.map((opt, oIndex) =>
                     oIndex === optionIndex ? value : opt
                   )
                 } : task
@@ -199,13 +205,13 @@ export default function ListeningForm() {
   const addOption = (sectionIndex, questionIndex, taskIndex) => {
     setFormData(prev => ({
       ...prev,
-      sections: prev.sections.map((section, sIndex) => 
+      sections: prev.sections.map((section, sIndex) =>
         sIndex === sectionIndex ? {
           ...section,
-          question: section.question.map((qGroup, qIndex) => 
+          question: section.question.map((qGroup, qIndex) =>
             qIndex === questionIndex ? {
               ...qGroup,
-              questionsTask: qGroup.questionsTask.map((task, tIndex) => 
+              questionsTask: qGroup.questionsTask.map((task, tIndex) =>
                 tIndex === taskIndex ? {
                   ...task,
                   options: [...task.options, '']
@@ -222,13 +228,13 @@ export default function ListeningForm() {
   const removeOption = (sectionIndex, questionIndex, taskIndex, optionIndex) => {
     setFormData(prev => ({
       ...prev,
-      sections: prev.sections.map((section, sIndex) => 
+      sections: prev.sections.map((section, sIndex) =>
         sIndex === sectionIndex ? {
           ...section,
-          question: section.question.map((qGroup, qIndex) => 
+          question: section.question.map((qGroup, qIndex) =>
             qIndex === questionIndex ? {
               ...qGroup,
-              questionsTask: qGroup.questionsTask.map((task, tIndex) => 
+              questionsTask: qGroup.questionsTask.map((task, tIndex) =>
                 tIndex === taskIndex ? {
                   ...task,
                   options: task.options.filter((_, oIndex) => oIndex !== optionIndex)
@@ -243,13 +249,12 @@ export default function ListeningForm() {
 
   // Form saqlash
   const handleSubmit = () => {
-    console.log('IELTS Listening Test Data:', JSON.stringify(formData, null, 2));
-    alert('Ma\'lumotlar consolega chiqarildi!');
+    addListeningMutation.mutate(formData)
   };
 
   return (
     <Container>
-      <Audioform/>
+      <Audioform />
       <FormWrapper>
         <Header>
           <Title>🎧 IELTS Listening Test Admin</Title>
@@ -328,9 +333,9 @@ export default function ListeningForm() {
               </Row>
 
               {/* Questions */}
-              <div style={{marginTop: '20px'}}>
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
-                  <h3 style={{margin: 0, color: '#2d3748'}}>📋 Savollar</h3>
+              <div style={{ marginTop: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                  <h3 style={{ margin: 0, color: '#2d3748' }}>📋 Savollar</h3>
                   <Button secondary onClick={() => addQuestionGroup(sectionIndex)}>
                     ➕ Savol Guruhi
                   </Button>
@@ -368,9 +373,9 @@ export default function ListeningForm() {
                     </Row>
 
                     {/* Tasks */}
-                    <div style={{marginTop: '15px'}}>
-                      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px'}}>
-                        <span style={{fontWeight: '600', color: '#2d3748'}}>
+                    <div style={{ marginTop: '15px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                        <span style={{ fontWeight: '600', color: '#2d3748' }}>
                           🎯 Vazifalar (Keyingi raqam: {getNextQuestionNumber()})
                         </span>
                         <ButtonGroup>
@@ -389,7 +394,7 @@ export default function ListeningForm() {
                       {questionGroup.questionsTask?.map((task, taskIndex) => (
                         <TaskCard key={taskIndex}>
                           <TaskHeader>
-                            <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                               <TaskType type={task.type}>{task.type}</TaskType>
                               <NumberBadge>№ {task.number}</NumberBadge>
                             </div>
@@ -424,7 +429,7 @@ export default function ListeningForm() {
 
                           {task.type !== 'text' && (
                             <FormGroup>
-                              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px'}}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                                 <Label>Variantlar</Label>
                                 <Button small secondary onClick={() => addOption(sectionIndex, questionIndex, taskIndex)}>
                                   ➕ Variant
@@ -433,7 +438,7 @@ export default function ListeningForm() {
                               <OptionsList>
                                 {task.options?.map((option, optionIndex) => (
                                   <OptionInput key={optionIndex}>
-                                    <span style={{minWidth: '20px', fontWeight: '600', color: '#666'}}>
+                                    <span style={{ minWidth: '20px', fontWeight: '600', color: '#666' }}>
                                       {String.fromCharCode(65 + optionIndex)}:
                                     </span>
                                     <OptionText
@@ -468,7 +473,7 @@ export default function ListeningForm() {
           ))}
 
           {/* Add Section Button */}
-          <div style={{textAlign: 'center', margin: '30px 0'}}>
+          <div style={{ textAlign: 'center', margin: '30px 0' }}>
             <Button secondary onClick={addSection}>
               ➕ Yangi Section Qo'shish
             </Button>

@@ -15,10 +15,10 @@ import {
 } from './style';
 import { GlobalContainer, TextBlock } from '@/globalStyle';
 import { Introduction, Times } from '@/components/reading/style';
-import { useAddListeningAnswers, useGetAudioListening } from '@/hooks/listening';
+import { useAddListeningAnswers, useGetAudioListening, useGetListeningTask } from '@/hooks/listening';
 import { useAuth } from '@/context/userData';
 import { useLatestMonth } from '@/hooks/useLatestMonth';
-import { data } from './lsiteningData';
+// import { data } from './lsiteningData';
 import { useAddUntied, useGetUntied } from '@/hooks/untied';
 import { usePathname } from 'next/navigation';
 import Untied from '@/components/untied';
@@ -37,15 +37,14 @@ function Listening() {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
-  // const [audios, setAudios] = useState([
-  //   {id:1, src: '/part1.mp3'},
-  //   {id:2, src: '/part2.mp3'},
-  //   {id:3, src: '/part3.mp3'},
-  //   {id:4, src: '/part4.mp3'},
-  // ]);
-
   const { data: latesMonth, isLoading: monthLoading } = useLatestMonth()
   const { data: audios, isLoading: audioLoader, error: audioErr, refetch } = useGetAudioListening({ monthId: latesMonth?.id });
+
+  const { data: listeningTask, error: listeningError, isLoading: listeningLoading } = useGetListeningTask(latesMonth?.id)
+
+  const data = listeningTask?.data?.test_data;
+
+
 
 
   const [answers, setAnswers] = useState({});
@@ -216,7 +215,7 @@ function Listening() {
         setAassessment.mutate({
           section,
           score: getBandScore(score),
-          comment: "Baxo qo'yildi kamchiliklar admin toponidan tuzatiladi",
+          comment: "Baholash yakunlandi ✅ Sizning natijangiz tizim tomonidan avtomatik hisoblandi. Agar kamchiliklar bo‘lsa, ular admin tomonidan ko‘rib chiqilib tuzatiladi.",
           paramdata,
         })
       }
@@ -235,7 +234,7 @@ function Listening() {
 
 
 
-  
+
   return (
     <div style={{ minHeight: '100vh' }}>
       <GlobalContainer>
@@ -253,16 +252,16 @@ function Listening() {
                 ) : (
                   <MiniLoader /> // yoki hech narsa
                 )}
-            </p>
-            </Times> */}
+            </p> */}
+            {/* </Times> */}
             <TabContent>
               <Introduction>
-                <h3>{data.sections[activeTab].part}</h3>
-                <p>{data.sections[activeTab].intro}</p>
+                <h3>{data?.sections[activeTab]?.part}</h3>
+                <p>{data?.sections[activeTab]?.intro}</p>
                 <p>
-                  <strong>{data.sections[activeTab].textTitle}</strong>
+                  <strong>{data?.sections[activeTab]?.textTitle}</strong>
                   <br />
-                  {data.sections[activeTab].text}
+                  {data?.sections[activeTab]?.text}
                 </p>
 
                 <AudioSection>
@@ -286,17 +285,17 @@ function Listening() {
               </Introduction>
 
               <QuestionBox>
-                {data.sections[activeTab].question.map((questionGroup, qIdx) => (
+                {data?.sections[activeTab]?.question?.map((questionGroup, qIdx) => (
                   <div key={qIdx}>
-                    <h4>{questionGroup.questionTitle}</h4>
-                    <p>{questionGroup.questionIntro}</p>
-                    {questionGroup.questionsTask.map((task, idx) => (
+                    <h4>{questionGroup?.questionTitle}</h4>
+                    <p>{questionGroup?.questionIntro}</p>
+                    {questionGroup?.questionsTask?.map((task, idx) => (
                       <QuestionItem key={idx}>
                         <p>
-                          <strong>{task.number}.</strong>{' '}
+                          <strong>{task?.number}.</strong>{' '}
                           {task.type === 'text'
-                            ? renderLabelWithInputs(task.question, idx, task)
-                            : task.question}
+                            ? renderLabelWithInputs(task?.question, idx, task)
+                            : task?.question}
                         </p>
 
                         {task.type === 'radio' && (
@@ -305,14 +304,14 @@ function Listening() {
                               <label key={i}>
                                 <input
                                   type="radio"
-                                  name={`radio-${activeTab}-${task.number}`}
+                                  name={`radio-${activeTab}-${task?.number}`}
                                   value={opt}
                                   checked={
-                                    answers[`${activeTab}-${task.number}`] === opt
+                                    answers[`${activeTab}-${task?.number}`] === opt
                                   }
                                   onChange={(e) =>
                                     handleAnswerChange(
-                                      task.number,
+                                      task?.number,
                                       e.target.value,
                                       activeTab
                                     )
@@ -324,9 +323,9 @@ function Listening() {
                           </RadioGroup>
                         )}
 
-                        {task.type === 'select' && (
+                        {task?.type === 'select' && (
                           <Select
-                            value={answers[`${activeTab}-${task.number}`] || ''}
+                            value={answers[`${activeTab}-${task?.number}`] || ''}
                             onChange={(e) =>
                               handleAnswerChange(
                                 task.number,
@@ -336,7 +335,7 @@ function Listening() {
                             }
                           >
                             <option value="">Select</option>
-                            {task.options.map((opt, i) => (
+                            {task?.options?.map((opt, i) => (
                               <option key={i} value={opt}>
                                 {opt}
                               </option>
@@ -351,13 +350,13 @@ function Listening() {
             </TabContent>
 
             <TabContainer>
-              {data.sections.map((section, index) => (
+              {data?.sections?.map((section, index) => (
                 <TabButton
                   key={index}
                   onClick={() => setActiveTab(index)}
                   $active={activeTab === index}
                 >
-                  {section.part}
+                  {section?.part}
                 </TabButton>
               ))}
             </TabContainer>
