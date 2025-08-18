@@ -342,7 +342,7 @@ export default function ListeningForm() {
 
           {/* Clear localStorage Button - Debug uchun */}
           <FormGroup>
-            <Button 
+            {/* <Button 
               danger 
               small 
               onClick={() => {
@@ -355,7 +355,7 @@ export default function ListeningForm() {
               }}
             >
               🗑️ localStorage ni tozalash (Debug)
-            </Button>
+            </Button> */}
           </FormGroup>
 
           {/* Sections */}
