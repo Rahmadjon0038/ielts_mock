@@ -142,7 +142,7 @@ export const useDeleteAudiosByMonth = () => {
 
 // ---------------------- ADD LISTENING - ---------------------
 const addListeningTask = async (data) => {
-    console.log(data,'kelgan data')
+    console.log(data, 'kelgan data')
     const response = await instance.post('/api/listening/add', data)
     return response.data
 }
@@ -151,9 +151,11 @@ export const useAddListeningTask = () => {
     const addListeningMutation = useMutation({
         mutationFn: addListeningTask,
         onSuccess: (data) => {
+            notify('ok', 'successful')
             console.log(data)
         },
         onError: (err) => {
+            notify('err', 'Error loading data')
             console.log(err)
         }
     })

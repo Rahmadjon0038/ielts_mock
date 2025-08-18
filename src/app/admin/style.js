@@ -94,7 +94,6 @@ export const SectionList = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1.5rem;
-  background-color: orange;
 `
 export const Title = styled.h2`
 

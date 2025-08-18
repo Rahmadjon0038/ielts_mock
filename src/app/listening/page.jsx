@@ -13,7 +13,7 @@ import {
   TabContainer,
   TabContent,
 } from './style';
-import { GlobalContainer, TextBlock } from '@/globalStyle';
+import { GlobalContainer } from '@/globalStyle';
 import { Introduction, Times } from '@/components/reading/style';
 import { useAddListeningAnswers, useGetAudioListening, useGetListeningTask } from '@/hooks/listening';
 import { useAuth } from '@/context/userData';
@@ -45,8 +45,6 @@ function Listening() {
   const data = listeningTask?.data?.test_data;
 
 
-
-
   const [answers, setAnswers] = useState({});
   const mutation = useAddListeningAnswers()
   const { user } = useAuth()
@@ -67,26 +65,36 @@ function Listening() {
   const setAassessment = useAassessment()
 
 
+  useEffect(() => {
+    if (
+      user?.user?.id &&
+      section &&
+      data &&
+      audios &&
+      !untieddata?.submitted // ✅ agar hali yechilmagan bo‘lsa
+    ) {
+      timerMutation.mutate({
+        userId: user?.user?.id,
+        section: section,
+        monthId: latesMonth?.id,
+      });
+    }
+  }, [user?.user?.id, section, data, audios, untieddata?.submitted, latesMonth?.id]);
 
-  // useEffect(() => {
-  //   if (user?.user?.id && section) {
-  //     timerMutation.mutate({ userId: user?.user?.id, section: section, monthId: latesMonth?.id });
-  //   }
-  // }, []);
-  // usePreventRefresh()
+  usePreventRefresh()
 
-  // const endTime = useMemo(() => {
-  //   if (!timer?.startTime) return null; // hali kelmagan bo‘lsa
-  //   return new Date(new Date(timer.startTime).getTime() + 60 * 60 * 1000);
-  // }, [timer?.startTime]);
+  const endTime = useMemo(() => {
+    if (!timer?.startTime) return null; // hali kelmagan bo‘lsa
+    return new Date(new Date(timer.startTime).getTime() + 60 * 60 * 1000);
+  }, [timer?.startTime]);
 
-  // const renderer = ({ minutes, seconds, completed }) => {
-  //   if (completed) {
-  //     return <TimerModal untieddata={untieddata?.submitted} handleSubmit={handleSubmit} show={true} />;;
-  //   } else {
-  //     return <span>{minutes}:{seconds.toString().padStart(2, '0')}</span>;
-  //   }
-  // };
+  const renderer = ({ minutes, seconds, completed }) => {
+    if (completed) {
+      return <TimerModal untieddata={untieddata?.submitted} handleSubmit={handleSubmit} show={true} />;;
+    } else {
+      return <span>{minutes}:{seconds.toString().padStart(2, '0')}</span>;
+    }
+  };
 
   const renderLabelWithInputs = (label, idx, task) => {
     const parts = label.split(/(\[\])/g);
@@ -222,151 +230,146 @@ function Listening() {
     });
   };
 
-
   if (monthLoading) {
     return <div style={{ position: 'relative', height: '500px' }}><Loader /></div>
   }
 
-  if (!latesMonth?.id || !latesMonth?.month) {
+  if (!latesMonth?.id || !latesMonth?.month || !data || !audios) {
     return <NoResult writing={'writing'} message="There are no listening tests." />
   }
-
-
-
-
 
   return (
     <div style={{ minHeight: '100vh' }}>
       <GlobalContainer>
         {
-          // untieddata?.submitted ?
-          //   <Untied />
-          //   :
-          <div>
-            {/* <Times>
-              <p>
-                {endTime ? (
-                  <>
-                    <Countdown date={endTime} renderer={renderer} />
-                  </>
-                ) : (
-                  <MiniLoader /> // yoki hech narsa
-                )}
-            </p> */}
-            {/* </Times> */}
-            <TabContent>
-              <Introduction>
-                <h3>{data?.sections[activeTab]?.part}</h3>
-                <p>{data?.sections[activeTab]?.intro}</p>
+          untieddata?.submitted ?
+            <Untied />
+            :
+            <div>
+              <Times>
                 <p>
-                  <strong>{data?.sections[activeTab]?.textTitle}</strong>
-                  <br />
-                  {data?.sections[activeTab]?.text}
-                </p>
-
-                <AudioSection>
-                  {audios && audios?.length > 0 ? (
-                    <audio style={{ width: '100%' }}
-                      key={audios[activeTab]?.id || activeTab} // Tab o'zgarsa qayta render bo'ladi
-                      controls
-                    >
-                      <source
-                        src={`${baseUrl}/uploads/audio/${audios[activeTab]?.filename}`}
-                        type={audios[activeTab]?.mimetype}
-                      />
-                      Brauzeringiz audio pleerni qo‘llab-quvvatlamaydi.
-                    </audio>
+                  {endTime ? (
+                    <>
+                      <Countdown date={endTime} renderer={renderer} />
+                    </>
                   ) : (
-                    <p>Qo‘shiq yo‘q</p>
+                    <MiniLoader /> // yoki hech narsa
                   )}
+                </p>
+              </Times>
+              <TabContent>
+                <Introduction>
+                  <h3>{data?.sections[activeTab]?.part}</h3>
+                  <p>{data?.sections[activeTab]?.intro}</p>
+                  <p>
+                    <strong>{data?.sections[activeTab]?.textTitle}</strong>
+                    <br />
+                    {data?.sections[activeTab]?.text}
+                  </p>
+
+                  <AudioSection>
+                    {audios && audios?.length > 0 ? (
+                      <audio style={{ width: '100%' }}
+                        key={audios[activeTab]?.id || activeTab} // Tab o'zgarsa qayta render bo'ladi
+                        controls
+                      >
+                        <source
+                          src={`${baseUrl}/uploads/audio/${audios[activeTab]?.filename}`}
+                          type={audios[activeTab]?.mimetype}
+                        />
+                        Brauzeringiz audio pleerni qo‘llab-quvvatlamaydi.
+                      </audio>
+                    ) : (
+                      <p>Qo‘shiq yo‘q</p>
+                    )}
 
 
-                </AudioSection>
-              </Introduction>
+                  </AudioSection>
+                </Introduction>
 
-              <QuestionBox>
-                {data?.sections[activeTab]?.question?.map((questionGroup, qIdx) => (
-                  <div key={qIdx}>
-                    <h4>{questionGroup?.questionTitle}</h4>
-                    <p>{questionGroup?.questionIntro}</p>
-                    {questionGroup?.questionsTask?.map((task, idx) => (
-                      <QuestionItem key={idx}>
-                        <p>
-                          <strong>{task?.number}.</strong>{' '}
-                          {task.type === 'text'
-                            ? renderLabelWithInputs(task?.question, idx, task)
-                            : task?.question}
-                        </p>
+                <QuestionBox>
+                  {data?.sections[activeTab]?.question?.map((questionGroup, qIdx) => (
+                    <div key={qIdx}>
+                      <h4>{questionGroup?.questionTitle}</h4>
+                      <p>{questionGroup?.questionIntro}</p>
+                      {questionGroup?.questionsTask?.map((task, idx) => (
+                        <QuestionItem key={idx}>
+                          <p>
+                            <strong>{task?.number}.</strong>{' '}
+                            {task.type === 'text'
+                              ? renderLabelWithInputs(task?.question, idx, task)
+                              : task?.question}
+                          </p>
 
-                        {task.type === 'radio' && (
-                          <RadioGroup>
-                            {task.options.map((opt, i) => (
-                              <label key={i}>
-                                <input
-                                  type="radio"
-                                  name={`radio-${activeTab}-${task?.number}`}
-                                  value={opt}
-                                  checked={
-                                    answers[`${activeTab}-${task?.number}`] === opt
-                                  }
-                                  onChange={(e) =>
-                                    handleAnswerChange(
-                                      task?.number,
-                                      e.target.value,
-                                      activeTab
-                                    )
-                                  }
-                                />
-                                <RadioLabel>{opt}</RadioLabel>
-                              </label>
-                            ))}
-                          </RadioGroup>
-                        )}
+                          {task.type === 'radio' && (
+                            <RadioGroup>
+                              {task.options.map((opt, i) => (
+                                <label key={i}>
+                                  <input
+                                    type="radio"
+                                    name={`radio-${activeTab}-${task?.number}`}
+                                    value={opt}
+                                    checked={
+                                      answers[`${activeTab}-${task?.number}`] === opt
+                                    }
+                                    onChange={(e) =>
+                                      handleAnswerChange(
+                                        task?.number,
+                                        e.target.value,
+                                        activeTab
+                                      )
+                                    }
+                                  />
+                                  <RadioLabel>{opt}</RadioLabel>
+                                </label>
+                              ))}
+                            </RadioGroup>
+                          )}
 
-                        {task?.type === 'select' && (
-                          <Select
-                            value={answers[`${activeTab}-${task?.number}`] || ''}
-                            onChange={(e) =>
-                              handleAnswerChange(
-                                task.number,
-                                e.target.value,
-                                activeTab
-                              )
-                            }
-                          >
-                            <option value="">Select</option>
-                            {task?.options?.map((opt, i) => (
-                              <option key={i} value={opt}>
-                                {opt}
-                              </option>
-                            ))}
-                          </Select>
-                        )}
-                      </QuestionItem>
-                    ))}
-                  </div>
+                          {task?.type === 'select' && (
+                            <Select
+                              value={answers[`${activeTab}-${task?.number}`] || ''}
+                              onChange={(e) =>
+                                handleAnswerChange(
+                                  task.number,
+                                  e.target.value,
+                                  activeTab
+                                )
+                              }
+                            >
+                              <option value="">Select</option>
+                              {task?.options?.map((opt, i) => (
+                                <option key={i} value={opt}>
+                                  {opt}
+                                </option>
+                              ))}
+                            </Select>
+                          )}
+                        </QuestionItem>
+                      ))}
+                    </div>
+                  ))}
+                </QuestionBox>
+              </TabContent>
+
+              <TabContainer>
+                {data?.sections?.map((section, index) => (
+                  <TabButton
+                    key={index}
+                    onClick={() => setActiveTab(index)}
+                    $active={activeTab === index}
+                  >
+                    {section?.part}
+                  </TabButton>
                 ))}
-              </QuestionBox>
-            </TabContent>
+              </TabContainer>
 
-            <TabContainer>
-              {data?.sections?.map((section, index) => (
-                <TabButton
-                  key={index}
-                  onClick={() => setActiveTab(index)}
-                  $active={activeTab === index}
-                >
-                  {section?.part}
-                </TabButton>
-              ))}
-            </TabContainer>
-
-            <Button
-              onClick={handleSubmit}
-            >
-              Send
-            </Button>
-          </div>}
+              <Button
+                onClick={handleSubmit}
+              >
+                Send
+              </Button>
+            </div>}
       </GlobalContainer>
     </div>
   );

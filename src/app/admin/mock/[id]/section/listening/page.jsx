@@ -1,5 +1,6 @@
+
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge, Button, ButtonGroup, Container, FormContent, FormGroup, FormWrapper, Header, Input, Label, NumberBadge, OptionInput, OptionsList, OptionText, QuestionCard, QuestionHeader, QuestionTitle, Row, SaveButton, SectionCard, SectionHeader, SectionTitle, Subtitle, TaskCard, TaskHeader, TaskType, Textarea, Title } from './style';
 import Audioform from '@/components/Listening/AudioForm';
 import { useAddListeningTask } from '@/hooks/listening';
@@ -13,8 +14,53 @@ export default function ListeningForm() {
     monthId: id || '',
     sections: []
   });
+  const [isLoaded, setIsLoaded] = useState(false); // Loading state qo'shamiz
 
   const addListeningMutation = useAddListeningTask()
+
+  // Component yuklanganda localStorage dan ma'lumotlarni olish
+  useEffect(() => {
+    if (typeof window !== 'undefined' && id) {
+      try {
+        const savedData = localStorage.getItem(`listeningForm_${id}`);
+        console.log('localStorage dan olingan ma\'lumot:', savedData); // Debug uchun
+        
+        if (savedData && savedData !== 'undefined' && savedData !== 'null') {
+          const parsedData = JSON.parse(savedData);
+          console.log('Parse qilingan ma\'lumot:', parsedData); // Debug uchun
+          
+          if (parsedData && parsedData.monthId) { // Ensure parsedData is valid and has monthId
+            setFormData(parsedData);
+          } else {
+            // If parsedData is invalid or missing monthId, reinitialize
+            console.warn('localStorage dan olingan ma\'lumotlar to\'liq emas, qayta initsializatsiya qilinmoqda.');
+            setFormData({ monthId: id, sections: [] });
+          }
+        } else {
+          // No saved data or invalid savedData string, initialize clean
+          setFormData({ monthId: id, sections: [] });
+        }
+      } catch (error) {
+        console.error('localStorage ma\'lumotlarini yuklashda xatolik:', error);
+        // On error, initialize clean
+        setFormData({ monthId: id, sections: [] });
+      }
+      setIsLoaded(true); // Ma'lumotlar yuklandi
+    }
+  }, [id]);
+
+  // formData o'zgarganda localStorage ga saqlash (faqat yuklash tugagandan keyin)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && formData.monthId && isLoaded) {
+      try {
+        const dataToSave = JSON.stringify(formData);
+        localStorage.setItem(`listeningForm_${formData.monthId}`, dataToSave);
+        console.log('localStorage ga saqlandi:', dataToSave); // Debug uchun
+      } catch (error) {
+        console.error('localStorage ga saqlashda xatolik:', error);
+      }
+    }
+  }, [formData, isLoaded]);
 
   // Keyingi savol raqamini avtomatik hisoblash
   const getNextQuestionNumber = () => {
@@ -249,8 +295,20 @@ export default function ListeningForm() {
 
   // Form saqlash
   const handleSubmit = () => {
+    console.log('Yuborilayotgan ma\'lumot:', formData); // Debug uchun
     addListeningMutation.mutate(formData)
   };
+
+  // Agar hali yuklanmagan bo'lsa, loading ko'rsatish
+  if (!isLoaded) {
+    return (
+      <Container>
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <h3>Ma'lumotlar yuklanmoqda...</h3>
+        </div>
+      </Container>
+    );
+  }
 
   return (
     <Container>
@@ -259,6 +317,10 @@ export default function ListeningForm() {
         <Header>
           <Title>🎧 IELTS Listening Test Admin</Title>
           <Subtitle>Listening test ma'lumotlarini kiritish formasi</Subtitle>
+          {/* Debug ma'lumot */}
+          <div style={{fontSize: '12px', color: '#666', marginTop: '10px'}}>
+            Debug: Sections soni: {formData.sections.length}, Month ID: {formData.monthId}
+          </div>
         </Header>
 
         <FormContent>
@@ -276,6 +338,24 @@ export default function ListeningForm() {
               }}
               placeholder="URL parametridan olinadi"
             />
+          </FormGroup>
+
+          {/* Clear localStorage Button - Debug uchun */}
+          <FormGroup>
+            <Button 
+              danger 
+              small 
+              onClick={() => {
+                localStorage.removeItem(`listeningForm_${id}`);
+                setFormData({ monthId: id, sections: [] });
+                setIsLoaded(false); // Reset isLoaded to re-trigger useEffect on next render
+                console.log('localStorage tozalandi');
+                // Optionally, reload the page to completely reset state
+                // window.location.reload(); 
+              }}
+            >
+              🗑️ localStorage ni tozalash (Debug)
+            </Button>
           </FormGroup>
 
           {/* Sections */}

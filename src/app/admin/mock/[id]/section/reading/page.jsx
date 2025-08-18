@@ -503,57 +503,57 @@ function ReadingForm() {
     // --- Validation ---
     for (const [sIdx, section] of sections.entries()) {
       if (!section.textTitle.trim()) {
-        alert(`Section ${sIdx + 1}: Title majburiy!`)
+        alert(`Section ${sIdx + 1}: Title required!`)
         return
       }
       if (!section.text.trim()) {
-        alert(`Section ${sIdx + 1}: Passage matni majburiy!`)
+        alert(`Section ${sIdx + 1}: Passage text is mandatory!`)
         return
       }
       for (const [qIdx, qBlock] of section.question.entries()) {
         if (!qBlock.questionTitle.trim()) {
-          alert(`Section ${sIdx + 1}, Block ${qIdx + 1}: Block sarlavhasi majburiy!`)
+          alert(`Section ${sIdx + 1}, Block ${qIdx + 1}: Block header is mandatory!`)
           return
         }
         for (const [tIdx, task] of qBlock.questionsTask.entries()) {
           if (['radio', 'select', 'text-multi'].includes(task.type) && !task.question.trim()) {
-            alert(`Section ${sIdx + 1}, Block ${qIdx + 1}, Savol ${tIdx + 1}: Savol matni majburiy!`)
+            alert(`Section ${sIdx + 1}, Block ${qIdx + 1}, Savol ${tIdx + 1}: Question text is mandatory!`)
             return
           }
           if (task.type === 'radio' || task.type === 'select') {
             if (!task.options || !task.options.length || task.options.some(opt => !opt.trim())) {
-              alert(`Section ${sIdx + 1}, Block ${qIdx + 1}, Savol ${tIdx + 1}: Barcha variantlar to'ldirilishi kerak!`)
+              alert(`Section ${sIdx + 1}, Block ${qIdx + 1}, Question ${tIdx + 1}: All options must be filled in!`)
               return
             }
             if (!task.answer || !task.answer.trim()) {
-              alert(`Section ${sIdx + 1}, Block ${qIdx + 1}, Savol ${tIdx + 1}: To'g'ri javob majburiy!`)
+              alert(`Section ${sIdx + 1}, Block ${qIdx + 1}, Savol ${tIdx + 1}: The correct answer is mandatory!`)
               return
             }
           }
           if (task.type === 'text-multi') {
             const fields = extractMultiFields(task.question)
             if (!fields.length) {
-              alert(`Section ${sIdx + 1}, Block ${qIdx + 1}, Savol ${tIdx + 1}: [ ] bilan maydonlar belgilang!`)
+              alert(`Section ${sIdx + 1}, Block ${qIdx + 1}, Savol ${tIdx + 1}: [ ] Mark the fields with!`)
               return
             }
             if (!task.answer || task.answer.length !== fields.length || task.answer.some(a => !a.trim())) {
-              alert(`Section ${sIdx + 1}, Block ${qIdx + 1}, Savol ${tIdx + 1}: Barcha javob maydonlari to'ldirilishi kerak!`)
+              alert(`Section ${sIdx + 1}, Block ${qIdx + 1}, Question ${tIdx + 1}: All response fields must be filled in!`)
               return
             }
           }
           if (task.type === 'table') {
             const rows = task.table?.[0]?.rows || []
             if (!rows.length) {
-              alert(`Section ${sIdx + 1}, Block ${qIdx + 1}, Savol ${tIdx + 1}: Kamida bitta qator bo'lishi kerak!`)
+              alert(`Section ${sIdx + 1}, Block ${qIdx + 1}, Question ${tIdx + 1}: There must be at least one line!`)
               return
             }
             for (const [rIdx, row] of rows.entries()) {
               if (!row.question.trim()) {
-                alert(`Section ${sIdx + 1}, Block ${qIdx + 1}, Savol ${tIdx + 1}, Qator ${rIdx + 1}: Qator savoli majburiy!`)
+                alert(`Section ${sIdx + 1}, Block ${qIdx + 1}, Question ${tIdx + 1}, row ${rIdx + 1}: The row question is mandatory.!`)
                 return
               }
               if (!row.answer || !row.answer.trim()) {
-                alert(`Section ${sIdx + 1}, Block ${qIdx + 1}, Savol ${tIdx + 1}, Qator ${rIdx + 1}: To'g'ri javob majburiy!`)
+                alert(`Section ${sIdx + 1}, Block ${qIdx + 1}, Question ${tIdx + 1}, row ${rIdx + 1}: Correct answer is mandatory.!`)
                 return
               }
             }
@@ -703,13 +703,13 @@ function ReadingForm() {
                             </div>
                           ))}
                           <Btn type="button" variant="add" onClick={() => addOption(sIdx, qIdx, tIdx)}>Add Option</Btn>
-                          <div style={{ marginTop: 8 }}>
+                          <div style={{ marginTop: 8 }}>Correct answer
                             <TextInput
                               placeholder="Correct Answer"
                               value={task.answer || ''}
                               onChange={e => handleTaskChange(sIdx, qIdx, tIdx, 'answer', e.target.value)}
                             />
-                            <span style={{ color: '#888', fontSize: 14 }}>To‘g‘ri javob</span>
+                            <span style={{ color: '#888', fontSize: 14 }}>Correct answer</span>
                           </div>
                         </>
                       )}
