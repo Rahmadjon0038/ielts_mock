@@ -50,11 +50,15 @@ export const Title = styled.h1`
 `
 export const Cards = styled.div`
   padding: 10px;
-  margin-top: 20px;
+  margin-top: 40px;
   display: grid;
   grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
   gap: 20px;
   
+   @media(max-width:600px){
+    margin: 20px;
+    font-size: 12px;
+  }
   
   `
 export const Card = styled.div`
@@ -74,11 +78,16 @@ export const CardInfo = styled.div`
   color: white;
   text-align: center;
   font-size:20px;
-  padding: 10px;
+  padding: 20px;
   border-radius:inherit;
   @media(max-width:768px){
     margin: 20px;
     font-size: 14px;
+  }
+
+   @media(max-width:600px){
+    margin: 20px;
+    font-size: 12px;
   }
 
 `

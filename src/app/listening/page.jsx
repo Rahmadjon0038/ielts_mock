@@ -201,18 +201,18 @@ function Listening() {
       if (rawScore >= 39) return 9;
       if (rawScore >= 37) return 8.5;
       if (rawScore >= 35) return 8;
-      if (rawScore >= 33) return 7.5;
+      if (rawScore >= 32) return 7.5;
       if (rawScore >= 30) return 7;
-      if (rawScore >= 27) return 6.5;
+      if (rawScore >= 26) return 6.5;
       if (rawScore >= 23) return 6;
-      if (rawScore >= 19) return 5.5;
-      if (rawScore >= 15) return 5;
+      if (rawScore >= 18) return 5.5;
+      if (rawScore >= 16) return 5;
       if (rawScore >= 13) return 4.5;
       if (rawScore >= 10) return 4;
-      if (rawScore >= 7) return 3.5;
-      if (rawScore >= 5) return 3;
-      if (rawScore >= 3) return 2.5;
-      return 0;
+      if (rawScore >= 8) return 3.5;
+      if (rawScore >= 6) return 3;
+      if (rawScore >= 4) return 2.5;
+      return 0; // agar 0–3 oralig‘ida bo‘lsa
     }
 
     console.log(getBandScore(score), 'ball')
@@ -223,7 +223,7 @@ function Listening() {
         setAassessment.mutate({
           section,
           score: getBandScore(score),
-          comment: "Baholash yakunlandi ✅ Sizning natijangiz tizim tomonidan avtomatik hisoblandi. Agar kamchiliklar bo‘lsa, ular admin tomonidan ko‘rib chiqilib tuzatiladi.",
+          comment: "Evaluation completed ✅ Your result has been automatically calculated by the system. If there are any shortcomings, they will be reviewed and corrected by the admin.",
           paramdata,
         })
       }
@@ -234,7 +234,7 @@ function Listening() {
     return <div style={{ position: 'relative', height: '500px' }}><Loader /></div>
   }
 
-  if (!latesMonth?.id || !latesMonth?.month || !data || !audios) {
+  if (!latesMonth?.id || !latesMonth?.month || !data) {
     return <NoResult writing={'writing'} message="There are no listening tests." />
   }
 
@@ -277,10 +277,10 @@ function Listening() {
                           src={`${baseUrl}/uploads/audio/${audios[activeTab]?.filename}`}
                           type={audios[activeTab]?.mimetype}
                         />
-                        Brauzeringiz audio pleerni qo‘llab-quvvatlamaydi.
+                        Your browser does not support the audio player.
                       </audio>
                     ) : (
-                      <p>Qo‘shiq yo‘q</p>
+                      <p>There is no song.</p>
                     )}
 
 
@@ -306,6 +306,7 @@ function Listening() {
                               {task.options.map((opt, i) => (
                                 <label key={i}>
                                   <input
+                                    spellCheck={false}
                                     type="radio"
                                     name={`radio-${activeTab}-${task?.number}`}
                                     value={opt}

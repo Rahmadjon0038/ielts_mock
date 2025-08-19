@@ -2,7 +2,7 @@
 import { GlobalContainer } from '@/globalStyle';
 import React, { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { useAddAudio, useGetAudioListening } from '@/hooks/listening';
+import { useAddAudio, useDeleteAudioListening, useGetAudioListening } from '@/hooks/listening';
 
 import styled from "styled-components";
 
@@ -11,7 +11,6 @@ export const FormContainer = styled.div`
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin: 20px auto;
 `;
 
 export const FormWrapper = styled.div`
@@ -71,13 +70,55 @@ export const DeleteBtn = styled.button`
   &:active {
     transform: scale(0.95);
   }
+  
+`;
+export const DangerButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 12px;
+  background: #ef4444;           /* red-500 */
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: transform .04s ease, background .2s ease, box-shadow .2s ease;
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.25);
+
+  &:hover {
+    background: #dc2626;         /* red-600 */
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(239, 68, 68, 0.32);
+  }
+
+  &:active {
+    transform: translateY(0);
+    background: #b91c1c;         /* red-700 */
+    box-shadow: 0 6px 16px rgba(185, 28, 28, 0.28);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(239, 68, 68, 0.3);
+    outline-offset: 3px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
 `;
 
 
 
 export default function Audioform() {
     const mutation = useAddAudio();
-    // const deleteMutation = useDeleteAudioListening(); // Comment qilingan, kerak bo'lsa faollashtirish mumkin
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+    const deleteMutation = useDeleteAudioListening();
     const { id } = useParams();
     const [audios, setAudios] = useState([null, null, null, null]);
     const [errorMessage, setErrorMessage] = useState('');
@@ -90,49 +131,45 @@ export default function Audioform() {
         const newAudios = [...audios];
         newAudios[index] = file;
         setAudios(newAudios);
-        setErrorMessage(''); // Xatolik xabarini tozalash
+        setErrorMessage('');
     };
 
 
     const sendAudio = async (index) => {
         if (!audios[index]) {
-            setErrorMessage(`${index + 1}-audio tanlanmagan! Iltimos, fayl tanlang.`);
+            setErrorMessage(`Audio ${index + 1} not selected! Please choose a file.`);
             return;
         }
         const formData = new FormData();
         formData.append('monthId', id);
-        formData.append('inputIndex', index); // <<< inputIndex qo‘shildi
+        formData.append('inputIndex', index);
         formData.append('audio', audios[index]);
 
         mutation.mutate(formData, {
             onSuccess: () => {
                 refetch();
-                setErrorMessage('Audio muvaffaqiyatli yuklandi!');
-                setTimeout(() => setErrorMessage(''), 3000); // 3 soniya keyin xabar o‘chadi
+                setErrorMessage('Audio uploaded successfully!');
+                setTimeout(() => setErrorMessage(''), 3000);
             },
-            onError: () => setErrorMessage('Audio yuklashda xatolik yuz berdi.'),
+            onError: () => setErrorMessage('An error occurred while uploading audio.'),
         });
     };
 
 
-    const handleDelete = (audioId) => {
-        // if (window.confirm("Rostdan ham o‘chirmoqchimisiz?")) {
-        //   deleteMutation.mutate({ id: audioId }, {
-        //     onSuccess: () => refetch()
-        //   })
-        // }
-    };
+    const handleDelete = () => {
+        deleteMutation.mutate(id)
+    }
 
     return (
         <div >
             <GlobalContainer>
                 <FormContainer>
-                    <h2 style={{ textAlign: 'center', color: '#2c3e50' }}>🎧 Listening Audio Yuklash</h2>
+                    <h2 style={{ textAlign: 'center', color: '#2c3e50' }}>🎧 Upload Listening Audio</h2>
                     {errorMessage && (
                         <div
                             style={{
                                 textAlign: 'center',
-                                color: errorMessage.includes('muvaffaqiyat') ? '#27ae60' : '#e74c3c',
+                                color: errorMessage.includes('successfully') ? '#27ae60' : '#e74c3c',
                                 marginBottom: '15px',
                                 fontWeight: 500,
                             }}
@@ -143,9 +180,6 @@ export default function Audioform() {
                     <FormWrapper>
                         {[...Array(4)].map((_, i) => (
                             <div key={i} style={{ width: '100%', marginBottom: '15px' }}>
-                                {/* Fayl nomini ko'rsatish */}
-                             
-
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                     <input
                                         type="file"
@@ -168,27 +202,28 @@ export default function Audioform() {
                                         onMouseOver={(e) => (e.target.style.background = '#2980b9')}
                                         onMouseOut={(e) => (e.target.style.background = '#3498db')}
                                     >
-                                        {i + 1}-Audio Jo‘natish
+                                        Send Audio {i + 1}
                                     </button>
                                 </div>
 
-                                <div style={{ marginBottom: '5px', fontWeight: 500, color: '#2c3e50' }}>
-                                    {/* Tanlangan audio: {data[i]?.originalname} */}
+                                <div style={{ margin: '5px 0', fontWeight: 500, color: '#2c3e50' }}>
+                                    Selected audio: {data && data[i]?.originalname}
                                 </div>
                                 {data?.[i] && (
-
                                     <audio controls style={{ width: '100%', marginTop: '10px' }}>
                                         <source
-                                            src={`http://localhost:5000/uploads/audio/${data[i].filename}`}
+                                            src={`${baseUrl}/uploads/audio/${data[i].filename}`}
                                             type={data[i].mimetype}
                                         />
-                                        Brauzeringiz audio o‘ynashni qo‘llab-quvvatlamaydi.
+                                        Your browser does not support audio playback.
                                     </audio>
                                 )}
                             </div>
                         ))}
 
                     </FormWrapper>
+                    <DangerButton onClick={handleDelete}>🗑️ Delete all songs</DangerButton>
+
                 </FormContainer>
 
             </GlobalContainer>

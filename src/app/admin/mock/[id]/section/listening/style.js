@@ -3,8 +3,6 @@ import styled from 'styled-components';
 // Styled Components (Animatsiyalarsiz va yangi ranglar bilan)
 export const Container = styled.div`
   min-height: 100vh;
-  background-color: #f7f8fa;
-  padding: 20px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 `;
 

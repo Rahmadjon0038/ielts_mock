@@ -24,4 +24,8 @@ export const Container = styled.div`
   &:hover {
     transform: scale(1.03);
   }
+
+   @media(max-width:768px){
+   padding: 20px;
+  }
 `

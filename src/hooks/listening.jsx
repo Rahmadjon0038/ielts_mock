@@ -179,3 +179,29 @@ export const useGetListeningTask = (monthId) => {
 
     return { data, error, isLoading }
 }
+
+
+// --------------- delete all audio ----------------
+
+// / const deleteMutation = useDeleteAudioListening(); 
+const deleteAudio = async (monthId) => {
+    console.log(monthId)
+    const response = await instance.delete(`/api/audio/delete/${monthId}`)
+    return response.data;
+}
+
+export const useDeleteAudioListening = () => {
+    const queryClient = useQueryClient();
+
+    const deleteMutation = useMutation({
+        mutationFn: deleteAudio,
+        onSuccess: (data) => {
+            notify('ok', data.msg)
+            queryClient.invalidateQueries({ queryKey: ['audioListening'] });
+        },
+        onError: (err) => {
+            notify('err', err.response.data.msg || 'error')
+        }
+    })
+    return deleteMutation;
+}

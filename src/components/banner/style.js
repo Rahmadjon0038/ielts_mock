@@ -14,11 +14,19 @@ export const Title = styled.h1`
     font-size: 28px;
     font-weight: bold;
     margin-bottom: 10px;
+
+    @media (max-width:768px){
+        font-size: 20px;
+    }
 `
 export const Subtitle = styled.p`
     font-size: 18px;
     margin-bottom: 8px;
     color: #ffe3e3;
+
+     @media (max-width:768px){
+        font-size: 16px;
+    }
 `
 
 export const LogOut = styled.div`
@@ -31,5 +39,10 @@ export const LogOut = styled.div`
 
     &:active{
         transform: scale(0.97);
+    }
+     @media (max-width:768px){
+        padding: 8px 14px;
+        font-size: 14px;
+
     }
 `

@@ -63,8 +63,7 @@ function Home() {
                     <Card
                         key={item.id}
                         ref={(el) => (cardsRef.current[index] = el)}
-                        onClick={() => handleNavigate(item.path)}
-                    >
+                        onClick={() => handleNavigate(item.path)}>
                         <CardInfo id={item.id}>
                             <h2>{item.title}</h2>
                         </CardInfo>

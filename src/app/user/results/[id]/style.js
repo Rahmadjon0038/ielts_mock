@@ -12,8 +12,8 @@ export const Title = styled.h2`
   border-right: 2px solid #B91613;
   border-bottom: 2px solid #B91613;
 
-  @media(max-width:468px){
-    font-size: 20px;
+  @media(max-width:768px){
+    font-size: 18px;
   }
 `
 
@@ -21,6 +21,10 @@ export const SectionsWrapper = styled.div`
   display: grid;
   grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
   gap: 22px;
+
+   @media(max-width:768px){
+    gap: 20px;
+   }
   `
 
 export const SectionCard = styled.div`
@@ -45,6 +49,13 @@ export const SectionCard = styled.div`
     font-weight: 600;
   }
 
+   @media(max-width:768px){
+  p {
+    font-size: 16px;
+  }
+  }
+
+
   ${({ status }) =>
     status
       ? css`
@@ -65,4 +76,7 @@ border: 2.5px dashed #adb5bd;
 cursor: default ;
 opacity: 0.75;
 `}
+
+
+
 `

@@ -84,23 +84,22 @@ function ReadingLayout() {
     let totalCount = 0;
 
     function getBandScore(rawScore) {
-      if (rawScore >= 39) return 9;
-      if (rawScore >= 37) return 8.5;
-      if (rawScore >= 35) return 8;
-      if (rawScore >= 33) return 7.5;
-      if (rawScore >= 30) return 7;
-      if (rawScore >= 27) return 6.5;
-      if (rawScore >= 23) return 6;
-      if (rawScore >= 19) return 5.5;
-      if (rawScore >= 15) return 5;
-      if (rawScore >= 13) return 4.5;
-      if (rawScore >= 10) return 4;
-      if (rawScore >= 7) return 3.5;
-      if (rawScore >= 5) return 3;
-      if (rawScore >= 3) return 2.5;
-      return 0;
+      if (rawScore === 40) return 9;
+      if (rawScore === 39) return 8.5;
+      if (rawScore >= 37 && rawScore <= 38) return 8;
+      if (rawScore === 36) return 7.5;
+      if (rawScore >= 34 && rawScore <= 35) return 7;
+      if (rawScore >= 32 && rawScore <= 33) return 6.5;
+      if (rawScore >= 30 && rawScore <= 31) return 6;
+      if (rawScore >= 27 && rawScore <= 29) return 5.5;
+      if (rawScore >= 23 && rawScore <= 26) return 5;
+      if (rawScore >= 19 && rawScore <= 22) return 4.5;
+      if (rawScore >= 15 && rawScore <= 18) return 4;
+      if (rawScore >= 12 && rawScore <= 14) return 3.5;
+      if (rawScore >= 9 && rawScore <= 11) return 3;
+      if (rawScore >= 6 && rawScore <= 8) return 2.5;
+      return 0; // agar 0–5 oralig‘ida bo‘lsa
     }
-
     function isCorrect(userAns, correctAns) {
       if (typeof userAns !== 'string' || typeof correctAns !== 'string') return false;
       return userAns.trim().toLowerCase() === correctAns.trim().toLowerCase();
@@ -214,7 +213,7 @@ function ReadingLayout() {
         setAassessment.mutate({
           section,
           score: bandScore,
-          comment: "Baxo qo'yildi kamchiliklar admin toponidan tuzatiladi",
+          comment: "Baholash yakunlandi ✅ Sizning natijangiz tizim tomonidan avtomatik hisoblandi. Agar kamchiliklar bo‘lsa, ular admin tomonidan ko‘rib chiqilib tuzatiladi.",
           paramdata,
         })
       },
@@ -459,7 +458,7 @@ function ReadingLayout() {
             <button style={{
               marginTop: '20px',
               padding: '10px 20px',
-              background: '#007bff',
+              background: '#ff0000',
               color: '#fff',
               border: 'none',
               borderRadius: '5px',
