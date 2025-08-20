@@ -83,23 +83,25 @@ function ReadingLayout() {
     let correctCount = 0;
     let totalCount = 0;
 
-    function getBandScore(rawScore) {
-      if (rawScore === 40) return 9;
-      if (rawScore === 39) return 8.5;
-      if (rawScore >= 37 && rawScore <= 38) return 8;
-      if (rawScore === 36) return 7.5;
-      if (rawScore >= 34 && rawScore <= 35) return 7;
-      if (rawScore >= 32 && rawScore <= 33) return 6.5;
-      if (rawScore >= 30 && rawScore <= 31) return 6;
-      if (rawScore >= 27 && rawScore <= 29) return 5.5;
-      if (rawScore >= 23 && rawScore <= 26) return 5;
-      if (rawScore >= 19 && rawScore <= 22) return 4.5;
-      if (rawScore >= 15 && rawScore <= 18) return 4;
-      if (rawScore >= 12 && rawScore <= 14) return 3.5;
-      if (rawScore >= 9 && rawScore <= 11) return 3;
-      if (rawScore >= 6 && rawScore <= 8) return 2.5;
-      return 0; // agar 0–5 oralig‘ida bo‘lsa
-    }
+function getBandScore(rawScore) {
+  if (rawScore >= 39 && rawScore <= 40) return 9;
+  if (rawScore >= 37 && rawScore <= 38) return 8.5;
+  if (rawScore >= 35 && rawScore <= 36) return 8;
+  if (rawScore >= 33 && rawScore <= 34) return 7.5;
+  if (rawScore >= 30 && rawScore <= 32) return 7;
+  if (rawScore >= 27 && rawScore <= 29) return 6.5;
+  if (rawScore >= 23 && rawScore <= 26) return 6;
+  if (rawScore >= 19 && rawScore <= 22) return 5.5;
+  if (rawScore >= 15 && rawScore <= 18) return 5;
+  if (rawScore >= 13 && rawScore <= 14) return 4.5;
+  if (rawScore >= 10 && rawScore <= 12) return 4;
+  if (rawScore >= 8 && rawScore <= 9) return 3.5;
+  if (rawScore >= 6 && rawScore <= 7) return 3;
+  if (rawScore >= 4 && rawScore <= 5) return 2.5;
+  return 0; // agar 0–3 oralig‘ida bo‘lsa
+}
+
+
     function isCorrect(userAns, correctAns) {
       if (typeof userAns !== 'string' || typeof correctAns !== 'string') return false;
       return userAns.trim().toLowerCase() === correctAns.trim().toLowerCase();
@@ -200,10 +202,7 @@ function ReadingLayout() {
     });
 
     const bandScore = getBandScore(correctCount);
-    // console.log(`To'g'ri javoblar soni: ${correctCount} / ${totalCount}`);
-    // // console.log('Batafsil natijalar:', result);
-    // console.log(`Band balli: ${bandScore}`);
-
+    
     mutate({
       userId,
       monthId,

@@ -21,7 +21,7 @@ function Home() {
     const cardsRef = useRef([]);
 
     useGSAP(() => {
-        gsap.fromTo(
+        gsap?.fromTo(
             cardsRef.current,
             { y: 50, opacity: 0 },
             {

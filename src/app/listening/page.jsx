@@ -106,10 +106,10 @@ function Listening() {
         return (
           <span
             key={`input-${task.number}-${i}`}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-          >
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
             {/* <span style={{ fontWeight: 'bold' }}>{`${task.number}.${inputNumber}.`}</span> */}
             <Input
+              spellCheck={false}
               placeholder="Answer"
               style={{ margin: '0 5px', maxWidth: '150px' }}
               value={
@@ -215,7 +215,6 @@ function Listening() {
       return 0; // agar 0–3 oralig‘ida bo‘lsa
     }
 
-    console.log(getBandScore(score), 'ball')
 
     mutation.mutate(submissionData, {
       onSuccess: () => {
@@ -229,6 +228,7 @@ function Listening() {
       }
     });
   };
+
 
   if (monthLoading) {
     return <div style={{ position: 'relative', height: '500px' }}><Loader /></div>
