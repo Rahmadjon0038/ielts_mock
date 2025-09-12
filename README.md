@@ -68,7 +68,7 @@ Platforma ikki qismdan iborat: **User (talaba)** va **Admin (o‘qituvchi)**.
 **Backend**:  
 - Node.js  
 - Express.js  
-- MongoDB  
+- Mysql  
 
 **Qo‘shimcha**:  
 - JWT Authentication  
