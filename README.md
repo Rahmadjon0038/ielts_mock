@@ -81,5 +81,5 @@ Platforma ikki qismdan iborat: **User (talaba)** va **Admin (o‘qituvchi)**.
 
 1. Reponi clone qiling:  
    ```bash
-   git clone https://github.com/username/ielts-mock-test.git
+   git clone https://github.com/Rahmadjon0038/ielts-mock-test.git
    cd ielts-mock-test
