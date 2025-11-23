@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 export const instance = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "https://apiielts.animall.uz/",
 });
 
 instance.interceptors.request.use(
