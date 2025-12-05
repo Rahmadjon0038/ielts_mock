@@ -1,9 +1,10 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 // Styled Components (Animatsiyalarsiz va yangi ranglar bilan)
 export const Container = styled.div`
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
 `;
 
 export const FormWrapper = styled.div`
@@ -16,23 +17,26 @@ export const FormWrapper = styled.div`
 `;
 
 export const Header = styled.div`
-  background: white;
-  color: #1a202c;
-  padding: 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 40px 30px;
   text-align: center;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: none;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
 `;
 
 export const Title = styled.h1`
   font-size: 2.25rem;
   font-weight: 700;
-  margin: 0 0 10px;
+  margin: 0 0 5px;
+  letter-spacing: -0.5px;
 `;
 
 export const Subtitle = styled.p`
-  font-size: 1.1rem;
-  color: #718096;
-  margin: 0;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 15px;
+  font-weight: 500;
 `;
 
 export const FormContent = styled.div`
@@ -41,7 +45,7 @@ export const FormContent = styled.div`
 
 export const Row = styled.div`
   display: grid;
-  grid-template-columns: ${props => props.columns || '1fr'};
+  grid-template-columns: ${(props) => props.columns || "1fr"};
   gap: 20px;
   margin-bottom: 25px;
 
@@ -195,30 +199,43 @@ export const TaskHeader = styled.div`
 `;
 
 export const TaskType = styled.span`
-  background: ${props => {
-    switch(props.type) {
-      case 'text': return '#e6fffa';
-      case 'radio': return '#fef5e7';
-      case 'select': return '#f0f9ff';
-      default: return '#f7fafc';
+  background: ${(props) => {
+    switch (props.type) {
+      case "text":
+        return "#e6fffa";
+      case "radio":
+        return "#fef5e7";
+      case "select":
+        return "#f0f9ff";
+      default:
+        return "#f7fafc";
     }
   }};
-  color: ${props => {
-    switch(props.type) {
-      case 'text': return '#047857';
-      case 'radio': return '#c05621';
-      case 'select': return '#1e40af';
-      default: return '#374151';
+  color: ${(props) => {
+    switch (props.type) {
+      case "text":
+        return "#047857";
+      case "radio":
+        return "#c05621";
+      case "select":
+        return "#1e40af";
+      default:
+        return "#374151";
     }
   }};
-  border: 1px solid ${props => {
-    switch(props.type) {
-      case 'text': return '#a7f3d0';
-      case 'radio': return '#fed7aa';
-      case 'select': return '#bfdbfe';
-      default: return '#e5e7eb';
-    }
-  }};
+  border: 1px solid
+    ${(props) => {
+      switch (props.type) {
+        case "text":
+          return "#a7f3d0";
+        case "radio":
+          return "#fed7aa";
+        case "select":
+          return "#bfdbfe";
+        default:
+          return "#e5e7eb";
+      }
+    }};
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 0.75rem;
@@ -253,7 +270,7 @@ export const OptionText = styled.input`
   border: 1px solid #e2e8f0;
   border-radius: 6px;
   font-size: 0.9rem;
-  
+
   &:focus {
     outline: none;
     border-color: #38a169;
@@ -261,17 +278,17 @@ export const OptionText = styled.input`
 `;
 
 export const Button = styled.button`
-  padding: ${props => props.small ? '8px 12px' : '14px 28px'};
-  background-color: ${props => {
-    if (props.danger) return '#e53e3e';
-    if (props.secondary) return 'white';
-    return '#38a169';
+  padding: ${(props) => (props.small ? "8px 12px" : "14px 28px")};
+  background-color: ${(props) => {
+    if (props.danger) return "#e53e3e";
+    if (props.secondary) return "white";
+    return "#38a169";
   }};
-  color: ${props => props.secondary ? '#2d3748' : 'white'};
-  border: ${props => props.secondary ? '1px solid #cbd5e1' : 'none'};
-  border-radius: ${props => props.small ? '6px' : '8px'};
+  color: ${(props) => (props.secondary ? "#2d3748" : "white")};
+  border: ${(props) => (props.secondary ? "1px solid #cbd5e1" : "none")};
+  border-radius: ${(props) => (props.small ? "6px" : "8px")};
   font-weight: 600;
-  font-size: ${props => props.small ? '0.8rem' : '1rem'};
+  font-size: ${(props) => (props.small ? "0.8rem" : "1rem")};
   cursor: pointer;
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
   display: inline-flex;
@@ -279,12 +296,13 @@ export const Button = styled.button`
   gap: 8px;
 
   &:hover {
-    background-color: ${props => {
-      if (props.danger) return '#c53030';
-      if (props.secondary) return '#f7fafc';
-      return '#2f855a';
+    background-color: ${(props) => {
+      if (props.danger) return "#c53030";
+      if (props.secondary) return "#f7fafc";
+      return "#2f855a";
     }};
-    box-shadow: ${props => props.secondary ? 'none' : '0 4px 12px rgba(0, 0, 0, 0.1)'};
+    box-shadow: ${(props) =>
+      props.secondary ? "none" : "0 4px 12px rgba(0, 0, 0, 0.1)"};
   }
 
   &:active {
@@ -300,15 +318,16 @@ export const ButtonGroup = styled.div`
 `;
 
 export const SaveButton = styled(Button)`
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  z-index: 1000;
-  box-shadow: 0 10px 30px rgba(56, 161, 105, 0.3);
-  font-size: 1.1rem;
+  width: 100%;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  z-index: 100;
+  font-size: 1.05rem;
   padding: 16px 32px;
+  background: linear-gradient(135deg, #38a169, #2f855a);
 
   &:hover {
+    background: linear-gradient(135deg, #2f855a, #276749);
     box-shadow: 0 12px 35px rgba(56, 161, 105, 0.4);
   }
 
@@ -317,6 +336,5 @@ export const SaveButton = styled(Button)`
     bottom: auto;
     right: auto;
     width: 100%;
-    margin-top: 20px;
   }
 `;

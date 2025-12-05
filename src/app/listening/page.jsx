@@ -1,5 +1,5 @@
-'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+"use client";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   AudioSection,
   Button,
@@ -12,58 +12,72 @@ import {
   TabButton,
   TabContainer,
   TabContent,
-} from './style';
-import { GlobalContainer } from '@/globalStyle';
-import { Introduction, Times } from '@/components/reading/style';
-import { useAddListeningAnswers, useGetAudioListening, useGetListeningTask } from '@/hooks/listening';
-import { useAuth } from '@/context/userData';
-import { useLatestMonth } from '@/hooks/useLatestMonth';
+} from "./style";
+import { GlobalContainer } from "@/globalStyle";
+import { Introduction, Times } from "@/components/reading/style";
+import {
+  useAddListeningAnswers,
+  useGetAudioListening,
+  useGetListeningTask,
+} from "@/hooks/listening";
+import { useAuth } from "@/context/userData";
+import { useLatestMonth } from "@/hooks/useLatestMonth";
 // import { data } from './lsiteningData';
-import { useAddUntied, useGetUntied } from '@/hooks/untied';
-import { usePathname } from 'next/navigation';
-import Untied from '@/components/untied';
-import Loader from '@/components/loader/Loader';
-import NoResult from '@/components/NoResult';
-import Countdown from 'react-countdown';
-import TimerModal from '@/components/Timer/TimerComponent';
-import usePreventRefresh from '@/components/BlockendReload';
-import { useAddtimer, useGetTimer } from '@/hooks/timer';
-import MiniLoader from '@/components/MiniLoader/MiniLoader';
-import { checkListeningAnswers } from './CheckListeningAnswers';
-import { useAassessment } from '@/hooks/writing';
+import { useAddUntied, useGetUntied } from "@/hooks/untied";
+import { usePathname } from "next/navigation";
+import Untied from "@/components/untied";
+import Loader from "@/components/loader/Loader";
+import NoResult from "@/components/NoResult";
+import Countdown from "react-countdown";
+import TimerModal from "@/components/Timer/TimerComponent";
+import usePreventRefresh from "@/components/BlockendReload";
+import { useAddtimer, useGetTimer } from "@/hooks/timer";
+import MiniLoader from "@/components/MiniLoader/MiniLoader";
+import { checkListeningAnswers } from "./CheckListeningAnswers";
+import { useAassessment } from "@/hooks/writing";
 
 function Listening() {
   const [activeTab, setActiveTab] = useState(0);
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+  const { data: latesMonth, isLoading: monthLoading } = useLatestMonth();
+  const {
+    data: audios,
+    isLoading: audioLoader,
+    error: audioErr,
+    refetch,
+  } = useGetAudioListening({ monthId: latesMonth?.id });
 
-  const { data: latesMonth, isLoading: monthLoading } = useLatestMonth()
-  const { data: audios, isLoading: audioLoader, error: audioErr, refetch } = useGetAudioListening({ monthId: latesMonth?.id });
-
-  const { data: listeningTask, error: listeningError, isLoading: listeningLoading } = useGetListeningTask(latesMonth?.id)
+  const {
+    data: listeningTask,
+    error: listeningError,
+    isLoading: listeningLoading,
+  } = useGetListeningTask(latesMonth?.id);
 
   const data = listeningTask?.data?.test_data;
 
-
   const [answers, setAnswers] = useState({});
-  const mutation = useAddListeningAnswers()
-  const { user } = useAuth()
-  const untiedmutation = useAddUntied() //  bolimni yechgani haqida malumot
-  const pathname = usePathname()
-  const section = pathname.split('/').pop();
+  const mutation = useAddListeningAnswers();
+  const { user } = useAuth();
+  const untiedmutation = useAddUntied(); //  bolimni yechgani haqida malumot
+  const pathname = usePathname();
+  const section = pathname.split("/").pop();
   const untied = {
     monthId: latesMonth?.id,
     userId: user?.user?.id,
     section: section,
-  }
+  };
   const { data: untieddata, isLoading, error } = useGetUntied(untied); // bu yechilgan malumotni olish
 
   const timerMutation = useAddtimer();
-  const { data: timer, isLoading: timerLoading, error: timerError } = useGetTimer(user?.user?.id, section, latesMonth?.id)  // vaqtni olish
+  const {
+    data: timer,
+    isLoading: timerLoading,
+    error: timerError,
+  } = useGetTimer(user?.user?.id, section, latesMonth?.id); // vaqtni olish
 
-  const paramdata = { id: latesMonth?.id, userid: user?.user?.id }
-  const setAassessment = useAassessment()
-
+  const paramdata = { id: latesMonth?.id, userid: user?.user?.id };
+  const setAassessment = useAassessment();
 
   useEffect(() => {
     if (
@@ -79,9 +93,16 @@ function Listening() {
         monthId: latesMonth?.id,
       });
     }
-  }, [user?.user?.id, section, data, audios, untieddata?.submitted, latesMonth?.id]);
+  }, [
+    user?.user?.id,
+    section,
+    data,
+    audios,
+    untieddata?.submitted,
+    latesMonth?.id,
+  ]);
 
-  usePreventRefresh()
+  usePreventRefresh();
 
   const endTime = useMemo(() => {
     if (!timer?.startTime) return null; // hali kelmagan bo‘lsa
@@ -90,9 +111,19 @@ function Listening() {
 
   const renderer = ({ minutes, seconds, completed }) => {
     if (completed) {
-      return <TimerModal untieddata={untieddata?.submitted} handleSubmit={handleSubmit} show={true} />;;
+      return (
+        <TimerModal
+          untieddata={untieddata?.submitted}
+          handleSubmit={handleSubmit}
+          show={true}
+        />
+      );
     } else {
-      return <span>{minutes}:{seconds.toString().padStart(2, '0')}</span>;
+      return (
+        <span>
+          {minutes}:{seconds.toString().padStart(2, "0")}
+        </span>
+      );
     }
   };
 
@@ -101,19 +132,20 @@ function Listening() {
     let inputCount = 0;
 
     return parts.map((part, i) => {
-      if (part === '[]') {
+      if (part === "[]") {
         const inputNumber = ++inputCount;
         return (
           <span
             key={`input-${task.number}-${i}`}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}
+          >
             {/* <span style={{ fontWeight: 'bold' }}>{`${task.number}.${inputNumber}.`}</span> */}
             <Input
               spellCheck={false}
               placeholder="Answer"
-              style={{ margin: '0 5px', maxWidth: '150px' }}
+              style={{ margin: "0 5px", maxWidth: "150px" }}
               value={
-                answers[`${activeTab}-${task.number}-${inputNumber - 1}`] || ''
+                answers[`${activeTab}-${task.number}-${inputNumber - 1}`] || ""
               }
               onChange={(e) =>
                 handleAnswerChange(
@@ -155,8 +187,6 @@ function Listening() {
     }
   };
 
-
-
   const handleSubmit = () => {
     const submissionData = {
       monthId: latesMonth?.id,
@@ -177,15 +207,15 @@ function Listening() {
           };
 
           // Har qanday turdagi savollar uchun javob yig'ish
-          if (task.type === 'text') {
+          if (task.type === "text") {
             const inputCount = (task.question.match(/\[\]/g) || []).length;
             for (let i = 0; i < inputCount; i++) {
               const key = `${tabIndex}-${task.number}-${i}`;
-              questionObj.userAnswers.push(answers[key] || '');
+              questionObj.userAnswers.push(answers[key] || "");
             }
           } else {
             const key = `${tabIndex}-${task.number}`;
-            questionObj.userAnswers.push(answers[key] || '');
+            questionObj.userAnswers.push(answers[key] || "");
           }
 
           submissionData.answers.push(questionObj);
@@ -193,9 +223,7 @@ function Listening() {
       });
     });
 
-
-
-    let score = checkListeningAnswers(submissionData).correctCount
+    let score = checkListeningAnswers(submissionData).correctCount;
 
     function getBandScore(rawScore) {
       if (rawScore >= 39) return 9;
@@ -215,93 +243,110 @@ function Listening() {
       return 0; // agar 0–3 oralig‘ida bo‘lsa
     }
 
-
     mutation.mutate(submissionData, {
       onSuccess: () => {
         untiedmutation.mutate(untied);
         setAassessment.mutate({
           section,
           score: getBandScore(score),
-          comment: "Evaluation completed ✅ Your result has been automatically calculated by the system. If there are any shortcomings, they will be reviewed and corrected by the admin.",
+          comment:
+            "Evaluation completed ✅ Your result has been automatically calculated by the system. If there are any shortcomings, they will be reviewed and corrected by the admin.",
           paramdata,
-        })
-      }
+        });
+      },
     });
   };
 
-
   if (monthLoading) {
-    return <div style={{ position: 'relative', height: '500px' }}><Loader /></div>
+    return (
+      <div style={{ position: "relative", height: "500px" }}>
+        <Loader />
+      </div>
+    );
   }
 
   if (!latesMonth?.id || !latesMonth?.month || !data) {
-    return <NoResult writing={'writing'} message="There are no listening tests." />
+    return (
+      <NoResult writing={"writing"} message="There are no listening tests." />
+    );
   }
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: "100vh" }}>
       <GlobalContainer>
-        {
-          untieddata?.submitted ?
-            <Untied />
-            :
-            <div>
-              <Times>
+        {untieddata?.submitted ? (
+          <Untied />
+        ) : (
+          <div>
+            <Times>
+              <p>
+                {endTime ? (
+                  <>
+                    <Countdown date={endTime} renderer={renderer} />
+                  </>
+                ) : (
+                  <MiniLoader /> // yoki hech narsa
+                )}
+              </p>
+            </Times>
+            <TabContent>
+              <Introduction>
+                <h3>{data?.sections[activeTab]?.part}</h3>
+                <p>{data?.sections[activeTab]?.intro}</p>
                 <p>
-                  {endTime ? (
-                    <>
-                      <Countdown date={endTime} renderer={renderer} />
-                    </>
-                  ) : (
-                    <MiniLoader /> // yoki hech narsa
-                  )}
+                  <strong>{data?.sections[activeTab]?.textTitle}</strong>
+                  <br />
+                  {data?.sections[activeTab]?.text}
                 </p>
-              </Times>
-              <TabContent>
-                <Introduction>
-                  <h3>{data?.sections[activeTab]?.part}</h3>
-                  <p>{data?.sections[activeTab]?.intro}</p>
-                  <p>
-                    <strong>{data?.sections[activeTab]?.textTitle}</strong>
-                    <br />
-                    {data?.sections[activeTab]?.text}
-                  </p>
 
-                  <AudioSection>
-                    {audios && audios?.length > 0 ? (
-                      <audio style={{ width: '100%' }}
-                        key={audios[activeTab]?.id || activeTab} // Tab o'zgarsa qayta render bo'ladi
-                        controls
-                      >
-                        <source
-                          src={`${baseUrl}/uploads/audio/${audios[activeTab]?.filename}`}
-                          type={audios[activeTab]?.mimetype}
-                        />
-                        Your browser does not support the audio player.
-                      </audio>
-                    ) : (
-                      <p>There is no song.</p>
-                    )}
+                <AudioSection>
+                  {audios && audios?.length > 0 ? (
+                    <audio
+                      style={{ width: "100%" }}
+                      key={audios[activeTab]?.id || activeTab}
+                      controls
+                      preload="auto"
+                    >
+                      <source
+                        src={`${baseUrl.replace(/\/$/, "")}/uploads/audio/${
+                          audios[activeTab]?.filename
+                        }`}
+                        type={
+                          audios[activeTab]?.mimetype === "audio/x-m4a"
+                            ? "audio/mp4"
+                            : audios[activeTab]?.mimetype
+                        }
+                      />
+                      <source
+                        src={`${baseUrl.replace(/\/$/, "")}/uploads/audio/${
+                          audios[activeTab]?.filename
+                        }`}
+                        type="audio/mpeg"
+                      />
+                      Your browser does not support the audio player.
+                    </audio>
+                  ) : (
+                    <p>There is no song.</p>
+                  )}
+                </AudioSection>
+              </Introduction>
 
-
-                  </AudioSection>
-                </Introduction>
-
-                <QuestionBox>
-                  {data?.sections[activeTab]?.question?.map((questionGroup, qIdx) => (
+              <QuestionBox>
+                {data?.sections[activeTab]?.question?.map(
+                  (questionGroup, qIdx) => (
                     <div key={qIdx}>
                       <h4>{questionGroup?.questionTitle}</h4>
                       <p>{questionGroup?.questionIntro}</p>
                       {questionGroup?.questionsTask?.map((task, idx) => (
                         <QuestionItem key={idx}>
                           <p>
-                            <strong>{task?.number}.</strong>{' '}
-                            {task.type === 'text'
+                            <strong>{task?.number}.</strong>{" "}
+                            {task.type === "text"
                               ? renderLabelWithInputs(task?.question, idx, task)
                               : task?.question}
                           </p>
 
-                          {task.type === 'radio' && (
+                          {task.type === "radio" && (
                             <RadioGroup>
                               {task.options.map((opt, i) => (
                                 <label key={i}>
@@ -311,7 +356,9 @@ function Listening() {
                                     name={`radio-${activeTab}-${task?.number}`}
                                     value={opt}
                                     checked={
-                                      answers[`${activeTab}-${task?.number}`] === opt
+                                      answers[
+                                        `${activeTab}-${task?.number}`
+                                      ] === opt
                                     }
                                     onChange={(e) =>
                                       handleAnswerChange(
@@ -327,9 +374,11 @@ function Listening() {
                             </RadioGroup>
                           )}
 
-                          {task?.type === 'select' && (
+                          {task?.type === "select" && (
                             <Select
-                              value={answers[`${activeTab}-${task?.number}`] || ''}
+                              value={
+                                answers[`${activeTab}-${task?.number}`] || ""
+                              }
                               onChange={(e) =>
                                 handleAnswerChange(
                                   task.number,
@@ -349,28 +398,28 @@ function Listening() {
                         </QuestionItem>
                       ))}
                     </div>
-                  ))}
-                </QuestionBox>
-              </TabContent>
+                  )
+                )}
+              </QuestionBox>
+            </TabContent>
 
-              <TabContainer>
-                {data?.sections?.map((section, index) => (
-                  <TabButton
-                    key={index}
-                    onClick={() => setActiveTab(index)}
-                    $active={activeTab === index}
-                  >
-                    {section?.part}
-                  </TabButton>
-                ))}
-              </TabContainer>
+            <TabContainer>
+              {data?.sections?.map((section, index) => (
+                <TabButton
+                  key={index}
+                  onClick={() => setActiveTab(index)}
+                  $active={activeTab === index}
+                >
+                  {section?.part}
+                </TabButton>
+              ))}
+            </TabContainer>
 
-              <Button
-                onClick={handleSubmit}
-              >
-                Send
-              </Button>
-            </div>}
+            {activeTab === data?.sections?.length - 1 && (
+              <Button onClick={handleSubmit}>Send</Button>
+            )}
+          </div>
+        )}
       </GlobalContainer>
     </div>
   );
