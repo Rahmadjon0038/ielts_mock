@@ -17,7 +17,7 @@ export default function NotAuthorized() {
     }
     `
   return (
-    <Container className="text-center p-10">
+    <Container className="text-center p-10 h-screen">
       <h2 className="">Kirish taqiqlangan</h2>
       <p className="mt-4">Sizda bu sahifaga ruxsat yo‘q.</p> <br /> 
       <Link href={'/'}><u>Home</u></Link>

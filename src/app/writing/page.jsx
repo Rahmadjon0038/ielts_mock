@@ -121,7 +121,7 @@ function Writing() {
   };
 
   if (monthLoading || writingLoading) {
-    return <div style={{ position: 'relative', height: '500px' }}><Loader /></div>
+    return <div style={{ position: 'relative', height: '900px' }}><Loader /></div>
   }
 
   // NoResult — writing yo‘q bo‘lsa yoki bo‘sh bo‘lsa
@@ -197,9 +197,13 @@ function Writing() {
                   Part 2
                 </TabButton>
               </TabRow>
-              <SubmitButton onClick={handleSubmit}>
-                {setAnswerWriting.isLoading ? <MiniLoader /> : "Send"}
-              </SubmitButton>
+              
+              {/* ✅ O'zgartirilgan joy: Faqat activeTab 'task2' bo'lganda Submit tugmasini ko'rsatish */}
+              {activeTab === 'task2' && (
+                  <SubmitButton onClick={handleSubmit}>
+                    {setAnswerWriting.isLoading ? <MiniLoader /> : "Send"}
+                  </SubmitButton>
+              )}
             </>
         }
 

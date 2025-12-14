@@ -5,20 +5,32 @@ import { useParams } from 'next/navigation';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
-// JSON ma'lumotlarni xavfsiz o'qish
-const safeParse = (str) => {
-  try {
-    const parsed = JSON.parse(str);
-    return Array.isArray(parsed) ? parsed : parsed.replace(/"/g, '');
-  } catch {
-    return str?.replace(/"/g, '');
+// ======================================================================
+// safeParse funksiyasi
+const safeParse = (value) => {
+  if (value === null || typeof value === 'undefined' || (typeof value === 'string' && value.trim() === '')) {
+      return null;
   }
-};
+  
+  if (typeof value === 'object') return value;
 
-// Styled Components
+  if (typeof value === 'string') {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value.trim();
+    }
+  }
+
+  return value;
+};
+// ======================================================================
+
 const Page = styled.main`
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   min-height: 100vh;
+  padding: 24px;
+  background-color: #f7fafc;
 `;
 
 const Header = styled.header`
@@ -43,12 +55,7 @@ const Card = styled.div`
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 16px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.2s ease;
-
-  &:hover {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  }
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 `;
 
 const PartLabel = styled.span`
@@ -67,6 +74,7 @@ const Question = styled.div`
   color: #2d3748;
   line-height: 1.6;
   margin-bottom: 16px;
+  white-space: pre-line; /* qator o‘tishlarni ko‘rsatadi */
 `;
 
 const AnswerLabel = styled.strong`
@@ -116,72 +124,30 @@ const Option = styled.span`
   `}
 `;
 
-// Matndagi [] larni userAnswer orqali to'ldirish
-const renderTextMulti = (text, userAnswer) => {
-  
-  const answers = Array.isArray(userAnswer)
-    ? [...userAnswer].sort((a, b) => (a.number || 0) - (b.number || 0))
-    : [{ number: null, answer: userAnswer }];
-
-  let index = 0;
-  const parts = text.split('[]');
-  return parts.map((part, i) => (
-    <React.Fragment key={i}>
-      {part}
-      {i < parts.length - 1 && (
-        <AnswerValue>
-          {answers[index] && answers[index].answer
-            ? (
-              <>
-                <strong>{answers[index].number}.</strong> {answers[index++].answer}
-              </>
-            )
-            : <i style={{ color: 'red' }}>[?]</i>
-          }
-        </AnswerValue>
-      )}
-    </React.Fragment>
-  ));
-};
-
 const ReadingAnswer = () => {
   const params = useParams();
   const userId = Array.isArray(params.userid) ? params.userid[0] : params.userid;
   const monthId = Array.isArray(params.id) ? params.id[0] : params.id;
 
   const { data, isLoading, error } = useGetUserReadingAnswer(userId, monthId);
-  console.log('ReadingAnswer data:', data);
 
   const filteredItems = useMemo(() => {
-  if (!data) return [];
+    if (!data) return [];
 
-
-  const result = [];
-  data.forEach((item, index) => {
-    const prevItem = data[index - 1];
-    const isNewPart = !prevItem || prevItem.part !== item.part;
-    result.push({
-      ...item,
-      showPartHeader: isNewPart,
+    const result = [];
+    data.forEach((item, index) => {
+      const prevItem = data[index - 1];
+      const isNewPart = !prevItem || prevItem.part !== item.part;
+      result.push({ ...item, showPartHeader: isNewPart });
     });
-  });
 
-  // questionNumber bo‘yicha sort qilamiz
-  result.sort((a, b) => (a.questionNumber || 0) - (b.questionNumber || 0));
-  return result;
-}, [data]);
+    result.sort((a, b) => (a.questionnumber || 0) - (b.questionnumber || 0));
+    return result;
+  }, [data]);
 
-  if (isLoading) {
-    return <Page><p style={{ textAlign: 'center', color: '#718096' }}>Yuklanmoqda...</p></Page>;
-  }
-
-  if (error) {
-    return <Page><p style={{ color: 'red', textAlign: 'center' }}>Xatolik: {error.message}</p></Page>;
-  }
-  
-  if (!data || data.length === 0) {
-    return <Page><p style={{ textAlign: 'center', color: '#718096' }}>Hech qanday javob topilmadi.</p></Page>;
-  }
+  if (isLoading) return <Page><p style={{ textAlign: 'center', color: '#718096' }}>Yuklanmoqda...</p></Page>;
+  if (error) return <Page><p style={{ color: 'red', textAlign: 'center' }}>Xatolik: {error.message}</p></Page>;
+  if (!data || data.length === 0) return <Page><p style={{ textAlign: 'center', color: '#718096' }}>Hech qanday javob topilmadi.</p></Page>;
 
   return (
     <Page>
@@ -191,16 +157,18 @@ const ReadingAnswer = () => {
       </Header>
 
       {filteredItems.map((item) => {
-        const options = Array.isArray(safeParse(item.options)) ? safeParse(item.options) : [];
-        const userAnswer = safeParse(item.userAnswer);
-        const isMissing = !userAnswer || userAnswer === 'jAVOB BER' || userAnswer === '';
+        const options = safeParse(item.options) || [];
+        const rawUserAnswer = safeParse(item.useranswer); // note: API may be `useranswer`
+
+        const trimmedAnswer = rawUserAnswer ? String(rawUserAnswer).trim() : '';
+        const isMissing = !rawUserAnswer || trimmedAnswer === '' || trimmedAnswer.toLowerCase() === 'javob ber';
 
         return (
           <Card key={item.id}>
             {item.showPartHeader && <PartLabel>{item.part.toUpperCase()}</PartLabel>}
 
             <Question>
-              <strong>{item.questionNumber}.</strong> {item.questionText}
+              <strong>{item.questionnumber}.</strong> {String(item.questiontext).replace(/\\"/g, '"')}
             </Question>
 
             <div>
@@ -208,17 +176,20 @@ const ReadingAnswer = () => {
               {isMissing ? (
                 <AnswerValue missing>javob berilmagan</AnswerValue>
               ) : (
-                <AnswerValue>{userAnswer}</AnswerValue>
+                <AnswerValue>{trimmedAnswer}</AnswerValue>
               )}
             </div>
 
             {['radio', 'select', 'checkbox'].includes(item.type) && options.length > 0 && (
               <OptionsList>
-                {options.map((opt, idx) => (
-                  <Option key={opt + '-' + idx} isCorrect={userAnswer === opt}>
-                    {opt}
-                  </Option>
-                ))}
+                {options.map((opt, idx) => {
+                  const trimmedOption = String(opt).trim();
+                  const isCorrect = item.type === 'checkbox'
+                    ? trimmedAnswer.includes(trimmedOption)
+                    : trimmedAnswer === trimmedOption;
+
+                  return <Option key={idx} isCorrect={isCorrect}>{opt}</Option>;
+                })}
               </OptionsList>
             )}
           </Card>

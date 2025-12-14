@@ -39,6 +39,15 @@ export const Input = styled.input`
   margin-bottom: 12px;
 `
 
+export const Textarea = styled.textarea`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  min-height: 200px;
+`
+
 export const SaveButton = styled.button`
   background: #2e86de;
   color: white;

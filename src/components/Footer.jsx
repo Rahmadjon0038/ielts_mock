@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <FooterContainer>
       <FooterContent>
-        <Logo>Taraqqiyot</Logo>
+        <Logo>IELTS Gauge</Logo>
         <Nav>
           <NavItem href="/">Home</NavItem>
           <NavItem href="#">IELTS Mock</NavItem>
@@ -14,7 +14,7 @@ const Footer = () => {
           <NavItem href="#">Contact</NavItem>
         </Nav>
         <CopyRight>
-          © {new Date().getFullYear()} Tarqqiyot Training Center. All rights reserved.
+          {/* © {new Date().getFullYear()} Tarqqiyot Training Center. All rights reserved. */}
         </CopyRight>
       </FooterContent>
     </FooterContainer>

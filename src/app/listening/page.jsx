@@ -259,7 +259,7 @@ function Listening() {
 
   if (monthLoading) {
     return (
-      <div style={{ position: "relative", height: "500px" }}>
+      <div style={{ position: "relative", height: "900px" }}>
         <Loader />
       </div>
     );

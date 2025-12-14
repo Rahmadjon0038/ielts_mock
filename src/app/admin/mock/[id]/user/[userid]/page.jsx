@@ -18,6 +18,7 @@ import {
   Input,
   SaveButton,
   Images,
+  Textarea,
 } from './style'
 import ReadingAnswer from '@/components/admin/CreateMockModal/section/ReadingAnswer'
 import UserAnswer from '@/components/listening/UserAnswer'
@@ -93,7 +94,7 @@ function Page() {
       score: grade,
       comment,
       paramdata,
-    })  
+    })
   }
 
 
@@ -117,7 +118,16 @@ function Page() {
             <br />
             <TextBlock>2) {writingTask?.task2}</TextBlock>
             <TextBlock>{item.question}</TextBlock>
-
+            {
+              writingTask?.task2_image ?
+                <Images
+                  src={`${baseUrl}/uploads/${writingTask?.task2_image}`}
+                  alt="Task 1"
+                  style={{ maxWidth: '100%', marginTop: '1rem' }}
+                />
+                :
+                ''
+            }
             <Label>User Answer:</Label>
             <TextBlock>
               1) {item.task1 && item.task1.trim() ? item.task1 : "did not answer"}
@@ -127,16 +137,18 @@ function Page() {
               2) {item.task2 && item.task2.trim() ? item.task2 : "did not answer"}
             </TextBlock>
 
+
             <Label>Assessment </Label>
             <Input
               placeholder="e.g. 6.5"
               value={grades.Writing}
               onChange={(e) => setGrades({ ...grades, Writing: e.target.value })}
             />
-            <Input
+            <Textarea
+            spellCheck={true}
               ref={writingCommentRef}
               placeholder="comment"
-            />
+            ></Textarea>
             <SaveButton onClick={() => handleSaveGrade('Writing')}>Save Grade</SaveButton>
           </div>
         ))}
@@ -152,17 +164,17 @@ function Page() {
           value={grades.Reading}
           onChange={(e) => setGrades({ ...grades, Reading: e.target.value })}
         />
-        <Input
+        <Textarea
+        spellCheck={true}
           ref={readingCommentRef}
           placeholder="comment"
-        />
+        ></Textarea>
         <SaveButton onClick={() => handleSaveGrade('Reading')}>Save Grade</SaveButton>
       </SectionContainer>
 
 
       {/* === LISTENING === */}
       <SectionContainer>
-
         <UserAnswer />
 
         <Label>Assessment</Label>
@@ -171,10 +183,11 @@ function Page() {
           value={grades.Listening}
           onChange={(e) => setGrades({ ...grades, Listening: e.target.value })}
         />
-        <Input
+        <Textarea
+        spellCheck={true}
           ref={listeningCommentRef}
           placeholder="comment"
-        />
+        ></Textarea>
         <SaveButton onClick={() => handleSaveGrade('Listening')}>Save Grade</SaveButton>
       </SectionContainer>
 
@@ -187,10 +200,11 @@ function Page() {
           value={grades.Speaking}
           onChange={(e) => setGrades({ ...grades, Speaking: e.target.value })}
         />
-        <Input
+        <Textarea
+        spellCheck={true}
           ref={speakingCommentRef}
           placeholder="comment"
-        />
+        ></Textarea>
         <SaveButton onClick={() => handleSaveGrade('Speaking')}>Save Grade</SaveButton>
       </SectionContainer>
     </GlobalContainer>

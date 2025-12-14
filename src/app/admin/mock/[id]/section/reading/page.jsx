@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation'
 import styled, { css } from 'styled-components'
 import { useAddReadingTask } from '@/hooks/reading'
 import { MdBorderLeft } from 'react-icons/md'
+import { Textarea } from '../listening/style'
 
 // --- Styled Components ---
 const Wrapper = styled.div`
@@ -643,18 +644,18 @@ function ReadingForm() {
             {section.question.map((qBlock, qIdx) => (
               <QuestionBlock key={qIdx}>
                 <InlineGroup>
-                  <TextInput
+                  <Textarea
                     placeholder="Question Block Title"
                     value={qBlock.questionTitle}
                     onChange={e => handleQuestionBlockChange(sIdx, qIdx, 'questionTitle', e.target.value)}
-                  />
+                  ></Textarea>
                   <Btn type="button" variant="remove" onClick={() => removeQuestionBlock(sIdx, qIdx)}>Remove Block</Btn>
                 </InlineGroup>
-                <TextInput
+                <Textarea
                   placeholder="Question Block Intro"
                   value={qBlock.questionIntro}
                   onChange={e => handleQuestionBlockChange(sIdx, qIdx, 'questionIntro', e.target.value)}
-                />
+                ></Textarea>
                 <div style={{ fontWeight: 600, fontSize: 17, margin: '12px 0 8px 0', color: '#2e7d32' }}>
                   Block {qIdx + 1}
                 </div>
@@ -686,11 +687,11 @@ function ReadingForm() {
                         <>
                           <div style={{ margin: '10px 0 6px 0', display: 'flex', alignItems: 'center', }}>
                             <b style={{ border: '1px solid #434343', padding: 14, borderRadius: 4, marginRight: 4 }}>{localTestNumbers[0]}</b>{' '}
-                            <QuestionInput
+                            <Textarea
                               placeholder="Radio Question"
                               value={task.question}
                               onChange={e => handleTaskChange(sIdx, qIdx, tIdx, 'question', e.target.value)}
-                            />
+                            ></Textarea>
                           </div>
                           {(task.options || []).map((opt, optIdx) => (
                             <div key={optIdx} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: '10px' }}>
@@ -717,11 +718,11 @@ function ReadingForm() {
                         <>
                           <div style={{ margin: '10px 0 6px 0', display: 'flex', alignItems: 'center' }}>
                             <b style={{ border: '1px solid #434343', padding: 14, borderRadius: 4, marginRight: 4 }}>{localTestNumbers[0]}</b>{' '}
-                            <QuestionInput
+                            <Textarea
                               placeholder="Select Question"
                               value={task.question}
                               onChange={e => handleTaskChange(sIdx, qIdx, tIdx, 'question', e.target.value)}
-                            />
+                            ></Textarea>
                           </div>
                           {(task.options || []).map((opt, optIdx) => (
                             <div key={optIdx} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: '10px' }}>
