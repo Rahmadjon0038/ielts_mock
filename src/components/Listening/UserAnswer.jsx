@@ -215,7 +215,6 @@ function UserAnswer() {
           Foydalanuvchi: <strong>№{userId}</strong> | Oy: <strong>№{monthId}</strong>
         </Subtitle>
       </HeaderSection>
-
       <QuestionDisplay>
         {sortedAnswers.length > 0 ? (
           sortedAnswers.map((question) => (
