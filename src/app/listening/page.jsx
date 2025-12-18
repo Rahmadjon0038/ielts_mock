@@ -13,7 +13,7 @@ import {
   TabContainer,
   TabContent,
 } from "./style";
-import { GlobalContainer } from "@/globalStyle";
+import { GlobalContainer, TextBlock } from "@/globalStyle";
 import { Introduction, Times } from "@/components/reading/style";
 import {
   useAddListeningAnswers,
@@ -57,36 +57,19 @@ function Listening() {
   };
   const { data: untieddata } = useGetUntied(untied);
   const timerMutation = useAddtimer();
-  const { data: timer } = useGetTimer(
-    user?.user?.id,
-    section,
-    latesMonth?.id
-  );
+  const { data: timer } = useGetTimer(user?.user?.id, section, latesMonth?.id);
   const paramdata = { id: latesMonth?.id, userid: user?.user?.id };
   const setAassessment = useAassessment();
 
   useEffect(() => {
-    if (
-      user?.user?.id &&
-      section &&
-      data &&
-      audios &&
-      !untieddata?.submitted
-    ) {
+    if (user?.user?.id && section && data && audios && !untieddata?.submitted) {
       timerMutation.mutate({
         userId: user?.user?.id,
         section: section,
         monthId: latesMonth?.id,
       });
     }
-  }, [
-    user?.user?.id,
-    section,
-    data,
-    audios,
-    untieddata?.submitted,
-    latesMonth?.id,
-  ]);
+  }, [user?.user?.id, section, data, audios, untieddata?.submitted, latesMonth?.id]);
 
   usePreventRefresh();
 
@@ -97,13 +80,7 @@ function Listening() {
 
   const renderer = ({ minutes, seconds, completed }) => {
     if (completed) {
-      return (
-        <TimerModal
-          untieddata={untieddata?.submitted}
-          handleSubmit={handleSubmit}
-          show={true}
-        />
-      );
+      return <TimerModal untieddata={untieddata?.submitted} handleSubmit={handleSubmit} show={true} />;
     } else {
       return (
         <span>
@@ -113,7 +90,6 @@ function Listening() {
     }
   };
 
-  // Funksiya faqat Text Completion savollari uchun inputlarni render qiladi
   const renderLabelWithInputs = (label, idx, task) => {
     const parts = label.split(/(\[\])/g);
     let inputCount = 0;
@@ -123,23 +99,13 @@ function Listening() {
         const inputNumber = ++inputCount;
         const key = `${activeTab}-${task.number}-${inputNumber - 1}`;
         return (
-          <span
-            key={`input-${task.number}-${i}`}
-            style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}
-          >
+          <span key={`input-${task.number}-${i}`} style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
             <Input
               spellCheck={false}
               placeholder="Answer"
               style={{ margin: "0 5px", maxWidth: "150px" }}
               value={answers[key] || ""}
-              onChange={(e) =>
-                handleAnswerChange(
-                  task.number,
-                  inputNumber - 1, // inputIndex
-                  e.target.value, // value
-                  activeTab // tabIndex
-                )
-              }
+              onChange={(e) => handleAnswerChange(task.number, inputNumber - 1, e.target.value, activeTab)}
             />
           </span>
         );
@@ -149,55 +115,27 @@ function Listening() {
     });
   };
 
-  const handleAnswerChange = (
-    questionNumber,
-    inputIndexOrValue, // Text uchun inputIndex, Radio/Select uchun value
-    valueOrTabIndex, // Text uchun value, Radio/Select uchun tabIndex
-    optionalTabIndex
-  ) => {
+  const handleAnswerChange = (questionNumber, inputIndexOrValue, valueOrTabIndex, optionalTabIndex) => {
     if (optionalTabIndex !== undefined) {
-      // TEXT TYPE (Completion)
       const key = `${optionalTabIndex}-${questionNumber}-${inputIndexOrValue}`;
       const value = valueOrTabIndex;
-      setAnswers((prev) => ({
-        ...prev,
-        [key]: value,
-      }));
+      setAnswers((prev) => ({ ...prev, [key]: value }));
     } else {
-      // RADIO/SELECT/CHECKBOX TYPE
       const tabIndex = valueOrTabIndex;
-      const value = inputIndexOrValue; // Radio/Select uchun string, Checkbox uchun input event
+      const value = inputIndexOrValue;
       const questionKey = `${tabIndex}-${questionNumber}`;
-      const taskType = data?.sections[tabIndex]?.question
-        ?.flatMap((q) => q.questionsTask)
-        .find((t) => t.number === questionNumber)?.type;
+      const taskType = data?.sections[tabIndex]?.question?.flatMap((q) => q.questionsTask).find((t) => t.number === questionNumber)?.type;
 
       if (taskType === "checkbox") {
         const checked = value.target.checked;
         const optionValue = value.target.value;
-
         setAnswers((prev) => {
           const currentAnswers = prev[questionKey] || [];
-          let newAnswers;
-
-          if (checked) {
-            // Tanlandi: Massivga qo'shish
-            newAnswers = [...currentAnswers, optionValue];
-          } else {
-            // Tanlov olib tashlandi: Massivdan o'chirish
-            newAnswers = currentAnswers.filter((ans) => ans !== optionValue);
-          }
-          return {
-            ...prev,
-            [questionKey]: newAnswers,
-          };
+          let newAnswers = checked ? [...currentAnswers, optionValue] : currentAnswers.filter((ans) => ans !== optionValue);
+          return { ...prev, [questionKey]: newAnswers };
         });
       } else {
-        // RADIO / SELECT
-        setAnswers((prev) => ({
-          ...prev,
-          [questionKey]: value,
-        }));
+        setAnswers((prev) => ({ ...prev, [questionKey]: value }));
       }
     }
   };
@@ -224,27 +162,22 @@ function Listening() {
           const key = `${tabIndex}-${task.number}`;
 
           if (task.type === "text") {
-            // Text Completion savollari (ko'p javobli)
             const inputCount = (task.question.match(/\[\]/g) || []).length;
             for (let i = 0; i < inputCount; i++) {
               const textKey = `${key}-${i}`;
               questionObj.userAnswers.push(answers[textKey] || "");
             }
           } else if (task.type === "checkbox") {
-            // Checkbox savollari (massiv sifatida saqlash)
             const checkboxAnswers = answers[key] || [];
-            questionObj.userAnswers.push(checkboxAnswers.join(', ') || ""); 
+            questionObj.userAnswers.push(checkboxAnswers.join(", ") || "");
           } else {
-            // Radio/Select savollari (bitta javobli)
             questionObj.userAnswers.push(answers[key] || "");
           }
-
           submissionData.answers.push(questionObj);
         });
       });
     });
-    
-    // Javoblarni tekshirish va band ballarini hisoblash qismi (o'zgarishsiz qoldirildi)
+
     let score = checkListeningAnswers(submissionData).correctCount;
 
     function getBandScore(rawScore) {
@@ -271,8 +204,7 @@ function Listening() {
         setAassessment.mutate({
           section,
           score: getBandScore(score),
-          comment:
-            "Evaluation completed  Your result has been automatically calculated by the system. If there are any shortcomings, they will be reviewed and corrected by the admin.",
+          comment: "Evaluation completed...",
           paramdata,
         });
       },
@@ -288,9 +220,7 @@ function Listening() {
   }
 
   if (!latesMonth?.id || !latesMonth?.month) {
-    return (
-      <NoResult writing={"writing"} message="There are no listening tests." />
-    );
+    return <NoResult writing={"writing"} message="There are no listening tests." />;
   }
 
   return (
@@ -301,50 +231,24 @@ function Listening() {
         ) : (
           <div>
             <Times>
-              <p>
-                {endTime ? (
-                  <>
-                    <Countdown date={endTime} renderer={renderer} />
-                  </>
-                ) : (
-                  <MiniLoader />
-                )}
-              </p>
+              <p>{endTime ? <Countdown date={endTime} renderer={renderer} /> : <MiniLoader />}</p>
             </Times>
             <TabContent>
               <Introduction>
                 <h3>{data?.sections[activeTab]?.part}</h3>
-                <p>{data?.sections[activeTab]?.intro}</p>
-                <p>
+                <TextBlock>{data?.sections[activeTab]?.intro}</TextBlock>
+                
+                <TextBlock>
                   <strong>{data?.sections[activeTab]?.textTitle}</strong>
                   <br />
                   {data?.sections[activeTab]?.text}
-                </p>
+                </TextBlock>
 
                 <AudioSection>
                   {audios && audios?.length > 0 ? (
-                    <audio
-                      style={{ width: "100%" }}
-                      key={audios[activeTab]?.id || activeTab}
-                      controls
-                      preload="auto"
-                    >
-                      <source
-                        src={`${baseUrl.replace(/\/$/, "")}/uploads/audio/${
-                          audios[activeTab]?.filename
-                        }`}
-                        type={
-                          audios[activeTab]?.mimetype === "audio/x-m4a"
-                            ? "audio/mp4"
-                            : audios[activeTab]?.mimetype
-                        }
-                      />
-                      <source
-                        src={`${baseUrl.replace(/\/$/, "")}/uploads/audio/${
-                          audios[activeTab]?.filename
-                        }`}
-                        type="audio/mpeg"
-                      />
+                    <audio style={{ width: "100%" }} key={audios[activeTab]?.id || activeTab} controls preload="auto">
+                      <source src={`${baseUrl.replace(/\/$/, "")}/uploads/audio/${audios[activeTab]?.filename}`} type={audios[activeTab]?.mimetype === "audio/x-m4a" ? "audio/mp4" : audios[activeTab]?.mimetype} />
+                      <source src={`${baseUrl.replace(/\/$/, "")}/uploads/audio/${audios[activeTab]?.filename}`} type="audio/mpeg" />
                       Your browser does not support the audio player.
                     </audio>
                   ) : (
@@ -354,142 +258,70 @@ function Listening() {
               </Introduction>
 
               <QuestionBox>
-                {data?.sections[activeTab]?.question?.map(
-                  (questionGroup, qIdx) => (
-                    <div key={qIdx}>
-                      <h4>{questionGroup?.questionTitle}</h4>
-                      <p>{questionGroup?.questionIntro}</p>
-                      {questionGroup?.questionsTask?.map((task, idx) => {
-                        const questionKey = `${activeTab}-${task?.number}`;
-                        const currentAnswers = answers[questionKey] || [];
-                        // Javob harfini hisoblash mantiqi o'zgarishsiz qoldi (chunki backendga A, B, C yuborish kerak)
-                        // Lekin UI da endi ko'rsatilmaydi.
-                        return (
-                          <QuestionItem key={idx}>
-                            <p>
-                              <strong>{task?.number}.</strong>{" "}
-                              {task.type === "text"
-                                ? renderLabelWithInputs(
-                                    task?.question,
-                                    idx,
-                                    task
-                                  )
-                                : task?.question}
-                            </p>
+                {data?.sections[activeTab]?.question?.map((questionGroup, qIdx) => (
+                  <div key={qIdx}>
+                    <h4>{questionGroup?.questionTitle} </h4>
+                    <TextBlock>{questionGroup?.questionIntro}</TextBlock>
+                    
+                    {questionGroup?.questionsTask?.map((task, idx) => {
+                      const questionKey = `${activeTab}-${task?.number}`;
+                      const currentAnswers = answers[questionKey] || [];
+                      return (
+                        <QuestionItem key={idx}>
+                          <TextBlock as="div">
+                            {/* SHART: Agar tip 'text' bo'lmasa raqamni ko'rsat, bo'lsa raqam yashiriladi */}
+                            {task.type !== "text" && <strong>{task?.number}. </strong>}
+                            
+                            {task.type === "text"
+                              ? renderLabelWithInputs(task?.question, idx, task)
+                              : task?.question}
+                          </TextBlock>
 
-                            {(task.type === "radio" ||
-                              task.type === "checkbox" ||
-                              task.type === "select") && (
-                              <RadioGroup>
-                                {task.options.map((opt, i) => {
-                                  // Variant harfini aniqlash (A, B, C...)
-                                  const optionLabel = String.fromCharCode(65 + i);
+                          {(task.type === "radio" || task.type === "checkbox") && (
+                            <RadioGroup>
+                              {task.options.map((opt, i) => {
+                                const optionLabel = String.fromCharCode(65 + i);
+                                return (
+                                  <label key={i}>
+                                    <input
+                                      type={task.type}
+                                      name={`${task.type}-${activeTab}-${task?.number}`}
+                                      value={optionLabel}
+                                      checked={task.type === "radio" ? answers[questionKey] === optionLabel : currentAnswers.includes(optionLabel)}
+                                      onChange={(e) => handleAnswerChange(task?.number, task.type === "checkbox" ? e : e.target.value, activeTab)}
+                                    />
+                                    <RadioLabel>{opt}</RadioLabel>
+                                  </label>
+                                );
+                              })}
+                            </RadioGroup>
+                          )}
 
-                                  if (task.type === "radio") {
-                                    return (
-                                      <label key={i}>
-                                        <input
-                                          spellCheck={false}
-                                          type="radio"
-                                          name={`radio-${activeTab}-${task?.number}`}
-                                          value={optionLabel} // Backendga yuborish uchun A, B, C saqlanadi
-                                          checked={
-                                            answers[questionKey] === optionLabel
-                                          }
-                                          onChange={(e) =>
-                                            handleAnswerChange(
-                                              task?.number,
-                                              e.target.value,
-                                              activeTab
-                                            )
-                                          }
-                                        />
-                                        <RadioLabel>
-                                          {/* Variant harfi olib tashlandi */}
-                                          {opt}
-                                        </RadioLabel>
-                                      </label>
-                                    );
-                                  }
-
-                                  if (task.type === "checkbox") {
-                                    return (
-                                      <label key={i}>
-                                        <input
-                                          spellCheck={false}
-                                          type="checkbox"
-                                          name={`checkbox-${activeTab}-${task?.number}`}
-                                          value={optionLabel} // Backendga yuborish uchun A, B, C saqlanadi
-                                          checked={currentAnswers.includes(
-                                            optionLabel
-                                          )}
-                                          onChange={(e) =>
-                                            handleAnswerChange(
-                                              task?.number,
-                                              e, // event ni to'liq yuboramiz
-                                              activeTab
-                                            )
-                                          }
-                                        />
-                                        <RadioLabel>
-                                          {/* Variant harfi olib tashlandi */}
-                                          {opt}
-                                        </RadioLabel>
-                                      </label>
-                                    );
-                                  }
-                                  return null;
-                                })}
-                              </RadioGroup>
-                            )}
-
-                            {task?.type === "select" && (
-                              <Select
-                                value={answers[questionKey] || ""}
-                                onChange={(e) =>
-                                  handleAnswerChange(
-                                    task.number,
-                                    e.target.value,
-                                    activeTab
-                                  )
-                                }
-                              >
-                                <option value="">Select</option>
-                                {task?.options?.map((opt, i) => {
-                                  const optionLabel = String.fromCharCode(65 + i);
-                                  return (
-                                    <option key={i} value={optionLabel}>
-                                      {/* Variant harfi olib tashlandi */}
-                                      {opt}
-                                    </option>
-                                  );
-                                })}
-                              </Select>
-                            )}
-                          </QuestionItem>
-                        );
-                      })}
-                    </div>
-                  )
-                )}
+                          {task?.type === "select" && (
+                            <Select value={answers[questionKey] || ""} onChange={(e) => handleAnswerChange(task.number, e.target.value, activeTab)}>
+                              <option value="">Select</option>
+                              {task?.options?.map((opt, i) => (
+                                <option key={i} value={String.fromCharCode(65 + i)}>{opt}</option>
+                              ))}
+                            </Select>
+                          )}
+                        </QuestionItem>
+                      );
+                    })}
+                  </div>
+                ))}
               </QuestionBox>
             </TabContent>
 
             <TabContainer>
               {data?.sections?.map((section, index) => (
-                <TabButton
-                  key={index}
-                  onClick={() => setActiveTab(index)}
-                  $active={activeTab === index}
-                >
+                <TabButton key={index} onClick={() => setActiveTab(index)} $active={activeTab === index}>
                   {section?.part}
                 </TabButton>
               ))}
             </TabContainer>
 
-            {activeTab === data?.sections?.length - 1 && (
-              <Button onClick={handleSubmit}>Send</Button>
-            )}
+            {activeTab === data?.sections?.length - 1 && <Button onClick={handleSubmit}>Send</Button>}
           </div>
         )}
       </GlobalContainer>

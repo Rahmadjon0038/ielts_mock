@@ -149,7 +149,25 @@ function ReadingLayout() {
               }
             });
           }
-          // 2. Multi-text (numbers va answer array bor)
+          // 2. Checkbox type
+          else if (q.type === "checkbox") {
+            const userAns = answers[partIndex]?.[`testNum${q.number}`] || [];
+            const correctAns = Array.isArray(q.answer) ? q.answer : [];
+            result.push({
+              part: part.part,
+              questionNumber: q.number,
+              questionText: q.question,
+              userAnswer: userAns.join(', '),
+              correctAnswer: correctAns.join(', '),
+              type: q.type,
+              options: q.options || [],
+            });
+            totalCount++;
+            if (userAns.sort().join(',') === correctAns.sort().join(',')) {
+              correctCount++;
+            }
+          }
+          // 3. Multi-text (numbers va answer array bor)
           else if (q.type === "text-multi") {
             const correctAnswers = Array.isArray(q.answer)
               ? q.answer
@@ -177,7 +195,7 @@ function ReadingLayout() {
             });
           }
 
-          // 3. TABLE yoki multi-answer savollar (numbers va answers array bor)
+          // 4. TABLE yoki multi-answer savollar (numbers va answers array bor)
           else if (
             Array.isArray(q.numbers) &&
             Array.isArray(q.answers) &&
@@ -201,7 +219,7 @@ function ReadingLayout() {
               }
             });
           }
-          // 4. Oddiy radio/select savollar (number va answer bor)
+          // 5. Oddiy radio/select savollar (number va answer bor)
           else if (
             typeof q.number === "number" &&
             typeof q.answer === "string"
@@ -238,7 +256,7 @@ function ReadingLayout() {
           section,
           score: bandScore,
           comment:
-            "Baholash yakunlandi ✅ Sizning natijangiz tizim tomonidan avtomatik hisoblandi. Agar kamchiliklar bo‘lsa, ular admin tomonidan ko‘rib chiqilib tuzatiladi.",
+            "Evaluation completed. Your score has been automatically calculated by the system. If there are any shortcomings, they will be reviewed and corrected by the admin.",
           paramdata,
         });
       },
@@ -305,19 +323,17 @@ function ReadingLayout() {
 
           <Container>
             <LeftBox>
-              <h3>{parts?.textTitle}</h3>
+              <h3>{parts?.textTitle || parts?.texttitle}</h3>
               <TextBlock>{parts?.text}</TextBlock>
             </LeftBox>
 
             <RightBox>
-              <b>{parts?.question?.questionTitle}</b>
-              <p>{parts?.question?.questionIntro}</p>
               <div>
                 {parts?.question?.map((section, sectionIdx) => (
                   <div key={sectionIdx} className="mb-6">
-                    <h3 className="question-title">{section?.questionTitle}</h3>
+                    <h3 className="question-title">{section?.questionTitle || section?.questiontitle}</h3>
                     <p className="text-gray-600 mb-4">
-                      {section?.questionIntro}
+                      {section?.questionintro}
                     </p>
 
                     {section?.questionsTask?.map((item) => (
@@ -493,6 +509,23 @@ function ReadingLayout() {
                                         )}
                                       </span>
                                     ))}
+                                  {!item?.question?.includes("[]") && (
+                                    <Input
+                                      type="text"
+                                      className="inline-block border border-gray-300 rounded px-2 py-1 mx-1 w-40"
+                                      value={
+                                        answers[partReplacement]?.[
+                                          `testNum${item.number}`
+                                        ] || ""
+                                      }
+                                      onChange={(e) =>
+                                        handleAnswerChange(
+                                          item.number,
+                                          e.target.value
+                                        )
+                                      }
+                                    />
+                                  )}
                                 </span>
                               ) : (
                                 <span>{item?.question}</span>
