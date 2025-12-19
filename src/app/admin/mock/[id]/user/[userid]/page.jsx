@@ -21,7 +21,7 @@ import {
   Textarea,
 } from './style'
 import ReadingAnswer from '@/components/admin/CreateMockModal/section/ReadingAnswer'
-import UserAnswer from '@/components/listening/UserAnswer.jsx'
+import UserAnswer from '@/components/Listening/UserAnswer.jsx'
 
 function Page() {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
