@@ -1,8 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   compiler: {
-    styledComponents: true, // ✅ SWC orqali styled-components qo‘llab-quvvatlanadi
+    styledComponents: true,
   },
+
+  turbopack: {},
+
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,
