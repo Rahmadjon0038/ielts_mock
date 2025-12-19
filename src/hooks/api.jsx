@@ -2,7 +2,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 export const instance = axios.create({
   // baseURL: "https://apiielts.animall.uz/",
-  baseURL: "http://localhost:5000/",
+  baseURL: "https://apiielts.astrocoder.uz/",
+  // baseURL: "http://localhost:5000/",
 });
 
 instance.interceptors.request.use(
