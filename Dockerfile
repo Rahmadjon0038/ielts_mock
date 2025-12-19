@@ -1,20 +1,21 @@
 # syntax=docker/dockerfile:1
 
-# Base image with Node for all stages
+# syntax=docker/dockerfile:1
+
 FROM node:20-alpine AS base
 WORKDIR /app
 ENV NODE_ENV=production
+RUN apk add --no-cache libc6-compat && corepack enable
 
-# Install deps
+# Install deps with Yarn (uses yarn.lock)
 FROM base AS deps
-RUN apk add --no-cache libc6-compat
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 
 # Build Next.js app
 FROM deps AS builder
 COPY . .
-RUN npm run build
+RUN yarn build
 
 # Production runner
 FROM base AS runner
@@ -26,4 +27,4 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/package.json ./package.json
 COPY --from=deps /app/node_modules ./node_modules
 EXPOSE 4012
-CMD ["npm", "run", "start", "--", "-p", "4012", "-H", "0.0.0.0"]
+CMD ["yarn", "start", "-p", "4012", "-H", "0.0.0.0"]
